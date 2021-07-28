@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".Homepage"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
@@ -25,12 +25,12 @@
             android:id="@+id/button"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/homeToolbar"
             android:layout_marginTop="32dp"
             android:text="Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/homeToolbar" />
 
         <Button
             android:id="@+id/button2"
@@ -44,11 +44,11 @@
             app:layout_constraintTop_toBottomOf="@+id/button" />
 
         <include
-            android:id="@+id/toolbar"
+            android:id="@+id/homeToolbar"
             layout="@layout/toolbar" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/hp_calendario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="40dp"
@@ -56,12 +56,12 @@
             android:textSize="30sp"
             android:layout_marginBottom="80dp"
             android:text="@string/calendario"
-            app:layout_constraintBottom_toTopOf="@+id/button4"
+            app:layout_constraintBottom_toTopOf="@+id/hp_newSession"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/hp_newSession"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
