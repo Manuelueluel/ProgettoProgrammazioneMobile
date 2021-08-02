@@ -31,6 +31,9 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     AutoCompleteTextView listaScadenze;
     AutoCompleteTextView listaSessioni;
 
+    InterceptEventLayout interceptEventScadenze;
+    InterceptEventLayout interceptEventSessioni;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,9 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
         listaScadenze = (AutoCompleteTextView) findViewById( R.id.dropdown_scadenze);
         listaSessioni = (AutoCompleteTextView) findViewById( R.id.dropdown_sessioni);
+
+        interceptEventScadenze = (InterceptEventLayout) findViewById( R.id.wrap_prossime_scadenze);
+        interceptEventSessioni = (InterceptEventLayout) findViewById( R.id.wrap_prossime_sessioni);
 
         calendario = findViewById(R.id.hp_calendario);
 
@@ -103,6 +109,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         toolbar.setTitle("Pommidori");
         toolbar.setNavigationIcon(R.drawable.ic_menu_24);
     }
+
     private void setButtonListeners(){
         calendario.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,29 +117,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                 startActivity(new Intent(Homepage.this,Calendario.class));
             }
         });
-
-        btnScadenze.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if( listaScadenze.isPopupShowing()){
-                    listaScadenze.dismissDropDown();
-                }else{
-                    listaScadenze.showDropDown();
-                }
-            }
-        });
-
-        btnSessioni.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if( listaSessioni.isPopupShowing()){
-                    listaSessioni.dismissDropDown();
-                }else{
-                    listaSessioni.showDropDown();
-                }
-            }
-        });
-
     }
 
     private void setDropDownLists(){

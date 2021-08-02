@@ -32,50 +32,66 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeToolbar">
 
-            <Button
-                android:id="@+id/btn_dropdown_scadenze"
+            <com.unitn.lpsmt.group13.pommidori.InterceptEventLayout
+                android:id="@+id/wrap_prossime_scadenze"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/prossime_scadenze"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="40dp"/>
+                android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <AutoCompleteTextView
-                    android:id="@+id/dropdown_scadenze"
+                <Button
+                    android:id="@+id/btn_dropdown_scadenze"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:inputType="none" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/prossime_scadenze"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="40dp"/>
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/btn_dropdown_sessioni"
+                    <AutoCompleteTextView
+                        android:id="@+id/dropdown_scadenze"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:inputType="none" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </com.unitn.lpsmt.group13.pommidori.InterceptEventLayout>
+
+            <com.unitn.lpsmt.group13.pommidori.InterceptEventLayout
+                android:id="@+id/wrap_prossime_sessioni"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/prossime_sessioni"
-                android:paddingVertical="10dp"
-                android:layout_marginTop="30dp"
-                android:paddingHorizontal="40dp"/>
+                android:orientation="vertical"
+                android:layout_marginTop="30dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <AutoCompleteTextView
-                    android:id="@+id/dropdown_sessioni"
+                <Button
+                    android:id="@+id/btn_dropdown_sessioni"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:inputType="none" />
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="40dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/prossime_sessioni" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/dropdown_sessioni"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:inputType="none" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </com.unitn.lpsmt.group13.pommidori.InterceptEventLayout>
 
         </LinearLayout>
 
