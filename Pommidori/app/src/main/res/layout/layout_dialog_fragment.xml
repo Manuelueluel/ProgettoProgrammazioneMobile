@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomDialogContainer"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="25dp"
+    android:padding="25dp"
+    android:background="@drawable/custom_border_square">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sessione_personalizzata"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginVertical="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/durata"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginRight="50dp"/>
+
+        <CheckBox
+            android:id="@+id/checkDurata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="libera"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/timerDurata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="20dp"
+        android:background="@drawable/custom_border_round">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/menoDurataOre"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="0dp"
+                android:text="-"/>
+
+            <TextView
+                android:id="@+id/durataPerOre"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="40sp"
+                android:textColor="@color/design_default_color_on_secondary"/>
+
+            <Button
+                android:id="@+id/piuDurataOre"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="0dp"
+                android:text="+"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginLeft="25dp">
+
+            <Button
+                android:id="@+id/menoDurataMin"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="0dp"
+                android:text="-"/>
+
+            <TextView
+                android:id="@+id/durataPerMin"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="40sp"
+                android:textColor="@color/design_default_color_on_secondary"/>
+
+            <Button
+                android:id="@+id/piuDurataMin"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="0dp"
+                android:text="+"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginVertical="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/associa_attivita"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/dropdownSessionePers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/avviaSessione"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/avvia"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"/>
+
+
+
+</LinearLayout>

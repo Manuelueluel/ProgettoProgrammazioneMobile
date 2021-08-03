@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.google.android.material.navigation.NavigationView;
+import com.unitn.lpsmt.group13.pommidori.fragments.BottomDialogFragment;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -25,6 +26,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     Toolbar toolbar;
 
     Button calendario;
+    Button newSession;
     Button btnScadenze;
     Button btnSessioni;
 
@@ -54,6 +56,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         interceptEventSessioni = (InterceptEventLayout) findViewById( R.id.wrap_prossime_sessioni);
 
         calendario = findViewById(R.id.hp_calendario);
+        newSession = findViewById(R.id.hp_newSession);
 
         //Metodi
         setNavigationDrawerMenu();
@@ -115,6 +118,14 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Homepage.this,Calendario.class));
+            }
+        });
+
+        newSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BottomDialogFragment bottomDialogFragment = new BottomDialogFragment();
+                bottomDialogFragment.show(getSupportFragmentManager(),"MyFragment");
             }
         });
     }

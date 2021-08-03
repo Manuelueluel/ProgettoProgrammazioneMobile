@@ -7,6 +7,10 @@
     <string name="d_pause">Durata Pausa</string>
     <string name="prossime_scadenze">Prossime scadenze</string>
     <string name="prossime_sessioni">Prossime sessioni</string>
+    <string name="sessione_personalizzata">Sessione Personalizzata</string>
+    <string name="durata">Durata: </string>
+    <string name="associa_attivita">Associa ad una atività:</string>
+    <string name="avvia">Avvia</string>
 
     <!-- Array d'esempio usato per mostrare le liste in homepage -->
     <string-array name="planets_array">

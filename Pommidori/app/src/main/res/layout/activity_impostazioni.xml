@@ -22,11 +22,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingToolbar" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:background="@drawable/custom_border"
+        android:gravity="center"
+        android:background="@drawable/custom_border_round"
         android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,11 +38,7 @@
             android:id="@+id/pausa_meno"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:text="-"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/durata_pausa"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="-"/>
 
         <TextView
             android:id="@+id/durata_pausa"
@@ -50,22 +48,14 @@
             android:text=""
             android:textAlignment="center"
             android:textSize="30sp"
-            android:textColor="@color/design_default_color_on_secondary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/pausa_piu"
-            app:layout_constraintStart_toEndOf="@+id/pausa_meno"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColor="@color/design_default_color_on_secondary"/>
 
         <Button
             android:id="@+id/pausa_piu"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:text="+"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/textView4"
-            app:layout_constraintStart_toEndOf="@id/durata_pausa"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="+"/>
 
         <TextView
             android:id="@+id/textView4"
@@ -73,11 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:text="minuti"
-            android:textColor="@color/design_default_color_on_secondary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/pausa_piu"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColor="@color/design_default_color_on_secondary"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
