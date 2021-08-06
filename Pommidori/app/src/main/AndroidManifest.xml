@@ -8,10 +8,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pommidori">
         <activity android:name=".Timer"></activity>
-        <activity android:name=".Calendario" />
-        <activity android:name=".Report" />
-        <activity android:name=".Impostazioni" />
-        <activity android:name=".Homepage">
+        <activity android:name=".Calendario"
+            android:label="Calendario"
+            android:parentActivityName=".Homepage"/>
+        <activity android:name=".Report"
+            android:label="Report"
+            android:parentActivityName=".Homepage"/>
+        <activity android:name=".Impostazioni"
+            android:label="Imposertazioni"
+            android:parentActivityName=".Homepage"/>
+        <activity android:name=".Homepage"
+            android:label="Pommodori">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

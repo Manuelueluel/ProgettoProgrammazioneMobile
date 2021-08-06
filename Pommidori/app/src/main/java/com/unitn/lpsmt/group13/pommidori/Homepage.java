@@ -36,6 +36,9 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     InterceptEventLayout interceptEventScadenze;
     InterceptEventLayout interceptEventSessioni;
 
+    //Shared Preferances file name
+    public static final String SHARED_PREFS = "tempoSessione";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
