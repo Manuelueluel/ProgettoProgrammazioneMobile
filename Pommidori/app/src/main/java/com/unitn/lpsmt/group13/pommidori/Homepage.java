@@ -16,7 +16,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.google.android.material.navigation.NavigationView;
+import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.BottomDialogFragment;
+
+import java.util.Date;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -35,6 +38,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     InterceptEventLayout interceptEventScadenze;
     InterceptEventLayout interceptEventSessioni;
+
+    Database db;
 
     //Shared Preferances file name
     public static final String SHARED_PREFS = "tempoSessione";
@@ -65,6 +70,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         setNavigationDrawerMenu();
         setButtonListeners();
         setDropDownLists();
+        setDatabase();
     }
 
     @Override
@@ -145,5 +151,14 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
         listaScadenze.setAdapter( adapter);
         listaSessioni.setAdapter( adapter);
+    }
+
+    private void setDatabase(){
+        //Test
+        TableActivityModel t = new TableActivityModel("Test1", new Date());
+
+        db = new Database(Homepage.this);
+
+        db.addActivity(t);
     }
 }
