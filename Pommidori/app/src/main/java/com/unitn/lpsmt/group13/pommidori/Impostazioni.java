@@ -22,7 +22,7 @@ public class Impostazioni extends AppCompatActivity {
     int pausa;
 
     //Shared Preferances key
-    public static final String SHARED_PREFS = Homepage.SHARED_PREFS;
+    public static final String SHARED_PREFS_SESSIONE = Homepage.SHARED_PREFS_SESSIONE;
     public static final String PAUSA = "pausa";
 
     @Override
@@ -80,7 +80,7 @@ public class Impostazioni extends AppCompatActivity {
     }
     private void saveData() {
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(PAUSA, pausa);
@@ -90,7 +90,7 @@ public class Impostazioni extends AppCompatActivity {
     }
      private void loadData(){
          //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
 
          pausa = sharedPreferences.getInt(PAUSA, 5);
 

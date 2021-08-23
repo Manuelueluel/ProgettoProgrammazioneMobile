@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,8 +42,11 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     Database db;
 
+    StatoSessione statoSessione;
+
     //Shared Preferances file name
-    public static final String SHARED_PREFS = "tempoSessione";
+    public static final String SHARED_PREFS_SESSIONE = "tempoSessione";
+    public static final String STATO_SESSIONE = BottomDialogFragment.STATO_SESSIONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         calendario = findViewById(R.id.hp_calendario);
         newSession = findViewById(R.id.hp_newSession);
 
+
         //Metodi
         setNavigationDrawerMenu();
         setButtonListeners();
@@ -74,9 +79,18 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if( checkSessioneAttiva()) newSession.setText( R.string.resume_session);
+        else newSession.setText(R.string.new_session);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setDropDownLists();
+        if( checkSessioneAttiva()) newSession.setText( R.string.resume_session);
+        else newSession.setText(R.string.new_session);
     }
 
     //Chiudere il navigation drawer con il pulsante indietro
@@ -118,7 +132,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         navigationView.setNavigationItemSelectedListener(this); //Listener per catturare gli eventi del NavigationView
 
         //settare titolo e icona del toolbar
-        toolbar.setTitle("Pommidori");
+        toolbar.setTitle(R.string.app_name);
         toolbar.setNavigationIcon(R.drawable.ic_menu_24);
     }
 
@@ -133,8 +147,15 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         newSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BottomDialogFragment bottomDialogFragment = new BottomDialogFragment();
-                bottomDialogFragment.show(getSupportFragmentManager(),"MyFragment");
+                if( checkSessioneAttiva()){
+                    //Timer attivo, vado direttamente all'activity Timer
+                    Intent i = new Intent( Homepage.this, Timer.class);
+                    startActivity(i);
+                }else{
+                    //Altrimenti passo per il BottomDialogFragment
+                    BottomDialogFragment bottomDialogFragment = new BottomDialogFragment();
+                    bottomDialogFragment.show(getSupportFragmentManager(),"MyFragment");
+                }
             }
         });
     }
@@ -160,5 +181,21 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         db = new Database(Homepage.this);
 
         db.addActivity(t);
+    }
+
+    //Controlla se è presente una sessione in corso
+    private boolean checkSessioneAttiva(){
+        SharedPreferences sharedPreferences = getSharedPreferences( SHARED_PREFS_SESSIONE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        //Se non è presente una sessione attiva, viene comunque salvato lo stato come disattivo
+        int stato = sharedPreferences.getInt( STATO_SESSIONE, StatoSessione.DISATTIVO);
+        statoSessione = new StatoSessione( stato);
+
+        editor.putInt( STATO_SESSIONE, statoSessione.getValue());
+        editor.apply();
+
+        if( statoSessione.getValue() == StatoSessione.DISATTIVO) return false;
+        return true;
     }
 }
