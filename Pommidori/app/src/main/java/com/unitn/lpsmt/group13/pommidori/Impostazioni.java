@@ -22,8 +22,8 @@ public class Impostazioni extends AppCompatActivity {
     int pausa;
 
     //Shared Preferances key
-    public static final String SHARED_PREFS_SESSIONE = Homepage.SHARED_PREFS_SESSIONE;
-    public static final String PAUSA = "pausa";
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
+    private final String PAUSA = Utility.PAUSA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class Impostazioni extends AppCompatActivity {
 
     protected void setToolbar(){
         //settare titolo e icona del toolbar
-        toolbar.setTitle("Impostazioni");
+        toolbar.setTitle(R.string.impostazioni);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

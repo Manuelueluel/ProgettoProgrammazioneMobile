@@ -35,21 +35,21 @@ public class Timer extends AppCompatActivity {
     private long tempoRimasto;
     private long tempoFinale;
     private long tempoTrascorso;
-    private final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;
+    private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
     private StatoSessione statoSessione;
     private StatoSessione statoSessionePrecedentePausa;
 
     //I timer per essere persistenti anche con l'activity chiusa necessitano di salvare delle informazioni nelle shared preferences
-    final String SHARED_PREFS_SESSIONE = Homepage.SHARED_PREFS_SESSIONE;
-    final String ORE_SESSIONE = BottomDialogFragment.ORE_SESSIONE;
-    final String MINUTI_SESSIONE = BottomDialogFragment.MINUTI_SESSIONE;
-    final String TEMPO_INIZIALE = BottomDialogFragment.TEMPO_INIZIALE;
-    final String TEMPO_RIMASTO = BottomDialogFragment.TEMPO_RIMASTO;
-    final String TEMPO_FINALE = BottomDialogFragment.TEMPO_FINALE;
-    final String TEMPO_TRASCORSO = BottomDialogFragment.TEMPO_TRASCORSO;
-    final String STATO_SESSIONE = BottomDialogFragment.STATO_SESSIONE;
-    final String STATO_SESSIONE_PRECEDENTE_PAUSA = BottomDialogFragment.STATO_SESSIONE_PRECEDENTE_PAUSA;
-    final String PAUSA = Impostazioni.PAUSA;
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
+    private final String ORE_SESSIONE = Utility.ORE_SESSIONE;
+    private final String MINUTI_SESSIONE = Utility.MINUTI_SESSIONE;
+    private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
+    private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
+    private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
+    private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
+    private final String STATO_SESSIONE = Utility.STATO_SESSIONE;
+    private final String STATO_SESSIONE_PRECEDENTE_PAUSA = Utility.STATO_SESSIONE_PRECEDENTE_PAUSA;
+    private final String PAUSA = Utility.PAUSA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

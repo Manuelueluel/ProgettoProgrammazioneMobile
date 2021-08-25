@@ -19,6 +19,7 @@ import com.unitn.lpsmt.group13.pommidori.Homepage;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoSessione;
 import com.unitn.lpsmt.group13.pommidori.Timer;
+import com.unitn.lpsmt.group13.pommidori.Utility;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,15 +40,15 @@ public class BottomDialogFragment extends DialogFragment {
     int ore, min;
 
     //Shared Preferances key
-    public static final String SHARED_PREFS_SESSIONE = Homepage.SHARED_PREFS_SESSIONE;
-    public static final String ORE_SESSIONE = "ore";
-    public static final String MINUTI_SESSIONE = "minuti";
-    public static final String TEMPO_INIZIALE = "tempoIniziale";
-    public static final String TEMPO_RIMASTO = "tempoRimasto";
-    public static final String TEMPO_FINALE = "tempoFinale";
-    public static final String TEMPO_TRASCORSO = "tempoTrascorso";
-    public static final String STATO_SESSIONE = "statoSessione";
-    public static final String STATO_SESSIONE_PRECEDENTE_PAUSA = "statoSessionePrecedentePausa";
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
+    private final String ORE_SESSIONE = Utility.ORE_SESSIONE;
+    private final String MINUTI_SESSIONE = Utility.MINUTI_SESSIONE;
+    private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
+    private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
+    private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
+    private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
+    private final String STATO_SESSIONE = Utility.STATO_SESSIONE;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

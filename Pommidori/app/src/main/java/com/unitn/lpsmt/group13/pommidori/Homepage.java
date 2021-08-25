@@ -45,8 +45,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     StatoSessione statoSessione;
 
     //Shared Preferances file name
-    public static final String SHARED_PREFS_SESSIONE = "tempoSessione";
-    public static final String STATO_SESSIONE = BottomDialogFragment.STATO_SESSIONE;
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
+    private final String STATO_SESSIONE = Utility.STATO_SESSIONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
