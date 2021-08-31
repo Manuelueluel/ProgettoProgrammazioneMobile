@@ -15,11 +15,15 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.Homepage;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoSessione;
 import com.unitn.lpsmt.group13.pommidori.Timer;
 import com.unitn.lpsmt.group13.pommidori.Utility;
+import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -164,14 +168,22 @@ public class BottomDialogFragment extends DialogFragment {
     }
 
     private void setDropDownLists(){
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        Database db = new Database(getContext());
+        List<TableActivityModel> allActivity = db.getAllActivity();
+
+        if(allActivity.isEmpty()){
+            allActivity.add(new TableActivityModel());
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter<TableActivityModel>(
                 getContext(),
-                R.array.planets_array,
-                R.layout.dropdown_item
+                R.layout.dropdown_item,
+                allActivity
         );
 
-        dropdownSessionePers.setText( adapter.getItem(0));
+        TableActivityModel m = (TableActivityModel) adapter.getItem(0);
 
+        dropdownSessionePers.setText( m.getName());
         dropdownSessionePers.setAdapter( adapter);
     }
 

@@ -15,11 +15,12 @@ public class TablePomodoroModel {
             "CREATE TABLE " + TABLE_NAME +
                     " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NOME_ACTIVITY + " TEXT, " +
-                    COLUMN_DATA + " DATATIME, " +
+                    COLUMN_DATA + " INTEGER, " +    //viene salvato il numero di millisecondi dal 1/1/1970
                     COLUMN_DURATA + " TIME, " +
                     "FOREIGN KEY (" + COLUMN_NOME_ACTIVITY +") REFERENCES " + TableActivityModel.TABLE_NAME + "(" + TableActivityModel.COLUMN_NOME +"));";
 
     //Modello
+    private int id;
     private String name;
     private Date scadenza;
     private Date durata;
@@ -27,10 +28,19 @@ public class TablePomodoroModel {
     //Costrutori
     public TablePomodoroModel() {
     }
-    public TablePomodoroModel(String name, Date scadenza, Date durata) {
+    public TablePomodoroModel(int id, String name, Date scadenza, Date durata) {
+        this.id = id;
         this.name = name;
         this.scadenza = scadenza;
         this.durata = durata;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

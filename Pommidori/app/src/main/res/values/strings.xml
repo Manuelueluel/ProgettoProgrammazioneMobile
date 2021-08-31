@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pommidori</string>
     <string name="calendario">Calendario</string>
@@ -15,17 +16,7 @@
     <string name="sessione_in_corso">Sessione in corso</string>
     <string name="pausa_in_corso">Pausa in corso</string>
     <string name="impostazioni">Impostazioni</string>
-
-    <!-- Array d'esempio usato per mostrare le liste in homepage -->
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-    </string-array>
-
+    <string name="nome_attivita">Inserire il nome dell\'attività</string>
+    <string name="sigla">Inserire la sigla dell\'attività</string>
+    <string name="nome_scadenza">Inserire il nome della scadenza</string>
 </resources>

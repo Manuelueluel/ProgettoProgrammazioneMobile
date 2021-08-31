@@ -7,7 +7,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pommidori">
-        <activity android:name=".Timer"></activity>
+        <activity android:name=".NewActivityAndSession"
+            android:label="NewActivityAndSession"
+            android:parentActivityName=".Calendario"/>
+        <activity android:name=".Timer"
+            android:label="Timer"
+            android:parentActivityName=".Homepage"/>
         <activity android:name=".Calendario"
             android:label="Calendario"
             android:parentActivityName=".Homepage"/>

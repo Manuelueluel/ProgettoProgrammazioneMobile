@@ -15,11 +15,12 @@ public class TableSessionModel {
             "CREATE TABLE " + TABLE_NAME +
                     " (" + COLUMN_SESSION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NOME_ACTIVITY + " TEXT, " +
-                    COLUMN_DATA + " DATATIME, " +
+                    COLUMN_DATA + " INTEGER, " +                            //viene salvato il numero di millisecondi dal 1/1/1970
                     COLUMN_AUTOVALUTAZIONE + " INTEGER NOT NULL, " +
                     "FOREIGN KEY (" + COLUMN_NOME_ACTIVITY +") REFERENCES " + TableActivityModel.TABLE_NAME + "(" + TableActivityModel.COLUMN_NOME +"));";
 
     //Modello
+    private int id;
     private String name;
     private Date scadenza;
     private int autovalutazione;
@@ -27,10 +28,19 @@ public class TableSessionModel {
     //Costruttori
     public TableSessionModel() {
     }
-    public TableSessionModel(String name, Date scadenza, int autovalutazione) {
+    public TableSessionModel(int id, String name, Date scadenza, int autovalutazione) {
+        this.id = id;
         this.name = name;
         this.scadenza = scadenza;
         this.autovalutazione = autovalutazione;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

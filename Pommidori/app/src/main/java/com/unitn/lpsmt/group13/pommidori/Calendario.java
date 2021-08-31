@@ -7,9 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class Calendario extends AppCompatActivity {
 
     Toolbar toolbar;
+
+    FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,24 @@ public class Calendario extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Calendario.this, Homepage.class));
+            }
+        });
+
+        floatingActionButton = findViewById(R.id.floatingActionButton);
+
+        setButtonListeners();
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+
+    private void setButtonListeners(){
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Calendario.this, NewActivityAndSession.class));
             }
         });
     }

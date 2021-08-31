@@ -18,9 +18,11 @@ import android.widget.Button;
 
 import com.google.android.material.navigation.NavigationView;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.BottomDialogFragment;
 
 import java.util.Date;
+import java.util.List;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -75,7 +77,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         setNavigationDrawerMenu();
         setButtonListeners();
         setDropDownLists();
-        setDatabase();
     }
 
     @Override
@@ -161,27 +162,37 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     private void setDropDownLists(){
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.planets_array,
-                R.layout.dropdown_item
+        db = new Database(Homepage.this);
+        List<TableActivityModel> activity = db.getAllActivityFromNow();
+        List<TableSessionProgModel> session = db.getFirstSessionByActivityFromNow();
+
+        if(activity.isEmpty()){
+            activity.add(new TableActivityModel());
+        }
+        if(session.isEmpty()){
+            session.add(new TableSessionProgModel());
+        }
+
+        ArrayAdapter activityAdapter = new ArrayAdapter<TableActivityModel>(
+                Homepage.this,
+                R.layout.dropdown_item,
+                activity
+        );ArrayAdapter sessionAdapter = new ArrayAdapter<TableSessionProgModel>(
+                Homepage.this,
+                R.layout.dropdown_item,
+                session
         );
 
-        listaScadenze.setText( adapter.getItem(0));
-        listaSessioni.setText( adapter.getItem(0));
+        TableActivityModel a = (TableActivityModel) activityAdapter.getItem(0);
+        TableSessionProgModel s = (TableSessionProgModel) sessionAdapter.getItem(0);
 
-        listaScadenze.setAdapter( adapter);
-        listaSessioni.setAdapter( adapter);
+        listaScadenze.setText( a.toString());
+        listaSessioni.setText( s.toString());
+
+        listaScadenze.setAdapter( activityAdapter);
+        listaSessioni.setAdapter( sessionAdapter);
     }
 
-    private void setDatabase(){
-        //Test
-        TableActivityModel t = new TableActivityModel("Test1", new Date());
-
-        db = new Database(Homepage.this);
-
-        db.addActivity(t);
-    }
 
     //Controlla se è presente una sessione in corso
     private boolean checkSessioneAttiva(){
