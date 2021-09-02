@@ -2,7 +2,6 @@ package com.unitn.lpsmt.group13.pommidori.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -20,9 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.unitn.lpsmt.group13.pommidori.Calendario;
 import com.unitn.lpsmt.group13.pommidori.Database;
-import com.unitn.lpsmt.group13.pommidori.Homepage;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;

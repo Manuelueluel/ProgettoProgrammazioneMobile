@@ -22,9 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.basgeekball.awesomevalidation.ValidationStyle;
-import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.google.android.material.textfield.TextInputLayout;
 import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
