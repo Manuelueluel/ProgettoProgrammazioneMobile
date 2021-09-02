@@ -69,11 +69,8 @@ public class NewSessionFregment extends Fragment {
         dateButton.setText(getTodayDate());
         hourStartButton = view.findViewById(R.id.start_hour_picker);
         hourEndButton = view.findViewById(R.id.end_hour_picker);
-
-        Date d = new Date();
-        SimpleDateFormat dd = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        hourStartButton.setText(dd.format(d));
-        hourEndButton.setText(dd.format(d));
+        hourStartButton.setText(getNowHour());
+        hourEndButton.setText(getNowHour());
 
         layoutEndSession = view.findViewById(R.id.layout_end_session);
         hourEndCheckBox = view.findViewById(R.id.checkbox_end_hour);
@@ -169,7 +166,16 @@ public class NewSessionFregment extends Fragment {
         month = cal.get(Calendar.MONTH)+1;
         day = cal.get(Calendar.DAY_OF_MONTH);
 
-        return day+"/"+month+"/"+year;
+        return "--/--/--";  //non visualizzo la data così da far capire che bisogna selezionarla
+    }
+    private String getNowHour(){
+        Calendar cal = Calendar.getInstance();
+        startHour = cal.get(Calendar.HOUR);
+        endHour = cal.get(Calendar.HOUR);
+        startMinute = cal.get(Calendar.MINUTE);
+        endMinute = cal.get(Calendar.MINUTE);
+
+        return "--:--"; //non visualizzo la data così da far capire che bisogna selezionarla
     }
 
     private void initDatePicker() {

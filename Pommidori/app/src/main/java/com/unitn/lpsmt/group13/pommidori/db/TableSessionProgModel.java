@@ -102,7 +102,7 @@ public class TableSessionProgModel {
     public String toString() {
         SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm");
-        return smDate.format(oraInizio)+" "+activity.getNomeScadenza()+" "+activity.getSigla()+" dalle " + smHour.format(oraInizio)+ " alle "+smHour.format(oraFine);
+        return smDate.format(oraInizio)+" "+activity.getNomeScadenza()+" "+activity.getSigla()+"  " + smHour.format(oraInizio)+ "/"+smHour.format(oraFine);
 
     }
 }

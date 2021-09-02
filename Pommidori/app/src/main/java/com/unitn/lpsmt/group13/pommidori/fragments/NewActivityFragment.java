@@ -2,13 +2,14 @@ package com.unitn.lpsmt.group13.pommidori.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import top.defaults.colorpicker.ColorPickerPopup;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
-import com.unitn.lpsmt.group13.pommidori.Calendario;
+import com.google.android.material.textfield.TextInputLayout;
 import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
@@ -40,12 +40,9 @@ public class NewActivityFragment extends Fragment {
     private DatePickerDialog datePickerDialog;
     private Button dateButton,hourButton, creaButton, annullaButton;
     private CheckBox dateCheckBox;
-    private EditText editNome, editSigla, editNomeScad;
+    private TextInputLayout editNome, editSigla, editNomeScad;
 
     AutoCompleteTextView dropdownAvviso;
-
-    //Validazione dei editext
-    AwesomeValidation awesomeValidation;
 
     private View view, colorPicker;
     private LinearLayout dateLayout;
@@ -75,13 +72,10 @@ public class NewActivityFragment extends Fragment {
         editSigla = view.findViewById(R.id.sigla_attivita);
         editNomeScad = view.findViewById(R.id.nome_scadenza);
 
-
         dateButton = view.findViewById(R.id.date_picker);
         dateButton.setText(getTodayDate());
         hourButton = view.findViewById(R.id.hour_picker);
-        Date d = new Date();
-        SimpleDateFormat dd = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        hourButton.setText(dd.format(d));
+        hourButton.setText(getNowHour());
 
         dateCheckBox = view.findViewById(R.id.checkbox_date);
         dateCheckBox.setChecked(false);
@@ -95,7 +89,7 @@ public class NewActivityFragment extends Fragment {
         //Metodi
         initDatePicker();
         setButtonListeners();
-        setAwesomeValidation();
+        setEdidTextListener();
         setDropDownLists();
 
         return view;
@@ -138,49 +132,80 @@ public class NewActivityFragment extends Fragment {
         creaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editNome.getText().length() < 1 || editSigla.getText().length() < 3 || (editNomeScad.getText().length() < 1 && !dateCheckBox.isChecked())) {
-                    Toast.makeText(getContext(), "Errore: Compilare tutti i campi richiesti", Toast.LENGTH_SHORT).show();
+                if(!validateName() | !validateNameScadenza() | !validateSigla()){
                     return;
                 }
-                if (awesomeValidation.validate()) {
-                    TableActivityModel m = new TableActivityModel();
-                    m.setName(editNome.getText().toString());
-                    m.setSigla(editSigla.getText().toString());
-                    m.setNomeScadenza(editNomeScad.getText().toString());
-                    m.setColore(color);
 
-                    if (dateCheckBox.isChecked()) {   //una attività "infinita" ha la data settata all'anno 0 (1/1/1970)
-                        m.setScadenza(new Date(0));
-                    } else {
-                        try {
-                            String d = year + "-" + month + "-" + day + " " + hour + ":" + minute;
-                            m.setScadenza(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.ITALY).parse(d));
-                        } catch (Exception e){
-                            return;
-                        }
-                    }
+                TableActivityModel m = new TableActivityModel();
+                m.setName(editNome.getEditText().getText().toString().trim());
+                m.setSigla(editSigla.getEditText().getText().toString().trim());
+                m.setNomeScadenza(editNomeScad.getEditText().getText().toString().trim());
+                m.setColore(color);
 
-                    Database db = new Database(getContext());
-                    if (db.addActivity(m)) {
-                        Toast.makeText(getContext(), "Attività creata!", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
-                    } else {
-                        Toast.makeText(getContext(), "Errore creazione attività", Toast.LENGTH_SHORT).show();
+                if (dateCheckBox.isChecked()) {   //una attività "infinita" ha la data settata all'anno 0 (1/1/1970)
+                    m.setScadenza(new Date(0));
+                } else {
+                    try {
+                        String d = year + "-" + month + "-" + day + " " + hour + ":" + minute;
+                        m.setScadenza(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.ITALY).parse(d));
+                    } catch (Exception e){
+                        return;
                     }
                 }
+
+                Database db = new Database(getContext());
+                if (db.addActivity(m)) {
+                    Toast.makeText(getContext(), "Attività creata!", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                } else {
+                    Toast.makeText(getContext(), "Errore creazione attività", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         annullaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editNome.setText("");
-                editNomeScad.setText("");
-                editSigla.setText("");
+                editNome.getEditText().setText("");
+                editNomeScad.getEditText().setText("");
+                editSigla.getEditText().setText("");
 
                 getActivity().finish();
             }
         });
     }
+
+    private void setEdidTextListener(){
+        editNome.getEditText().addTextChangedListener(editText);
+        editNomeScad.getEditText().addTextChangedListener(editText);
+        editSigla.getEditText().addTextChangedListener(editText);
+    }
+
+    private TextWatcher editText = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            String name = editNome.getEditText().getText().toString().trim();
+            String nameScad = editNomeScad.getEditText().getText().toString().trim();
+            String sigla = editSigla.getEditText().getText().toString().trim();
+
+            if(!name.isEmpty())
+                editNome.setError(null);
+            if(!nameScad.isEmpty())
+                editNomeScad.setError(null);
+            if(!sigla.isEmpty())
+                editSigla.setError(null);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
 
     private String getTodayDate(){
         Calendar cal = Calendar.getInstance();
@@ -188,7 +213,14 @@ public class NewActivityFragment extends Fragment {
         month = cal.get(Calendar.MONTH)+1;
         day = cal.get(Calendar.DAY_OF_MONTH);
 
-        return day+"/"+month+"/"+year;
+        return "--/--/--"; //non visualizzo la data così da far capire che bisogna selezionarla
+    }
+    private String getNowHour(){
+        Calendar cal = Calendar.getInstance();
+        hour = cal.get(Calendar.HOUR);
+        minute = cal.get(Calendar.MINUTE);
+
+        return "--:--"; //non visualizzo la data così da far capire che bisogna selezionarla
     }
 
     private void initDatePicker() {
@@ -231,24 +263,6 @@ public class NewActivityFragment extends Fragment {
         timePickerDialog.show();
     }
 
-    //Validazione dei campi form
-    private void setAwesomeValidation(){
-        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
-
-        //validation Nome
-        awesomeValidation.addValidation(getActivity(),R.id.nome_attivita
-                ,RegexTemplate.NOT_EMPTY,R.string.nome_attivita);
-        //validation Sigla
-        awesomeValidation.addValidation(getActivity(),R.id.sigla_attivita
-                ,".{3}",R.string.sigla);
-
-        if(!dateCheckBox.isChecked()){
-            //validation Nome Scadenza
-            awesomeValidation.addValidation(getActivity(),R.id.nome_scadenza
-                    ,RegexTemplate.NOT_EMPTY,R.string.nome_scadenza);
-        }
-    }
-
     //Attiva o disattiva (enabled) tutte le Views che sono figlie di view, essa stessa compresa
     private void setViewAndChildrenEnabled(View view, boolean enabled) {
         view.setEnabled(enabled);
@@ -271,5 +285,42 @@ public class NewActivityFragment extends Fragment {
         dropdownAvviso.setText(adapter.getItem(0));
 
         dropdownAvviso.setAdapter(adapter);
+    }
+
+    private boolean validateName(){
+        String name = editNome.getEditText().getText().toString().trim();
+
+        if(name.isEmpty()){
+            editNome.setError("Campo obbligatorio");
+            return  false;
+        }else{
+            editNome.setError(null);
+            return true;
+        }
+    }
+    private boolean validateNameScadenza(){
+        String nameScad = editNomeScad.getEditText().getText().toString().trim();
+
+        if(nameScad.isEmpty()){
+            editNomeScad.setError("Campo obbligatorio");
+            return  false;
+        }else{
+            editNomeScad.setError(null);
+            return true;
+        }
+    }
+    private boolean validateSigla(){
+        String sigla = editSigla.getEditText().getText().toString().trim();
+
+        if(sigla.isEmpty()){
+            editSigla.setError("Campo obbligatorio");
+            return  false;
+        }else if(sigla.length()<3 || sigla.length()>3){
+            editSigla.setError("3 caratteri");
+            return false;
+        }else{
+            editSigla.setError(null);
+            return true;
+        }
     }
 }
