@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.Nullable;
 
@@ -108,7 +109,7 @@ public class Database extends SQLiteOpenHelper {
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
             //se la data è dopo oggi, aggiungi l'attività al return
-            if(a.getScadenza().after(new Date()))
+            if(a.getScadenza().after(new Date()) || a.getScadenza().getTime()==0)
                 returnActivity.add(a);
         }
 
@@ -244,6 +245,21 @@ public class Database extends SQLiteOpenHelper {
 
             if(!returnTemp.isEmpty())
                 returnSession.add(returnTemp.get(0));
+        }
+
+        return returnSession;
+    }
+    public List<TableSessionProgModel> getSessionByMonth(String month, String year){
+        List<TableSessionProgModel> returnSession = new ArrayList<>();
+        List<TableSessionProgModel> getSession= getAllSessioniProgrammate();
+
+        String date = month+"-"+year;
+
+        //loop su tutti gli elementi
+        for(TableSessionProgModel s : getSession) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy", Locale.ITALY);
+            if(dateFormat.format(s.getOraInizio()).equalsIgnoreCase(date))
+                returnSession.add(s);
         }
 
         return returnSession;

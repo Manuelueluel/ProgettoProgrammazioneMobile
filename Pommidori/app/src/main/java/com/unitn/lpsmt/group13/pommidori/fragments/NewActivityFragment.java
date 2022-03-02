@@ -298,9 +298,14 @@ public class NewActivityFragment extends Fragment {
     private boolean validateNameScadenza(){
         String nameScad = editNomeScad.getEditText().getText().toString().trim();
 
-        if(nameScad.isEmpty()){
-            editNomeScad.setError("Campo obbligatorio");
-            return  false;
+        if(!dateCheckBox.isChecked()) {
+            if (nameScad.isEmpty()) {
+                editNomeScad.setError("Campo obbligatorio");
+                return false;
+            } else {
+                editNomeScad.setError(null);
+                return true;
+            }
         }else{
             editNomeScad.setError(null);
             return true;

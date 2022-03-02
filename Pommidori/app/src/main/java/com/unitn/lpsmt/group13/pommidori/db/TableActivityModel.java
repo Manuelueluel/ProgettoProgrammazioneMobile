@@ -2,6 +2,7 @@ package com.unitn.lpsmt.group13.pommidori.db;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class TableActivityModel {
 
@@ -112,8 +113,8 @@ public class TableActivityModel {
 
     @Override
     public String toString() {
-        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm");
-        return smDate.format(scadenza)+" "+nomeScadenza+" "+sigla.toUpperCase()+" ore "+smHour.format(scadenza);
+        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
+        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm", Locale.ITALY);
+        return scadenza.getTime()==0 ? "["+sigla.toUpperCase()+"] "+name.toUpperCase() : "["+sigla.toUpperCase()+"] "+ nomeScadenza +" ore "+smHour.format(scadenza) +" "+ smDate.format(scadenza);
     }
 }

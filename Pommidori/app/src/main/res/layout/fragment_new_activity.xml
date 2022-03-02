@@ -7,7 +7,14 @@
     tools:context=".fragments.NewActivityFragment"
     android:orientation="vertical">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -51,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
-                android:layout_marginVertical="10dp">
+                android:layout_marginVertical="10dp"
+                android:gravity="center">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -221,6 +229,26 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Programmazione Sessioni"
+                android:paddingHorizontal="20dp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/custom_border_round"
+                android:layout_marginHorizontal="10dp"
+                android:paddingHorizontal="10dp"
+                android:orientation="vertical">
+
+                <!-- Lista Sessioni -->
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -241,4 +269,6 @@
                     android:text="Annulla"/>
 
             </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

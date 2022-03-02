@@ -3,7 +3,7 @@ package com.unitn.lpsmt.group13.pommidori;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
-import com.unitn.lpsmt.group13.pommidori.fragments.FragmentAdapter;
+import com.unitn.lpsmt.group13.pommidori.adapter.FragmentAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;

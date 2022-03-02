@@ -6,10 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".Calendario">
 
-    <include
-        android:id="@+id/calendarToolbar"
-        layout="@layout/toolbar"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <include
+            android:id="@+id/calendarToolbar"
+            layout="@layout/toolbar"/>
+
+        <!--
+        <com.unitn.lpsmt.group13.pommidori.OldCustomCalendarView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/custom_calendar_view">
+        </com.unitn.lpsmt.group13.pommidori.OldCustomCalendarView>
+        -->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/calendar_fragment"
+            />
+
+    </LinearLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"

@@ -2,6 +2,7 @@ package com.unitn.lpsmt.group13.pommidori.db;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class TableSessionProgModel {
 
@@ -100,9 +101,9 @@ public class TableSessionProgModel {
 
     @Override
     public String toString() {
-        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm");
-        return smDate.format(oraInizio)+" "+activity.getNomeScadenza()+" "+activity.getSigla()+"  " + smHour.format(oraInizio)+ "/"+smHour.format(oraFine);
+        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
+        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm",Locale.ITALY);
+        return "["+activity.getSigla().toUpperCase()+"]  " + smHour.format(oraInizio)+ "/"+smHour.format(oraFine)+" "+smDate.format(oraInizio);
 
     }
 }

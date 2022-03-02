@@ -265,6 +265,7 @@ public class NewSessionFregment extends Fragment {
         );
 
         listaAttivita.setText(activityAdapter.getItem(0).toString());
+        activityModel = activity.get(0);
         listaAvviso.setText(avvisoAdapter.getItem(0));
         listaRipetizione.setText(ripetizioneAdapter.getItem(0));
 

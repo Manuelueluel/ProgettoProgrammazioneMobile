@@ -1,4 +1,7 @@
-package com.unitn.lpsmt.group13.pommidori.fragments;
+package com.unitn.lpsmt.group13.pommidori.adapter;
+
+import com.unitn.lpsmt.group13.pommidori.fragments.NewActivityFragment;
+import com.unitn.lpsmt.group13.pommidori.fragments.NewSessionFregment;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

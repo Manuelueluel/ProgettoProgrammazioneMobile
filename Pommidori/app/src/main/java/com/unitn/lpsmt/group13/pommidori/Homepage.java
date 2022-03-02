@@ -27,24 +27,24 @@ import java.util.List;
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //Variabili
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
-    Button calendario;
-    Button newSession;
-    Button btnScadenze;
-    Button btnSessioni;
+    private Button calendario;
+    private Button newSession;
+    private Button btnScadenze;
+    private Button btnSessioni;
 
-    AutoCompleteTextView listaScadenze;
-    AutoCompleteTextView listaSessioni;
+    private AutoCompleteTextView listaScadenze;
+    private AutoCompleteTextView listaSessioni;
 
-    InterceptEventLayout interceptEventScadenze;
-    InterceptEventLayout interceptEventSessioni;
+    private InterceptEventLayout interceptEventScadenze;
+    private InterceptEventLayout interceptEventSessioni;
 
-    Database db;
+    private Database db;
 
-    StatoSessione statoSessione;
+    private StatoSessione statoSessione;
 
     //Shared Preferances file name
     private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
@@ -177,7 +177,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                 Homepage.this,
                 R.layout.dropdown_item,
                 activity
-        );ArrayAdapter sessionAdapter = new ArrayAdapter<TableSessionProgModel>(
+        );
+        ArrayAdapter sessionAdapter = new ArrayAdapter<TableSessionProgModel>(
                 Homepage.this,
                 R.layout.dropdown_item,
                 session
