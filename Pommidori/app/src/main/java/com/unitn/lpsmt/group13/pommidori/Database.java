@@ -249,16 +249,16 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
-    public List<TableSessionProgModel> getSessionByMonth(String month, String year){
+    public List<TableSessionProgModel> getSessionByDay(Date date){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
         List<TableSessionProgModel> getSession= getAllSessioniProgrammate();
 
-        String date = month+"-"+year;
+        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
 
         //loop su tutti gli elementi
         for(TableSessionProgModel s : getSession) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy", Locale.ITALY);
-            if(dateFormat.format(s.getOraInizio()).equalsIgnoreCase(date))
+            String d = sfd.format(s.getOraInizio());
+            if(d.equalsIgnoreCase(sfd.format(date)))
                 returnSession.add(s);
         }
 

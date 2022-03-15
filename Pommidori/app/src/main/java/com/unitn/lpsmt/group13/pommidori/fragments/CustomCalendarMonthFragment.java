@@ -1,37 +1,40 @@
 package com.unitn.lpsmt.group13.pommidori.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
-import com.unitn.lpsmt.group13.pommidori.adapter.CalendarAdapter;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
+import com.unitn.lpsmt.group13.pommidori.utils.CalendarUtils;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Locale;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-public class CustomCalendarMonthFragment extends Fragment implements CalendarAdapter.OnItemListener{
+import static com.unitn.lpsmt.group13.pommidori.utils.CalendarUtils.monthYearFormatDate;
+
+public class CustomCalendarMonthFragment extends Fragment {
 
     private View view;
     private TextView monthYearText;
     private Button toWeeklyView, previousMoth, nextMonth;
-    private RecyclerView calendarRecycleView;
-    private LocalDate selectDate;
+    private CompactCalendarView compactCalendarView;
+    private Database db;
 
     @Nullable
     @Override
@@ -40,52 +43,40 @@ public class CustomCalendarMonthFragment extends Fragment implements CalendarAda
         view = inflater.inflate(R.layout.custom_calendar_month_view,container,false);
 
         initializeLayout();
-        setMonthView();
+        setMonthText();
         setButtonListeners();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        compactCalendarView.removeAllEvents();
+        addEvents();
     }
 
     private void initializeLayout() {
         toWeeklyView = view.findViewById(R.id.to_weekly_view_btn);
         previousMoth = view.findViewById(R.id.previous_month_btn_month);
         nextMonth = view.findViewById(R.id.next_month_btn_month);
-        calendarRecycleView = view.findViewById(R.id.month_calendar_view);
         monthYearText = view.findViewById(R.id.current_month_calendar_month);
-        selectDate = LocalDate.now();
+
+        if (CalendarUtils.selectDate == null)
+            CalendarUtils.selectDate = LocalDate.now();
+
+        compactCalendarView = (CompactCalendarView) view.findViewById(R.id.month_calendar_view);
+        String[] gironi = {"LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"};
+        compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
+        compactCalendarView.setDayColumnNames(gironi);
+
+        compactCalendarView.setCurrentDate(java.sql.Date.from(CalendarUtils.selectDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+
+        db = new Database(getContext());
     }
 
-    private void setMonthView() {
-        monthYearText.setText(monthYearFormatDate(selectDate));
-        ArrayList<LocalDate> daysInMonth = daysInMonthArray(selectDate);
-
-        CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, this);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext().getApplicationContext(), 7);
-        calendarRecycleView.setLayoutManager(layoutManager);
-        calendarRecycleView.setAdapter(calendarAdapter);
-    }
-
-    private ArrayList<LocalDate> daysInMonthArray(LocalDate date) {
-        ArrayList<LocalDate> daysInMonthArray = new ArrayList<>();
-        YearMonth yearMonth  = YearMonth.from(date);
-
-        int daysInMonth = yearMonth.lengthOfMonth();
-        LocalDate firstOfMonth = selectDate.withDayOfMonth(1);
-        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue();
-
-        for(int i=2; i<=42; i++){
-            if(i<=dayOfWeek || i>daysInMonth+dayOfWeek){
-                daysInMonthArray.add(null);
-            }else{
-                daysInMonthArray.add(LocalDate.of(selectDate.getYear(),selectDate.getMonth(),i - dayOfWeek));
-            }
-        }
-        return daysInMonthArray;
-    }
-
-    private String monthYearFormatDate(LocalDate date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ITALY);
-        return date.format(formatter);
+    private void setMonthText() {
+        monthYearText.setText(monthYearFormatDate(CalendarUtils.selectDate));
     }
 
     private void setButtonListeners() {
@@ -101,21 +92,39 @@ public class CustomCalendarMonthFragment extends Fragment implements CalendarAda
         previousMoth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectDate = selectDate.minusMonths(1);
-                setMonthView();
+                CalendarUtils.selectDate = CalendarUtils.selectDate.minusMonths(1);
+                compactCalendarView.scrollLeft();
+                setMonthText();
             }
         });
         nextMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectDate = selectDate.plusMonths(1);
-                setMonthView();
+                CalendarUtils.selectDate = CalendarUtils.selectDate.plusMonths(1);
+                compactCalendarView.scrollRight();
+                setMonthText();
+            }
+        });
+
+        compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                CalendarUtils.selectDate = dateClicked.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                CalendarUtils.selectDate = firstDayOfNewMonth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                setMonthText();
             }
         });
     }
 
-    @Override
-    public void OnItemClick(int position, String dayText) {
-        // on press a day in calendar
+    public void addEvents(){
+        List<TableSessionProgModel> sessProg = db.getAllSessioniProgrammate();
+        for(TableSessionProgModel tb : sessProg){
+            Event e = new Event(tb.getActivity().getColore(),tb.getOraInizio().getTime(),tb.toString());
+            compactCalendarView.addEvent(e);
+        }
     }
 }

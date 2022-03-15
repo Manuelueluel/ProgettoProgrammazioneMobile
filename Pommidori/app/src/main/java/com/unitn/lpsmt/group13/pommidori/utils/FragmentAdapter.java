@@ -1,4 +1,4 @@
-package com.unitn.lpsmt.group13.pommidori.adapter;
+package com.unitn.lpsmt.group13.pommidori.utils;
 
 import com.unitn.lpsmt.group13.pommidori.fragments.NewActivityFragment;
 import com.unitn.lpsmt.group13.pommidori.fragments.NewSessionFregment;

@@ -15,14 +15,6 @@
             android:id="@+id/calendarToolbar"
             layout="@layout/toolbar"/>
 
-        <!--
-        <com.unitn.lpsmt.group13.pommidori.OldCustomCalendarView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/custom_calendar_view">
-        </com.unitn.lpsmt.group13.pommidori.OldCustomCalendarView>
-        -->
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

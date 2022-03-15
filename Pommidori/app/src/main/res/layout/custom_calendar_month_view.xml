@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingHorizontal="10dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -21,7 +22,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@drawable/ic_arrow_left"
-                android:textSize="10sp"/>
+                android:textSize="10sp" />
             <TextView
                 android:id="@+id/current_month_calendar_month"
                 android:layout_width="150dp"
@@ -36,7 +37,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@drawable/ic_arrow_right"
-                android:textSize="10sp"/>
+                android:textSize="10sp" />
         </LinearLayout>
         <Button
             android:id="@+id/to_weekly_view_btn"
@@ -46,73 +47,18 @@
             android:textSize="11sp"
             android:layout_weight="2"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginVertical="5dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="LUN"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MAR"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MER"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="GIO"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="VEN"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SAB"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="DOM"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
+    <com.github.sundeepk.compactcalendarview.CompactCalendarView
         android:id="@+id/month_calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp"/>
+        android:layout_height="400dp"
+        app:compactCalendarEventIndicatorStyle="small_indicator"
+        app:compactCalendarDisplayOtherMonthDays="true"
+        app:compactCalendarOtherMonthDaysTextColor="#CCC"
+        app:compactCalendarTextSize="20sp"
+        app:compactCalendarCurrentSelectedDayIndicatorStyle="fill_large_indicator"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#DFFFFD"
+        app:compactCalendarCurrentDayIndicatorStyle="no_fill_large_indicator"
+        app:compactCalendarCurrentDayTextColor="#FF0000"/>
 
 </LinearLayout>
