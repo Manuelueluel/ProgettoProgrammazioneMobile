@@ -19,9 +19,8 @@ import android.widget.Button;
 import com.google.android.material.navigation.NavigationView;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
-import com.unitn.lpsmt.group13.pommidori.fragments.BottomDialogFragment;
+import com.unitn.lpsmt.group13.pommidori.fragments.StartNewSessionFragment;
 
-import java.util.Date;
 import java.util.List;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -153,8 +152,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                     Intent i = new Intent( Homepage.this, Timer.class);
                     startActivity(i);
                 }else{
-                    //Altrimenti passo per il BottomDialogFragment
-                    BottomDialogFragment bottomDialogFragment = new BottomDialogFragment();
+                    //Altrimenti passo per il StartNewSessionFragment
+                    StartNewSessionFragment bottomDialogFragment = new StartNewSessionFragment();
                     bottomDialogFragment.show(getSupportFragmentManager(),"MyFragment");
                 }
             }

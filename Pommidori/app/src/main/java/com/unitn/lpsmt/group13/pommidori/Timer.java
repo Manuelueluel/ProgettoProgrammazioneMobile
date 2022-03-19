@@ -7,13 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
-import android.widget.Chronometer;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.unitn.lpsmt.group13.pommidori.fragments.BottomDialogFragment;
 
 import java.util.Locale;
 

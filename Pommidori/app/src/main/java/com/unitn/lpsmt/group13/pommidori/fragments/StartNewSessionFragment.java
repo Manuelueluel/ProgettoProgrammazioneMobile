@@ -29,7 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class BottomDialogFragment extends DialogFragment {
+public class StartNewSessionFragment extends DialogFragment {
 
     //Variabili
     Button menoDurataOre, piuDurataOre, menoDurataMin, piuDurataMin, avvia;
