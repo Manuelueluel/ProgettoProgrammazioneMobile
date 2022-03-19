@@ -60,10 +60,8 @@ public class Timer extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         timer = findViewById(R.id.timer);
 
-        //Settaggio titolo toolbar
-        toolbar.setTitle(R.string.sessione_in_corso);
-
         //Metodi
+        setToolbar();
         setButtonListener();
 
     }
@@ -90,6 +88,19 @@ public class Timer extends AppCompatActivity {
         tempoTrascorso = sharedPreferences.getLong( TEMPO_TRASCORSO, 0);
         statoSessione = new StatoSessione( sharedPreferences.getInt( STATO_SESSIONE, StatoSessione.DISATTIVO));
         statoSessionePrecedentePausa = new StatoSessione( sharedPreferences.getInt( STATO_SESSIONE_PRECEDENTE_PAUSA, StatoSessione.DISATTIVO));
+    }
+
+    private void setToolbar(){
+        //settare titolo e icona del toolbar
+        toolbar.setTitle(R.string.sessione_in_corso);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Timer.this, Homepage.class));
+            }
+        });
     }
 
     private void setButtonListener() {

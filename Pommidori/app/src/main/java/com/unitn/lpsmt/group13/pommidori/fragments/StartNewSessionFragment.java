@@ -163,6 +163,7 @@ public class StartNewSessionFragment extends DialogFragment {
                 saveData();
 
                 startActivity(i);
+                StartNewSessionFragment.this.dismiss();
             }
         });
     }
