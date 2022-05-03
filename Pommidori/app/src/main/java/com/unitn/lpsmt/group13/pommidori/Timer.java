@@ -33,19 +33,19 @@ public class Timer extends AppCompatActivity {
     private long tempoFinale;
     private long tempoTrascorso;
     private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
-    private StatoSessione statoSessione;
-    private StatoSessione statoSessionePrecedentePausa;
+    private StatoPomodoro statoPomodoro;
+    private StatoPomodoro statoPomodoroPrecedentePausa;
 
     //I timer per essere persistenti anche con l'activity chiusa necessitano di salvare delle informazioni nelle shared preferences
-    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
-    private final String ORE_SESSIONE = Utility.ORE_SESSIONE;
-    private final String MINUTI_SESSIONE = Utility.MINUTI_SESSIONE;
+    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_POMODORO;
+    private final String ORE_POMODORO = Utility.ORE_POMODORO;
+    private final String MINUTI_POMODORO = Utility.MINUTI_POMODORO;
     private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
     private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
     private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
     private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
-    private final String STATO_SESSIONE = Utility.STATO_SESSIONE;
-    private final String STATO_SESSIONE_PRECEDENTE_PAUSA = Utility.STATO_SESSIONE_PRECEDENTE_PAUSA;
+    private final String STATO_POMODORO = Utility.STATO_POMODORO;
+    private final String STATO_POMODORO_PRECEDENTE = Utility.STATO_POMODORO_PRECEDENTE;
     private final String PAUSA = Utility.PAUSA;
 
     @Override
@@ -68,31 +68,31 @@ public class Timer extends AppCompatActivity {
 
     //Salva i dati nelle shared preferences
     private void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences( SHARED_PREFS_SESSIONE, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong( TEMPO_INIZIALE, tempoIniziale);
         editor.putLong( TEMPO_RIMASTO, tempoRimasto);
         editor.putLong( TEMPO_FINALE, tempoFinale);
         editor.putLong( TEMPO_TRASCORSO, tempoTrascorso);
-        editor.putInt( STATO_SESSIONE, statoSessione.getValue());
-        editor.putInt( STATO_SESSIONE_PRECEDENTE_PAUSA, statoSessionePrecedentePausa.getValue());
+        editor.putInt(STATO_POMODORO, statoPomodoro.getValue());
+        editor.putInt(STATO_POMODORO_PRECEDENTE, statoPomodoroPrecedentePausa.getValue());
         editor.apply();
     }
 
     //Carica i dati dalle shared preferences
     private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences( SHARED_PREFS_SESSIONE, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
         tempoIniziale = sharedPreferences.getLong( TEMPO_INIZIALE, 1800000);
         tempoRimasto = sharedPreferences.getLong( TEMPO_RIMASTO, tempoIniziale);
         tempoFinale = sharedPreferences.getLong( TEMPO_FINALE, 0);
         tempoTrascorso = sharedPreferences.getLong( TEMPO_TRASCORSO, 0);
-        statoSessione = new StatoSessione( sharedPreferences.getInt( STATO_SESSIONE, StatoSessione.DISATTIVO));
-        statoSessionePrecedentePausa = new StatoSessione( sharedPreferences.getInt( STATO_SESSIONE_PRECEDENTE_PAUSA, StatoSessione.DISATTIVO));
+        statoPomodoro = new StatoPomodoro( sharedPreferences.getInt(STATO_POMODORO, StatoPomodoro.DISATTIVO));
+        statoPomodoroPrecedentePausa = new StatoPomodoro( sharedPreferences.getInt(STATO_POMODORO_PRECEDENTE, StatoPomodoro.DISATTIVO));
     }
 
     private void setToolbar(){
         //settare titolo e icona del toolbar
-        toolbar.setTitle(R.string.sessione_in_corso);
+        toolbar.setTitle(R.string.pomodoro_in_corso_timer);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,7 @@ public class Timer extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //stopSessione();
+                //stopPomodoro();
                 reset();    //Metodo momentaneo
             }
         });
@@ -130,18 +130,18 @@ public class Timer extends AppCompatActivity {
         loadData();
 
         //Countdown e Pausa usano lo stesso metodo startCountDownTimer() per il conteggio del tempo
-        if( statoSessione.getValue() == StatoSessione.COUNTDOWN || statoSessione.getValue() == StatoSessione.PAUSA){
+        if( statoPomodoro.isCountDown() || statoPomodoro.isPausa()){
             aggiornaCountDownTimer();
             tempoRimasto = tempoFinale - System.currentTimeMillis();    //Calcolo tempo rimanente
             if( tempoRimasto < 0){
                 tempoRimasto = 0;
-                statoSessione.setValue( StatoSessione.DISATTIVO);
+                statoPomodoro.setValue( StatoPomodoro.DISATTIVO);
                 aggiornaCountDownTimer();
             }else{
                 startCountDownTimer();
             }
 
-        }else if( statoSessione.getValue() == StatoSessione.COUNTUP){   //Gestione CountUpTimer
+        }else if( statoPomodoro.isCountUp()){   //Gestione CountUpTimer
 
             //Se tempoTrascorso == 0 significa che è un nuovo timer, non è necessario calcolare il tempo trascorso con l'activity chiusa
             if(tempoTrascorso != 0){
@@ -185,30 +185,30 @@ public class Timer extends AppCompatActivity {
             @Override
             public void onFinish() {
                 //Fine countdowntimer, si controlla quale sia il suo stato attuale
-                switch ( statoSessione.getValue()){
+                switch ( statoPomodoro.getValue()){
 
                     //In caso sia un countdowntimer, si salva tale stato e poi si fa partire una pausa
-                    case StatoSessione.COUNTDOWN:
+                    case StatoPomodoro.COUNTDOWN:
                         startPausa();
                         break;
 
                     //In caso sia finita una pausa, si controlla lo stato precedente e si ri esegue quel tipo di timer
                     //Si evita che una pausa possa essere seguita da un'altra pausa
-                    case StatoSessione.PAUSA:
+                    case StatoPomodoro.PAUSA:
                         btnPausa.setEnabled(true);
-                        toolbar.setTitle(R.string.sessione_in_corso);
+                        toolbar.setTitle(R.string.pomodoro_in_corso_timer);
 
-                        if( statoSessionePrecedentePausa.getValue() == StatoSessione.COUNTDOWN){
+                        if( statoPomodoroPrecedentePausa.isCountDown()){
                             //Riottieni i dati per il countdown e lo si avvia
-                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
-                            int ore = sharedPreferences.getInt(ORE_SESSIONE, 0);
-                            int min = sharedPreferences.getInt(MINUTI_SESSIONE, 30);
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
+                            int ore = sharedPreferences.getInt(ORE_POMODORO, 0);
+                            int min = sharedPreferences.getInt(MINUTI_POMODORO, 30);
                             long milliSecondi = ((ore*3600) +  (min*60)) * 1000;
 
                             tempoIniziale = milliSecondi;
                             tempoRimasto = milliSecondi;
                             tempoFinale = System.currentTimeMillis() + milliSecondi;
-                            statoSessione.setValue( StatoSessione.COUNTDOWN);
+                            statoPomodoro.setValue( StatoPomodoro.COUNTDOWN);
                             startCountDownTimer();
                         }else{
                             startCountUpTimer();
@@ -229,8 +229,8 @@ public class Timer extends AppCompatActivity {
             public void onTick(int sec) {
                 tempoTrascorso = tempoTrascorso + 1000;
                 if(tempoTrascorso >= DURATA_MASSIMA_COUNTUP_TIMER){
-                    //CountUpTimer arriva a durata massima, interrompi sessione
-                    stopSessione();
+                    //CountUpTimer arriva a durata massima, interrompi pomodoro
+                    stopPomodoro();
                 }else{
                     aggiornaCountUpTimer();
                 }
@@ -245,7 +245,7 @@ public class Timer extends AppCompatActivity {
         //Disattivo bottone pausa
         btnPausa.setEnabled(false);
 
-        toolbar.setTitle(R.string.pausa_in_corso);
+        toolbar.setTitle(R.string.pausa_in_corso_timer);
 
         //Cancellare l'attuale timer
         if( countDownTimer != null){
@@ -256,7 +256,7 @@ public class Timer extends AppCompatActivity {
         }
 
         //Recuperare durata pausa
-        SharedPreferences sharedPreferences = getSharedPreferences( SHARED_PREFS_SESSIONE, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
         long pausaMilliSecondi = 60000 * sharedPreferences.getInt(PAUSA, 5);
 
         //Reimpostare i tempi con quelli della pausa e salvarli
@@ -265,8 +265,8 @@ public class Timer extends AppCompatActivity {
         tempoFinale = System.currentTimeMillis() + tempoRimasto;
         tempoTrascorso = 0;     //Il countUpTimer dovrà ripartire da 0 dopo la pausa
         //Salvare lo stato precedente e impostare quello attuale a pausa
-        statoSessionePrecedentePausa.setValue( statoSessione.getValue());
-        statoSessione.setValue( StatoSessione.PAUSA);
+        statoPomodoroPrecedentePausa.setValue( statoPomodoro.getValue());
+        statoPomodoro.setValue( StatoPomodoro.PAUSA);
         saveData();
 
         //Riavviare un countdowntimer per la pausa
@@ -310,13 +310,13 @@ public class Timer extends AppCompatActivity {
     }
 
     //Ferma qualsiasi timer e apre il dialog di valutazione
-    private void stopSessione() {
-        //TODO stop sessione
+    private void stopPomodoro() {
+        //TODO stop pomodoro
     }
 
-    //Funzione puramente di debug, chiude i timer in corso resettando lo statoSessione e riportando alla homepage
+    //Funzione puramente di debug, chiude i timer in corso resettando lo statoPomodoro e riportando alla homepage
     private void reset(){
-        statoSessione.setValue( StatoSessione.DISATTIVO);
+        statoPomodoro.setValue( StatoPomodoro.DISATTIVO);
         if( countDownTimer != null){
             countDownTimer.cancel();
         }

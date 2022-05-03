@@ -43,11 +43,11 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     private Database db;
 
-    private StatoSessione statoSessione;
+    private StatoPomodoro statoPomodoro;
 
     //Shared Preferances file name
-    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
-    private final String STATO_SESSIONE = Utility.STATO_SESSIONE;
+    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_POMODORO;
+    private final String STATO_POMODORO = Utility.STATO_POMODORO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,19 +194,19 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
 
-    //Controlla se è presente una sessione in corso
+    //Controlla se è presente un pomodoro in corso
     private boolean checkSessioneAttiva(){
-        SharedPreferences sharedPreferences = getSharedPreferences( SHARED_PREFS_SESSIONE, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        //Se non è presente una sessione attiva, viene comunque salvato lo stato come disattivo
-        int stato = sharedPreferences.getInt( STATO_SESSIONE, StatoSessione.DISATTIVO);
-        statoSessione = new StatoSessione( stato);
+        //Se non è presente un pomodoro attivo, viene comunque salvato lo stato come disattivo
+        int stato = sharedPreferences.getInt(STATO_POMODORO, StatoPomodoro.DISATTIVO);
+        statoPomodoro = new StatoPomodoro( stato);
 
-        editor.putInt( STATO_SESSIONE, statoSessione.getValue());
+        editor.putInt(STATO_POMODORO, statoPomodoro.getValue());
         editor.apply();
 
-        if( statoSessione.getValue() == StatoSessione.DISATTIVO) return false;
+        if( statoPomodoro.isDisattivo()) return false;
         return true;
     }
 }

@@ -22,7 +22,7 @@ public class Impostazioni extends AppCompatActivity {
     int pausa;
 
     //Shared Preferances key
-    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_SESSIONE;
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_POMODORO;
     private final String PAUSA = Utility.PAUSA;
 
     @Override

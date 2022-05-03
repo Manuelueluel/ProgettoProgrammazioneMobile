@@ -151,7 +151,7 @@
         android:id="@+id/avviaSessione"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/avvia"
+        android:text="@string/pomodoro_avvia"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"/>
 

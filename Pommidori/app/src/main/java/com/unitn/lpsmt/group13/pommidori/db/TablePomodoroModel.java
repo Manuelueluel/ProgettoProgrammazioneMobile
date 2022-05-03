@@ -5,10 +5,10 @@ import java.util.Date;
 public class TablePomodoroModel {
 
     //Variabili tabella Pomodori
-    public static final String TABLE_NAME = "pommodoro";
+    public static final String TABLE_NAME = "pomodoro";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NOME_ACTIVITY = "nome_attivita";
-    public static final String COLUMN_DATA = "data_pmodoro";
+    public static final String COLUMN_DATA = "data_pomodoro";
     public static final String COLUMN_DURATA = "durata_pomodoro";
 
     public static final String queryCreate =
