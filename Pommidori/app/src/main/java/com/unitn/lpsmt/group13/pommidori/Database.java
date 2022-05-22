@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
@@ -13,11 +12,20 @@ import com.unitn.lpsmt.group13.pommidori.db.TableSessionModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Database extends SQLiteOpenHelper {
@@ -249,6 +257,7 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
+
     public List<TableSessionProgModel> getSessionByDay(Date date){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
         List<TableSessionProgModel> getSession= getAllSessioniProgrammate();
@@ -264,4 +273,148 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
+
+    //Pomodoro
+    public boolean addPomodoroCompletato(@NonNull TablePomodoroModel tablePomodoroModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(TablePomodoroModel.COLUMN_NOME_ACTIVITY, tablePomodoroModel.getName());
+        cv.put(TablePomodoroModel.COLUMN_DATA_INIZIO, tablePomodoroModel.getInizio().getTime());
+        cv.put(TablePomodoroModel.COLUMN_DURATA, tablePomodoroModel.getDurata());
+
+        long result = db.insert(TableSessionProgModel.TABLE_NAME,null,cv);
+        db.close();
+        return result == -1 ? false : true;
+    }
+
+    public List<TablePomodoroModel> getPomodoroBySettimana(@NonNull LocalDate date){
+        //Date è un giorno qualsiasi della settimana, da cui ricavo inizio e fine settimana
+        List<TablePomodoroModel> pomodoroSettimanali = new ArrayList<>();
+        date = date.with( WeekFields.of(Locale.ITALY).dayOfWeek(), 1);  //Lunedì primo giorno della settimana
+        LocalDateTime inizioSettimana = date.atStartOfDay();                     //Orario impostato ad inizio giorno
+        LocalDateTime fineSettimana = date.plus(Period.ofDays(6)).atTime(LocalTime.MAX);    //ottengo ultimo giorno della settimana alle 23:59:59
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(inizioSettimana);   //Zone orarie, GMT +02:00 per italia
+
+        String query = "SELECT * FROM " + TablePomodoroModel.TABLE_NAME
+                + " WHERE " + TablePomodoroModel.COLUMN_DATA_INIZIO
+                + " BETWEEN " + inizioSettimana.toInstant(zoneOffset).toEpochMilli()
+                + " AND " + fineSettimana.toInstant(zoneOffset).toEpochMilli();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            //loop su tutti gli elementi
+            do{
+                int pomodoroId = cursor.getInt(0);
+                String activityName = cursor.getString(1);
+                long dataInizioPomodoro = cursor.getLong(2);
+                long durataPomodoro = cursor.getLong(3);
+
+                TablePomodoroModel p = new TablePomodoroModel(
+                        pomodoroId,
+                        activityName,
+                        new Date(dataInizioPomodoro),
+                        durataPomodoro
+                );
+
+                pomodoroSettimanali.add(p);
+            }while (cursor.moveToNext());
+        } else{
+            //fallimento nell'accedere al database
+            pomodoroSettimanali.add(new TablePomodoroModel());
+        }
+
+        cursor.close();
+        db.close();
+
+        return pomodoroSettimanali;
+    }
+
+    public List<TablePomodoroModel> getPomodoroByMese(@NonNull LocalDate date){
+        //Date è un giorno qualsiasi del mese, da cui ricavo inizio e fine mese
+        List<TablePomodoroModel> pomodoroMensili = new ArrayList<>();
+        LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
+        LocalDateTime fineMese = date.withDayOfMonth( date.getMonth().length( date.isLeapYear())).atTime(LocalTime.MAX); //Ultimo giorno del mese, alle 23:59:59
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(inizioMese);   //Zone orarie, GMT +02:00 per italia
+
+        String query = "SELECT * FROM " + TablePomodoroModel.TABLE_NAME
+                + " WHERE " + TablePomodoroModel.COLUMN_DATA_INIZIO
+                + " BETWEEN " + inizioMese.toInstant(zoneOffset).toEpochMilli()
+                + " AND " + fineMese.toInstant(zoneOffset).toEpochMilli();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            //loop su tutti gli elementi
+            do{
+                int pomodoroId = cursor.getInt(0);
+                String activityName = cursor.getString(1);
+                long dataInizioPomodoro = cursor.getLong(2);
+                long durataPomodoro = cursor.getLong(3);
+
+                TablePomodoroModel p = new TablePomodoroModel(
+                        pomodoroId,
+                        activityName,
+                        new Date(dataInizioPomodoro),
+                        durataPomodoro
+                );
+
+                pomodoroMensili.add(p);
+            }while (cursor.moveToNext());
+        } else{
+            //fallimento nell'accedere al database
+            pomodoroMensili.add(new TablePomodoroModel());
+        }
+
+        cursor.close();
+        db.close();
+        return pomodoroMensili;
+    }
+
+    public List<TablePomodoroModel> getPomodoroByAnno(@NonNull  LocalDate date){
+        //Date è un giorno qualsiasi dell'anno, da cui ricavo inizio e fine anno
+        List<TablePomodoroModel> pomodoroAnnuali = new ArrayList<>();
+        LocalDateTime inizioAnno = date.withDayOfYear(1).atStartOfDay();    //Primo giorno dell'anno alle 00:00
+        LocalDateTime fineAnno = date.withDayOfYear( date.lengthOfYear()).atTime( LocalTime.MAX); //Ultimo giorno dell'anno alle 23:59:59
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(inizioAnno);   //Zone orarie, GMT +02:00 per italia
+
+        String query = "SELECT * FROM " + TablePomodoroModel.TABLE_NAME
+                + " WHERE " + TablePomodoroModel.COLUMN_DATA_INIZIO
+                + " BETWEEN " + inizioAnno.toInstant(zoneOffset).toEpochMilli()
+                + " AND " + fineAnno.toInstant(zoneOffset).toEpochMilli();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            //loop su tutti gli elementi
+            do{
+                int pomodoroId = cursor.getInt(0);
+                String activityName = cursor.getString(1);
+                long dataInizioPomodoro = cursor.getLong(2);
+                long durataPomodoro = cursor.getLong(3);
+
+                TablePomodoroModel p = new TablePomodoroModel(
+                        pomodoroId,
+                        activityName,
+                        new Date(dataInizioPomodoro),
+                        durataPomodoro
+                );
+
+                pomodoroAnnuali.add(p);
+            }while (cursor.moveToNext());
+        } else{
+            //fallimento nell'accedere al database
+            pomodoroAnnuali.add(new TablePomodoroModel());
+        }
+
+        cursor.close();
+        db.close();
+
+        return pomodoroAnnuali;
+    }
+
 }

@@ -8,30 +8,30 @@ public class TablePomodoroModel {
     public static final String TABLE_NAME = "pomodoro";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NOME_ACTIVITY = "nome_attivita";
-    public static final String COLUMN_DATA = "data_pomodoro";
+    public static final String COLUMN_DATA_INIZIO = "data_pomodoro";
     public static final String COLUMN_DURATA = "durata_pomodoro";
 
     public static final String queryCreate =
             "CREATE TABLE " + TABLE_NAME +
                     " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NOME_ACTIVITY + " TEXT, " +
-                    COLUMN_DATA + " INTEGER, " +    //viene salvato il numero di millisecondi dal 1/1/1970
-                    COLUMN_DURATA + " TIME, " +
+                    COLUMN_DATA_INIZIO + " INTEGER, " +    //viene salvato il numero di millisecondi dal 1/1/1970
+                    COLUMN_DURATA + " INTEGER, " +         //viene salvato il numero di millisecondi dal 1/1/1970
                     "FOREIGN KEY (" + COLUMN_NOME_ACTIVITY +") REFERENCES " + TableActivityModel.TABLE_NAME + "(" + TableActivityModel.COLUMN_NOME +"));";
 
     //Modello
     private int id;
     private String name;
-    private Date scadenza;
-    private Date durata;
+    private Date inizio;
+    private long durata;    //Durata espressa come intervallo da inizio a fine pomodoro in millisecondi
 
     //Costrutori
     public TablePomodoroModel() {
     }
-    public TablePomodoroModel(int id, String name, Date scadenza, Date durata) {
+    public TablePomodoroModel(int id, String name, Date inizio, long durata) {
         this.id = id;
         this.name = name;
-        this.scadenza = scadenza;
+        this.inizio = inizio;
         this.durata = durata;
     }
 
@@ -51,19 +51,19 @@ public class TablePomodoroModel {
         this.name = name;
     }
 
-    public Date getScadenza() {
-        return scadenza;
+    public Date getInizio() {
+        return inizio;
     }
 
-    public void setScadenza(Date scadenza) {
-        this.scadenza = scadenza;
+    public void setInizio(Date inizio) {
+        this.inizio = inizio;
     }
 
-    public Date getDurata() {
+    public long getDurata() {
         return durata;
     }
 
-    public void setDurata(Date durata) {
+    public void setDurata(long durata) {
         this.durata = durata;
     }
 }

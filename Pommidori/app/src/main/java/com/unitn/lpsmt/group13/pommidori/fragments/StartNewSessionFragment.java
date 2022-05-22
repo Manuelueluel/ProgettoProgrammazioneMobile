@@ -182,7 +182,7 @@ public class StartNewSessionFragment extends DialogFragment {
         );
 
         TableActivityModel m = (TableActivityModel) adapter.getItem(0);
-
+        //TODO: salvataggio activity selezionata nelle shared preferences
         dropdownSessionePers.setText( m.getName());
         dropdownSessionePers.setAdapter( adapter);
     }

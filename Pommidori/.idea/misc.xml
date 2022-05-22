@@ -26,6 +26,9 @@
         <entry key="app/src/main/res/drawable/ic_settings_24.xml" value="0.3859375" />
         <entry key="app/src/main/res/layout/activity_timer.xml" value="0.36367753623188404" />
         <entry key="app/src/main/res/layout/content_timer.xml" value="0.3697916666666667" />
+        <entry key="app/src/main/res/layout/custom_calendar_week_view.xml" value="0.3555253623188406" />
+        <entry key="app/src/main/res/layout/fragment_new_activity.xml" value="0.14351851851851852" />
+        <entry key="app/src/main/res/layout/fragment_new_session.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_dialog_fragment.xml" value="0.34193840579710144" />
       </map>
     </option>
