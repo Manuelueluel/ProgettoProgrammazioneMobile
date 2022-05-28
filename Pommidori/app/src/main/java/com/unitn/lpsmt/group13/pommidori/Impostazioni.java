@@ -14,15 +14,15 @@ public class Impostazioni extends AppCompatActivity {
 
     //Variabili
     Toolbar toolbar;
-
     Button pausaMeno, pausaPiu;
     TextView durataPausa;
+    SharedPreferences sharedPreferences;
 
-    //valore provvisorio pausa
+    //valore pausa
     int pausa;
 
     //Shared Preferances key
-    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_POMODORO;
+    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_TIMER;
     private final String PAUSA = Utility.PAUSA;
 
     @Override
@@ -32,10 +32,11 @@ public class Impostazioni extends AppCompatActivity {
 
         //Inizializzazione variabili
         toolbar = findViewById(R.id.settingToolbar);
-
         pausaMeno = findViewById(R.id.pausa_meno);
         pausaPiu = findViewById(R.id.pausa_piu);
         durataPausa = findViewById(R.id.durata_pausa);
+        //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
 
 
         //Metodi
@@ -68,10 +69,11 @@ public class Impostazioni extends AppCompatActivity {
                 }
             }
         });
+
         pausaMeno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(pausa>0) { //la pausa deve essere maggiore di 0
+                if(pausa>1) { //la pausa deve essere di almeno 1 minuto
                     pausa--;
                     saveData();
                 }
@@ -79,8 +81,6 @@ public class Impostazioni extends AppCompatActivity {
         });
     }
     private void saveData() {
-        //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(PAUSA, pausa);
@@ -89,9 +89,6 @@ public class Impostazioni extends AppCompatActivity {
         durataPausa.setText(Integer.toString(pausa));
     }
      private void loadData(){
-         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
-
          pausa = sharedPreferences.getInt(PAUSA, 5);
 
          durataPausa.setText(Integer.toString(pausa));

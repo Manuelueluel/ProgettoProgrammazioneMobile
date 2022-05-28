@@ -43,11 +43,11 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     private Database db;
 
-    private StatoPomodoro statoPomodoro;
+    private StatoTimer statoTimer;
 
     //Shared Preferances file name
-    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_POMODORO;
-    private final String STATO_POMODORO = Utility.STATO_POMODORO;
+    private final String SHARED_PREFS_TIMER = Utility.SHARED_PREFS_TIMER;
+    private final String STATO_TIMER = Utility.STATO_TIMER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +76,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         setNavigationDrawerMenu();
         setButtonListeners();
         setDropDownLists();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if( checkSessioneAttiva()) newSession.setText( R.string.resume_session);
-        else newSession.setText(R.string.new_session);
     }
 
     @Override
@@ -196,17 +189,17 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     //Controlla se è presente un pomodoro in corso
     private boolean checkSessioneAttiva(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        //Se non è presente un pomodoro attivo, viene comunque salvato lo stato come disattivo
-        int stato = sharedPreferences.getInt(STATO_POMODORO, StatoPomodoro.DISATTIVO);
-        statoPomodoro = new StatoPomodoro( stato);
+        //Se non è presente un timer attivo, viene comunque salvato lo stato come disattivo
+        int stato = sharedPreferences.getInt(STATO_TIMER, StatoTimer.DISATTIVO);
+        statoTimer = new StatoTimer( stato);
 
-        editor.putInt(STATO_POMODORO, statoPomodoro.getValue());
+        editor.putInt(STATO_TIMER, statoTimer.getValue());
         editor.apply();
 
-        if( statoPomodoro.isDisattivo()) return false;
+        if( statoTimer.isDisattivo()) return false;
         return true;
     }
 }

@@ -2,24 +2,68 @@ package com.unitn.lpsmt.group13.pommidori;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.unitn.lpsmt.group13.pommidori.fragments.TimerFragment;
 
-import java.util.Locale;
-
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
-
-public class Timer extends AppCompatActivity {
+public class Timer extends AppCompatActivity implements TimerFragment.StatoTimerListener {
 
     //Variabili
     private Toolbar toolbar;
+    private Fragment timerFragment;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_timer);
+
+        //Inizializzazione variabili
+        toolbar = findViewById(R.id.timerToolbar);
+        timerFragment = new TimerFragment();
+
+        //Metodi
+        setToolbar();
+        setFragment( timerFragment);
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+
+    private void setToolbar(){
+        //settare titolo e icona del toolbar
+        toolbar.setTitle(R.string.pomodoro_in_corso_timer);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Timer.this, Homepage.class));
+            }
+        });
+    }
+
+    public void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.placeholder_fragment_timer, fragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void cambioStatoToolbarTimer(int stato) {
+        if(timerFragment != null){
+            toolbar.setTitle( stato);
+        }
+    }
+}
+
+    /*
     private FloatingActionButton btnPausa;
     private FloatingActionButton btnStop;
     private MaterialProgressBar progressBar;
@@ -33,8 +77,8 @@ public class Timer extends AppCompatActivity {
     private long tempoFinale;
     private long tempoTrascorso;
     private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
-    private StatoPomodoro statoPomodoro;
-    private StatoPomodoro statoPomodoroPrecedentePausa;
+    private StatoTimer statoPomodoro;
+    private StatoTimer statoPomodoroPrecedentePausa;
 
     //I timer per essere persistenti anche con l'activity chiusa necessitano di salvare delle informazioni nelle shared preferences
     private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_POMODORO;
@@ -47,25 +91,16 @@ public class Timer extends AppCompatActivity {
     private final String STATO_POMODORO = Utility.STATO_POMODORO;
     private final String STATO_POMODORO_PRECEDENTE = Utility.STATO_POMODORO_PRECEDENTE;
     private final String PAUSA = Utility.PAUSA;
+    */
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timer);
+    /*
+    btnPausa = findViewById(R.id.pausa_timer_fab);
+    btnStop = findViewById(R.id.stop_timer_fab);
+    //progressBar = findViewById(R.id.progress_bar);
+    timer = findViewById(R.id.timer);
+    */
 
-        //Inizializzazione variabili
-        toolbar = findViewById(R.id.timerToolbar);
-        btnPausa = findViewById(R.id.pausa_timer_fab);
-        btnStop = findViewById(R.id.stop_timer_fab);
-        progressBar = findViewById(R.id.progress_bar);
-        timer = findViewById(R.id.timer);
-
-        //Metodi
-        setToolbar();
-        setButtonListener();
-
-    }
-
+/*
     //Salva i dati nelle shared preferences
     private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_POMODORO, MODE_PRIVATE);
@@ -86,23 +121,12 @@ public class Timer extends AppCompatActivity {
         tempoRimasto = sharedPreferences.getLong( TEMPO_RIMASTO, tempoIniziale);
         tempoFinale = sharedPreferences.getLong( TEMPO_FINALE, 0);
         tempoTrascorso = sharedPreferences.getLong( TEMPO_TRASCORSO, 0);
-        statoPomodoro = new StatoPomodoro( sharedPreferences.getInt(STATO_POMODORO, StatoPomodoro.DISATTIVO));
-        statoPomodoroPrecedentePausa = new StatoPomodoro( sharedPreferences.getInt(STATO_POMODORO_PRECEDENTE, StatoPomodoro.DISATTIVO));
+        statoPomodoro = new StatoTimer( sharedPreferences.getInt(STATO_POMODORO, StatoTimer.DISATTIVO));
+        statoPomodoroPrecedentePausa = new StatoTimer( sharedPreferences.getInt(STATO_POMODORO_PRECEDENTE, StatoTimer.DISATTIVO));
     }
+    */
 
-    private void setToolbar(){
-        //settare titolo e icona del toolbar
-        toolbar.setTitle(R.string.pomodoro_in_corso_timer);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Timer.this, Homepage.class));
-            }
-        });
-    }
-
+    /*
     private void setButtonListener() {
         btnPausa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,11 +144,14 @@ public class Timer extends AppCompatActivity {
         });
 
     }
+    */
+
 
     /*  Metodo invocato all'avvio o al rientro in activity, permette la selezione del timer corretto
         recuperando i dati salvati del tempo già trascorso per avviare poi un nuovo timer.
     * */
-    @Override
+
+    /* @Override
     protected void onStart() {
         super.onStart();
         loadData();
@@ -135,7 +162,7 @@ public class Timer extends AppCompatActivity {
             tempoRimasto = tempoFinale - System.currentTimeMillis();    //Calcolo tempo rimanente
             if( tempoRimasto < 0){
                 tempoRimasto = 0;
-                statoPomodoro.setValue( StatoPomodoro.DISATTIVO);
+                statoPomodoro.setValue( StatoTimer.DISATTIVO);
                 aggiornaCountDownTimer();
             }else{
                 startCountDownTimer();
@@ -188,13 +215,13 @@ public class Timer extends AppCompatActivity {
                 switch ( statoPomodoro.getValue()){
 
                     //In caso sia un countdowntimer, si salva tale stato e poi si fa partire una pausa
-                    case StatoPomodoro.COUNTDOWN:
+                    case StatoTimer.COUNTDOWN:
                         startPausa();
                         break;
 
                     //In caso sia finita una pausa, si controlla lo stato precedente e si ri esegue quel tipo di timer
                     //Si evita che una pausa possa essere seguita da un'altra pausa
-                    case StatoPomodoro.PAUSA:
+                    case StatoTimer.PAUSA:
                         btnPausa.setEnabled(true);
                         toolbar.setTitle(R.string.pomodoro_in_corso_timer);
 
@@ -208,7 +235,7 @@ public class Timer extends AppCompatActivity {
                             tempoIniziale = milliSecondi;
                             tempoRimasto = milliSecondi;
                             tempoFinale = System.currentTimeMillis() + milliSecondi;
-                            statoPomodoro.setValue( StatoPomodoro.COUNTDOWN);
+                            statoPomodoro.setValue( StatoTimer.COUNTDOWN);
                             startCountDownTimer();
                         }else{
                             startCountUpTimer();
@@ -266,7 +293,7 @@ public class Timer extends AppCompatActivity {
         tempoTrascorso = 0;     //Il countUpTimer dovrà ripartire da 0 dopo la pausa
         //Salvare lo stato precedente e impostare quello attuale a pausa
         statoPomodoroPrecedentePausa.setValue( statoPomodoro.getValue());
-        statoPomodoro.setValue( StatoPomodoro.PAUSA);
+        statoPomodoro.setValue( StatoTimer.PAUSA);
         saveData();
 
         //Riavviare un countdowntimer per la pausa
@@ -311,12 +338,12 @@ public class Timer extends AppCompatActivity {
 
     //Ferma qualsiasi timer e apre il dialog di valutazione
     private void stopPomodoro() {
-        //TODO stop pomodoro
+
     }
 
     //Funzione puramente di debug, chiude i timer in corso resettando lo statoPomodoro e riportando alla homepage
     private void reset(){
-        statoPomodoro.setValue( StatoPomodoro.DISATTIVO);
+        statoPomodoro.setValue( StatoTimer.DISATTIVO);
         if( countDownTimer != null){
             countDownTimer.cancel();
         }
@@ -329,4 +356,4 @@ public class Timer extends AppCompatActivity {
         startActivity( i);
 
     }
-}
+    */

@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class NewSessionFregment extends Fragment {
+public class NewSessionFragment extends Fragment {
 
     private DatePickerDialog datePickerDialog;
     private Button dateButton,hourStartButton,hourEndButton, creaButton, annullaButton;

@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
-import com.unitn.lpsmt.group13.pommidori.StatoPomodoro;
+import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.Timer;
 import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
@@ -35,22 +35,22 @@ public class StartNewSessionFragment extends DialogFragment {
     TextView durataPerOre,durataPerMin;
     CheckBox checkDurataLibera;
     LinearLayout riquadroSelezioneTimer;
-    StatoPomodoro statoPomodoro;
-
+    StatoTimer statoTimer;
     AutoCompleteTextView dropdownSessionePers;
 
-    //valore provvisorio pausa
+    //valori pausa
     int ore, min;
 
     //Shared Preferances key
-    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_POMODORO;
-    private final String ORE_POMODORO = Utility.ORE_POMODORO;
-    private final String MINUTI_POMODORO = Utility.MINUTI_POMODORO;
+    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_TIMER;
+    private final String ORE_POMODORO = Utility.ORE_TIMER;
+    private final String MINUTI_POMODORO = Utility.MINUTI_TIMER;
     private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
     private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
     private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
     private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
-    private final String STATO_POMODORO = Utility.STATO_POMODORO;
+    private final String STATO_TIMER = Utility.STATO_TIMER;
+    private final String STATO_TIMER_PRECEDENTE = Utility.STATO_TIMER_PRECEDENTE;
 
 
     @Override
@@ -70,7 +70,7 @@ public class StartNewSessionFragment extends DialogFragment {
         checkDurataLibera = i.findViewById(R.id.checkDurata);
         riquadroSelezioneTimer = i.findViewById(R.id.timerDurata);
         avvia = i.findViewById(R.id.avviaSessione);
-        statoPomodoro = new StatoPomodoro( StatoPomodoro.COUNTDOWN);    //Valore di default per il fragment
+        statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);    //Valore di default per il fragment
 
         //Metodi
         loadData();
@@ -87,14 +87,14 @@ public class StartNewSessionFragment extends DialogFragment {
 
                 if( checkDurataLibera.isChecked()){
                     //Seleziona tipo di timer countup
-                    statoPomodoro.setValue( StatoPomodoro.COUNTUP);
+                    statoTimer.setValue( StatoTimer.COUNTUP);
                     //Riattiva selezione ore e minuti nel caso fossero disabled
                     setViewAndChildrenEnabled( riquadroSelezioneTimer, false);
                     durataPerOre.setTextColor(Color.GRAY);
                     durataPerMin.setTextColor(Color.GRAY);
                 }else{
                     //Seleziona tipo di timer countdown
-                    statoPomodoro.setValue( StatoPomodoro.COUNTDOWN);
+                    statoTimer.setValue( StatoTimer.COUNTDOWN);
                     //Disattiva selezione ore e minuti
                     setViewAndChildrenEnabled( riquadroSelezioneTimer, true);
                     durataPerOre.setTextColor(Color.BLACK);
@@ -131,8 +131,7 @@ public class StartNewSessionFragment extends DialogFragment {
                     ore++;
                     durataPerOre.setText(Integer.toString(ore));
                     durataPerMin.setText(Integer.toString(min));
-                }
-                if(min<59) { //durata massima 59 minuti
+                }else if(min<59) { //durata massima 59 minuti
                     min++;
                     durataPerMin.setText(Integer.toString(min));
                 }
@@ -147,8 +146,10 @@ public class StartNewSessionFragment extends DialogFragment {
                     ore--;
                     durataPerOre.setText(Integer.toString(ore));
                     durataPerMin.setText(Integer.toString(min));
-                }
-                if(min>0) { //la pausa deve essere maggiore di 0
+                } else if((ore==0) && (min>1)) { //la pausa deve essere maggiore di 0
+                    min--;
+                    durataPerMin.setText(Integer.toString(min));
+                }else if(ore!=0){
                     min--;
                     durataPerMin.setText(Integer.toString(min));
                 }
@@ -201,7 +202,8 @@ public class StartNewSessionFragment extends DialogFragment {
         editor.putLong(TEMPO_RIMASTO, milliSecondi);
         editor.putLong(TEMPO_FINALE, (System.currentTimeMillis() + milliSecondi));
         editor.putLong(TEMPO_TRASCORSO, 0);
-        editor.putInt(STATO_POMODORO, statoPomodoro.getValue());
+        editor.putInt(STATO_TIMER, statoTimer.getValue());
+        editor.putInt(STATO_TIMER_PRECEDENTE, statoTimer.getValue());
         editor.apply();
     }
 

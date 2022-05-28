@@ -5,18 +5,19 @@ import androidx.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/*	Classe indicante il tipo di pomodoro di studio in corso, e se è attivo o meno
+/*	Classe indicante il tipo di timer di studio in corso, e se è attivo o meno
 * */
-public class StatoPomodoro {
+public class StatoTimer {
 	public static final int COUNTDOWN = 0;
 	public static final int COUNTUP = 1;
 	public static final int PAUSA = 2;
 	public static final int DISATTIVO = 3;
+	public static final int SOSPESO = 4;
 
 	private int value;
-	public StatoPomodoro(){ value = DISATTIVO; }	//Il costruttore di default assegna lo stato disattivo
+	public StatoTimer(){ value = DISATTIVO; }	//Il costruttore di default assegna lo stato disattivo
 
-	public StatoPomodoro(int val){
+	public StatoTimer(int val){
 		value = val;
 	}
 
@@ -35,5 +36,7 @@ public class StatoPomodoro {
 	public boolean isPausa() { return value == PAUSA; }
 
 	public boolean isDisattivo() { return value == DISATTIVO; }
+
+	public boolean isSospeso() { return value == SOSPESO; }
 
 }

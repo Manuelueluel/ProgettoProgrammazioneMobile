@@ -1,7 +1,7 @@
 package com.unitn.lpsmt.group13.pommidori.utils;
 
 import com.unitn.lpsmt.group13.pommidori.fragments.NewActivityFragment;
-import com.unitn.lpsmt.group13.pommidori.fragments.NewSessionFregment;
+import com.unitn.lpsmt.group13.pommidori.fragments.NewSessionFragment;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,7 +20,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
 
         switch (position){
-            case 1: return new NewSessionFregment();
+            case 1: return new NewSessionFragment();
         }
         return new NewActivityFragment();
     }
