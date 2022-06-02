@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TableSessionProgModel {
+public class TableSessionProgModel implements Comparable<TableSessionProgModel>{
 
     //Variabili tabella Sessioni Programmate
     public static final String TABLE_NAME = "sessioni_programmate";
@@ -105,5 +105,10 @@ public class TableSessionProgModel {
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm",Locale.ITALY);
         return "["+activity.getSigla().toUpperCase()+"]  " + smHour.format(oraInizio)+ "/"+smHour.format(oraFine)+" "+smDate.format(oraInizio);
 
+    }
+
+    @Override
+    public int compareTo(TableSessionProgModel sessionProgModel) {
+        return getOraInizio().compareTo( sessionProgModel.getOraInizio());
     }
 }

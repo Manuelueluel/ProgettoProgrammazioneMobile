@@ -2,7 +2,7 @@ package com.unitn.lpsmt.group13.pommidori.db;
 
 import java.util.Date;
 
-public class TableSessionModel {
+public class TableSessionModel implements Comparable<TableSessionModel>{
 
     //Variabili tabella Sessioni Svolte
     public static final String TABLE_NAME = "sessioni";
@@ -65,5 +65,10 @@ public class TableSessionModel {
 
     public void setAutovalutazione(int autovalutazione) {
         this.autovalutazione = autovalutazione;
+    }
+
+    @Override
+    public int compareTo(TableSessionModel sessionModel) {
+        return getScadenza().compareTo( sessionModel.getScadenza());
     }
 }

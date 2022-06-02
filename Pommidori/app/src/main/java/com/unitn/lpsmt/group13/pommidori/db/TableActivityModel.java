@@ -3,11 +3,12 @@ package com.unitn.lpsmt.group13.pommidori.db;
 import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TableActivityModel {
+public class TableActivityModel implements Comparable<TableActivityModel>{
 
     //Variabili tabella Attività
     public static final String TABLE_NAME = "attivita";
@@ -45,7 +46,7 @@ public class TableActivityModel {
         this.sigla = "";
         this.colore = 0;
         this.nomeScadenza = "";
-        this.scadenza = new Date(0l);
+        this.scadenza = new Date(0l);; //new Date(0l);
         this.avviso = null;
     }
     public TableActivityModel(int id, String name, String sigla, int colore, String nomeScadenza, Date scadenza, String avviso) {
@@ -133,4 +134,10 @@ public class TableActivityModel {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getSigla(), getColore(), getNomeScadenza(), getScadenza(), getAvviso());
     }
+
+    @Override
+    public int compareTo(TableActivityModel activityModel){
+        return getScadenza().compareTo( activityModel.getScadenza());
+    }
+
 }

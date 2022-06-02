@@ -405,19 +405,19 @@ public class TimerFragment extends Fragment {
 			btnPlay.setVisibility(View.GONE);
 			btnStop.setVisibility(View.VISIBLE);
 			btnPausa.setVisibility(View.VISIBLE);
-			statoTimerListener.cambioStatoToolbarTimer( R.string.pomodoro_in_corso_timer);
+			statoTimerListener.cambioStatoToolbarTimer( R.string.pomodoro_in_corso);
 
 		}else if( statoTimer.isPausa()){
 			btnPlay.setVisibility(View.GONE);
 			btnStop.setVisibility(View.VISIBLE);
 			btnPausa.setVisibility(View.GONE);
-			statoTimerListener.cambioStatoToolbarTimer( R.string.pausa_in_corso_timer);
+			statoTimerListener.cambioStatoToolbarTimer( R.string.pausa_in_corso);
 
 		}else if( statoTimer.isDisattivo()){
 			btnPlay.setVisibility(View.VISIBLE);
 			btnStop.setVisibility(View.GONE);
 			btnPausa.setVisibility(View.VISIBLE);
-			statoTimerListener.cambioStatoToolbarTimer( R.string.pomodoro_disattivo_timer);
+			statoTimerListener.cambioStatoToolbarTimer( R.string.pomodoro_disattivo);
 		}
 	}
 

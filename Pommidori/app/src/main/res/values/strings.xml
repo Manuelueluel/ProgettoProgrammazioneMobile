@@ -18,10 +18,9 @@
     <string name="nome_scadenza">Inserire il nome della scadenza</string>
     <string name="pomodoro_avvia">Avvia</string>
 
-    <!-- Activity Timer -->
-    <!-- TODO rinominare stringhe sostituendo pomodoro con timer -->
-    <string name="pomodoro_in_corso_timer">Pomodoro in corso</string>
-    <string name="pomodoro_disattivo_timer">Pomodoro disattivo</string>
-    <string name="pausa_in_corso_timer">Pausa in corso</string>
+    <!-- Timer -->
+    <string name="pomodoro_in_corso">Pomodoro in corso</string>
+    <string name="pomodoro_disattivo">Pomodoro disattivo</string>
+    <string name="pausa_in_corso">Pausa in corso</string>
 
 </resources>

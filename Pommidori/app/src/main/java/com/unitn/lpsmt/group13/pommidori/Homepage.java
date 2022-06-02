@@ -21,6 +21,7 @@ import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.StartNewSessionFragment;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -159,7 +160,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         db = Database.getInstance( Homepage.this);
         List<TableActivityModel> activity = db.getAllActivityFromNow();
         List<TableSessionProgModel> session = db.getFirstSessionByActivityFromNow();
-        //TODO: inserire nella lista solo activity con scadenza, e sessioni non passate
+
         //L'activity di default non deve essere visualizzata
         TableActivityModel nessunaActivity = new TableActivityModel();
         for(int i=0; i<activity.size(); i++){
@@ -167,6 +168,9 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                 activity.remove(i);
             }
         }
+
+        Collections.sort( activity);
+        Collections.sort( session);
 
         ArrayAdapter activityAdapter = new ArrayAdapter<TableActivityModel>(
                 Homepage.this,

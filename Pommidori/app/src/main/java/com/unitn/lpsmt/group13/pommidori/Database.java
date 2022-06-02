@@ -130,7 +130,7 @@ public class Database extends SQLiteOpenHelper {
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
             //se la data è dopo oggi, aggiungi l'attività al return
-            if(a.getScadenza().after(new Date()) || a.getScadenza().getTime()==0)
+            if(a.getScadenza().after(new Date()))
                 returnActivity.add(a);
         }
 
