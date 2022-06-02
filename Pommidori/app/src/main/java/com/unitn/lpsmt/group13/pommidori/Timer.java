@@ -49,7 +49,7 @@ public class Timer extends AppCompatActivity implements TimerFragment.StatoTimer
         });
     }
 
-    public void setFragment(Fragment fragment) {
+    private void setFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.placeholder_fragment_timer, fragment);
         fragmentTransaction.commit();

@@ -8,6 +8,8 @@
 
     <include
         android:id="@+id/reportToolbar"
-        layout="@layout/toolbar"/>
+        layout="@layout/toolbar" />
+
+    <include layout="@layout/content_report" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

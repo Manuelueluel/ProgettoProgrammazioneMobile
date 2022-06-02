@@ -23,4 +23,8 @@
     <string name="pomodoro_disattivo">Pomodoro disattivo</string>
     <string name="pausa_in_corso">Pausa in corso</string>
 
+    <string name="report">Report</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
