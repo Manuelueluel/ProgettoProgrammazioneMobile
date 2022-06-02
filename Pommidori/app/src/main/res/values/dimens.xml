@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="marginHorizontal_homepage">50dp</dimen>
     <dimen name="min_dim_progress_bar">285dp</dimen>
 </resources>

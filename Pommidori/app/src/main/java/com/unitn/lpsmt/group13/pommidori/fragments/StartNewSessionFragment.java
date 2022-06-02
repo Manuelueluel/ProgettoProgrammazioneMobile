@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -36,6 +37,7 @@ public class StartNewSessionFragment extends DialogFragment {
     CheckBox checkDurataLibera;
     LinearLayout riquadroSelezioneTimer;
     StatoTimer statoTimer;
+    TableActivityModel activitySelezionata;
     AutoCompleteTextView dropdownSessionePers;
 
     //valori pausa
@@ -43,41 +45,45 @@ public class StartNewSessionFragment extends DialogFragment {
 
     //Shared Preferances key
     private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_TIMER;
-    private final String ORE_POMODORO = Utility.ORE_TIMER;
-    private final String MINUTI_POMODORO = Utility.MINUTI_TIMER;
+    private final String ORE_TIMER = Utility.ORE_TIMER;
+    private final String MINUTI_TIMER = Utility.MINUTI_TIMER;
     private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
     private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
     private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
     private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
     private final String STATO_TIMER = Utility.STATO_TIMER;
     private final String STATO_TIMER_PRECEDENTE = Utility.STATO_TIMER_PRECEDENTE;
+    private final String NOME_ACTIVITY_ASSOCIATA = Utility.NOME_ACTIVITY_ASSOCIATA;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View i = inflater.inflate(R.layout.layout_dialog_fragment,container,false);
+        return inflater.inflate(R.layout.layout_dialog_fragment,container,false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         //Inizializzazione variabili
-        menoDurataOre = i.findViewById(R.id.menoDurataOre);
-        piuDurataOre = i.findViewById(R.id.piuDurataOre);
-        menoDurataMin = i.findViewById(R.id.menoDurataMin);
-        piuDurataMin = i.findViewById(R.id.piuDurataMin);
-        durataPerOre = i.findViewById(R.id.durataPerOre);
-        durataPerMin = i.findViewById(R.id.durataPerMin);
-        dropdownSessionePers = i.findViewById(R.id.dropdownSessionePers);
-        checkDurataLibera = i.findViewById(R.id.checkDurata);
-        riquadroSelezioneTimer = i.findViewById(R.id.timerDurata);
-        avvia = i.findViewById(R.id.avviaSessione);
-        statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);    //Valore di default per il fragment
+        menoDurataOre = view.findViewById(R.id.menoDurataOre);
+        piuDurataOre = view.findViewById(R.id.piuDurataOre);
+        menoDurataMin = view.findViewById(R.id.menoDurataMin);
+        piuDurataMin = view.findViewById(R.id.piuDurataMin);
+        durataPerOre = view.findViewById(R.id.durataPerOre);
+        durataPerMin = view.findViewById(R.id.durataPerMin);
+        dropdownSessionePers = view.findViewById(R.id.dropdownSessionePers);
+        checkDurataLibera = view.findViewById(R.id.checkDurata);
+        riquadroSelezioneTimer = view.findViewById(R.id.timerDurata);
+        avvia = view.findViewById(R.id.avviaSessione);
+        statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);     //Valore di default per il fragment
+        activitySelezionata = new TableActivityModel();         //Default activity
 
         //Metodi
         loadData();
         setButtonListener();
         setDropDownLists();
-
-        return i;
     }
 
     protected void setButtonListener(){
@@ -169,7 +175,7 @@ public class StartNewSessionFragment extends DialogFragment {
     }
 
     private void setDropDownLists(){
-        Database db = new Database(getContext());
+        Database db = Database.getInstance( getContext());
         List<TableActivityModel> allActivity = db.getAllActivity();
 
         if(allActivity.isEmpty()){
@@ -182,10 +188,15 @@ public class StartNewSessionFragment extends DialogFragment {
                 allActivity
         );
 
-        TableActivityModel m = (TableActivityModel) adapter.getItem(0);
-        //TODO: salvataggio activity selezionata nelle shared preferences
-        dropdownSessionePers.setText( m.getName());
+        dropdownSessionePers.setText( ((TableActivityModel)adapter.getItem(0)).toString());
         dropdownSessionePers.setAdapter( adapter);
+
+        dropdownSessionePers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                activitySelezionata = (TableActivityModel) parent.getAdapter().getItem( position);
+            }
+        });
     }
 
     void saveData(){
@@ -196,14 +207,15 @@ public class StartNewSessionFragment extends DialogFragment {
         //Trasformo ore:minuti in millisecondi
         long milliSecondi = ((ore*3600) +  (min*60)) * 1000;
 
-        editor.putInt(ORE_POMODORO, ore);
-        editor.putInt(MINUTI_POMODORO, min);
+        editor.putInt(ORE_TIMER, ore);
+        editor.putInt(MINUTI_TIMER, min);
         editor.putLong(TEMPO_INIZIALE, milliSecondi);
         editor.putLong(TEMPO_RIMASTO, milliSecondi);
         editor.putLong(TEMPO_FINALE, (System.currentTimeMillis() + milliSecondi));
         editor.putLong(TEMPO_TRASCORSO, 0);
         editor.putInt(STATO_TIMER, statoTimer.getValue());
-        editor.putInt(STATO_TIMER_PRECEDENTE, statoTimer.getValue());
+        editor.putInt(STATO_TIMER_PRECEDENTE, StatoTimer.DISATTIVO);
+        editor.putString(NOME_ACTIVITY_ASSOCIATA, activitySelezionata.getName());
         editor.apply();
     }
 
@@ -211,8 +223,8 @@ public class StartNewSessionFragment extends DialogFragment {
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_POMODORO, Context.MODE_PRIVATE);
 
-        ore = sharedPreferences.getInt(ORE_POMODORO, 0);
-        min = sharedPreferences.getInt(MINUTI_POMODORO, 30);
+        ore = sharedPreferences.getInt(ORE_TIMER, 0);
+        min = sharedPreferences.getInt(MINUTI_TIMER, 30);
 
         durataPerOre.setText(Integer.toString(ore));
         durataPerMin.setText(Integer.toString(min));
@@ -229,4 +241,5 @@ public class StartNewSessionFragment extends DialogFragment {
             }
         }
     }
+
 }

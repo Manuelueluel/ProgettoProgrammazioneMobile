@@ -72,7 +72,7 @@ public class CustomCalendarMonthFragment extends Fragment {
 
         compactCalendarView.setCurrentDate(java.sql.Date.from(CalendarUtils.selectDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
 
-        db = new Database(getContext());
+        db = Database.getInstance( getContext());
     }
 
     private void setMonthText() {

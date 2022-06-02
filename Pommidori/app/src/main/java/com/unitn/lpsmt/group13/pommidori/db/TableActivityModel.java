@@ -1,8 +1,11 @@
 package com.unitn.lpsmt.group13.pommidori.db;
 
+import androidx.annotation.Nullable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class TableActivityModel {
 
@@ -38,10 +41,10 @@ public class TableActivityModel {
     //Costruttore
     public TableActivityModel() {
         this.id = 0000;
-        this.name = "???";
-        this.sigla = "???";
+        this.name = "Nessuna attività"; //Attività di default associata alle sessioni che sono senza attività associate
+        this.sigla = "";
         this.colore = 0;
-        this.nomeScadenza = "???";
+        this.nomeScadenza = "";
         this.scadenza = new Date(0l);
         this.avviso = null;
     }
@@ -116,5 +119,18 @@ public class TableActivityModel {
         SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm", Locale.ITALY);
         return scadenza.getTime()==0 ? "["+sigla.toUpperCase()+"] "+name.toUpperCase() : "["+sigla.toUpperCase()+"] "+ nomeScadenza +" ore "+smHour.format(scadenza) +" "+ smDate.format(scadenza);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TableActivityModel that = (TableActivityModel) o;
+        return getId() == that.getId() && getColore() == that.getColore() && getName().equals(that.getName()) && getSigla().equals(that.getSigla()) && getNomeScadenza().equals(that.getNomeScadenza()) && getScadenza().equals(that.getScadenza()) && getAvviso().equals(that.getAvviso());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getSigla(), getColore(), getNomeScadenza(), getScadenza(), getAvviso());
     }
 }

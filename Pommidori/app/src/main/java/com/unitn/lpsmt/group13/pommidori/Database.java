@@ -11,6 +11,7 @@ import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,10 +35,16 @@ public class Database extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "PommidoriTimer.db";
     private static final int DATABASE_VERSION = 1;
+    private static Database instance = null;
 
-    public Database(@Nullable Context context) {
+    private Database(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+    }
+
+    public static Database getInstance(Context ctx){
+        if( instance == null)   instance = new Database(ctx);
+        return instance;
     }
 
     @Override
@@ -56,6 +63,12 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TablePomodoroModel.TABLE_NAME);
 
         onCreate(db);
+    }
+
+    //Controllo esistenza database
+    public boolean exist(Context ctx){
+        File dbFile = ctx.getDatabasePath(DATABASE_NAME);
+        return dbFile.exists();
     }
 
     //Attività
@@ -321,9 +334,6 @@ public class Database extends SQLiteOpenHelper {
 
                 pomodoroSettimanali.add(p);
             }while (cursor.moveToNext());
-        } else{
-            //fallimento nell'accedere al database
-            pomodoroSettimanali.add(new TablePomodoroModel());
         }
 
         cursor.close();
@@ -364,9 +374,6 @@ public class Database extends SQLiteOpenHelper {
 
                 pomodoroMensili.add(p);
             }while (cursor.moveToNext());
-        } else{
-            //fallimento nell'accedere al database
-            pomodoroMensili.add(new TablePomodoroModel());
         }
 
         cursor.close();
@@ -406,9 +413,6 @@ public class Database extends SQLiteOpenHelper {
 
                 pomodoroAnnuali.add(p);
             }while (cursor.moveToNext());
-        } else{
-            //fallimento nell'accedere al database
-            pomodoroAnnuali.add(new TablePomodoroModel());
         }
 
         cursor.close();

@@ -142,7 +142,7 @@ public class CustomCalendarWeekFragment extends Fragment implements CalendarAdap
 
     //da ordinare in base all'ora
     private void addEvents() {
-        db = new Database(getContext());
+        db = Database.getInstance( getContext());
         ArrayList<LocalDate> days = daysInWeekArray(CalendarUtils.selectDate);
         for(int i=0; i<days.size();i++) {
             tSPMArray = (ArrayList<TableSessionProgModel>) db.getSessionByDay(java.sql.Date.valueOf(days.get(i).toString()));

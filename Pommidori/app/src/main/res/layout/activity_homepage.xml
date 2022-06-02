@@ -23,9 +23,10 @@
         android:layout_alignParentBottom="true">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="@dimen/marginHorizontal_homepage"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -101,10 +102,10 @@
 
         <Button
             android:id="@+id/hp_calendario"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="80dp"
-            android:paddingHorizontal="40dp"
+            android:layout_marginHorizontal="@dimen/marginHorizontal_homepage"
             android:paddingVertical="15dp"
             android:text="@string/calendario"
             android:textSize="30sp"
@@ -114,8 +115,10 @@
 
         <Button
             android:id="@+id/hp_newSession"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingVertical="15dp"
+            android:layout_marginHorizontal="@dimen/marginHorizontal_homepage"
             android:layout_marginBottom="50dp"
             android:text="@string/new_session"
             app:layout_constraintBottom_toBottomOf="parent"

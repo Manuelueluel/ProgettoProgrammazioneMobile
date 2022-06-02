@@ -150,7 +150,7 @@ public class NewActivityFragment extends Fragment {
                     }
                 }
 
-                Database db = new Database(getContext());
+                Database db = Database.getInstance( getContext());
                 if (db.addActivity(m)) {
                     Toast.makeText(getContext(), "Attività creata!", Toast.LENGTH_SHORT).show();
                     getActivity().finish();

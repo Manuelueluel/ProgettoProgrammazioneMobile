@@ -21,7 +21,9 @@ import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.StartNewSessionFragment;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,23 +31,19 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-
     private Button calendario;
     private Button newSession;
     private Button btnScadenze;
     private Button btnSessioni;
-
     private AutoCompleteTextView listaScadenze;
     private AutoCompleteTextView listaSessioni;
-
     private InterceptEventLayout interceptEventScadenze;
     private InterceptEventLayout interceptEventSessioni;
 
     private Database db;
-
     private StatoTimer statoTimer;
 
-    //Shared Preferances file name
+    //Shared Preferances
     private final String SHARED_PREFS_TIMER = Utility.SHARED_PREFS_TIMER;
     private final String STATO_TIMER = Utility.STATO_TIMER;
 
@@ -71,18 +69,22 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         calendario = findViewById(R.id.hp_calendario);
         newSession = findViewById(R.id.hp_newSession);
 
+        db = Database.getInstance(this);
+        //Al primo avvio dell'app, è necessario inserire l'attività che contiene tutte le sessioni di studio non associate ad attività
+        if( !db.exist(this)){
+            db.addActivity( new TableActivityModel());
+        }
 
         //Metodi
         setNavigationDrawerMenu();
         setButtonListeners();
-        setDropDownLists();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setDropDownLists();
-        if( checkSessioneAttiva()) newSession.setText( R.string.resume_session);
+        if( checkTimerAttivo()) newSession.setText( R.string.resume_session);
         else newSession.setText(R.string.new_session);
     }
 
@@ -140,7 +142,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         newSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if( checkSessioneAttiva()){
+                if( checkTimerAttivo()){
                     //Timer attivo, vado direttamente all'activity Timer
                     Intent i = new Intent( Homepage.this, Timer.class);
                     startActivity(i);
@@ -154,15 +156,16 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     private void setDropDownLists(){
-        db = new Database(Homepage.this);
+        db = Database.getInstance( Homepage.this);
         List<TableActivityModel> activity = db.getAllActivityFromNow();
         List<TableSessionProgModel> session = db.getFirstSessionByActivityFromNow();
-
-        if(activity.isEmpty()){
-            activity.add(new TableActivityModel());
-        }
-        if(session.isEmpty()){
-            session.add(new TableSessionProgModel());
+        //TODO: inserire nella lista solo activity con scadenza, e sessioni non passate
+        //L'activity di default non deve essere visualizzata
+        TableActivityModel nessunaActivity = new TableActivityModel();
+        for(int i=0; i<activity.size(); i++){
+            if( activity.get(i).equals(nessunaActivity) ) {
+                activity.remove(i);
+            }
         }
 
         ArrayAdapter activityAdapter = new ArrayAdapter<TableActivityModel>(
@@ -176,19 +179,22 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                 session
         );
 
-        TableActivityModel a = (TableActivityModel) activityAdapter.getItem(0);
-        TableSessionProgModel s = (TableSessionProgModel) sessionAdapter.getItem(0);
-
-        listaScadenze.setText( a.toString());
-        listaSessioni.setText( s.toString());
+        //Se le liste son vuote le lascio tali, altrimenti anteprimo il primo oggetto in lista
+        if(!activity.isEmpty()){
+            TableActivityModel a = (TableActivityModel) activityAdapter.getItem(0);
+            listaScadenze.setText( a.toString());
+        }
+        if(!session.isEmpty()){
+            TableSessionProgModel s = (TableSessionProgModel) sessionAdapter.getItem(0);
+            listaSessioni.setText( s.toString());
+        }
 
         listaScadenze.setAdapter( activityAdapter);
         listaSessioni.setAdapter( sessionAdapter);
     }
 
-
-    //Controlla se è presente un pomodoro in corso
-    private boolean checkSessioneAttiva(){
+    //Controlla se è presente un timer in corso
+    private boolean checkTimerAttivo(){
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 

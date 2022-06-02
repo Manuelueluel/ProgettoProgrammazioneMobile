@@ -236,7 +236,7 @@ public class NewSessionFragment extends Fragment {
     }
 
     private void setDropDownLists(){
-        db = new Database(getContext());
+        db = Database.getInstance( getContext());
         activity = db.getAllActivity();
         List<String> activityName = new ArrayList<>();
 

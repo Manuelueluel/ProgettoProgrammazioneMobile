@@ -18,11 +18,14 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unitn.lpsmt.group13.pommidori.CountUpTimer;
+import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.Homepage;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.Utility;
+import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
 
+import java.util.Date;
 import java.util.Locale;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
@@ -39,7 +42,7 @@ public class TimerFragment extends Fragment {
 	private static final String ARG_PARAM1 = "param1";
 	private static final String ARG_PARAM2 = "param2";
 
-	//Variabili
+	//Views
 	private FloatingActionButton btnPlay;
 	private FloatingActionButton btnPausa;
 	private FloatingActionButton btnStop;
@@ -49,16 +52,18 @@ public class TimerFragment extends Fragment {
 	private CountUpTimer countUpTimer;          //Timer a contatore
 	private SharedPreferences sharedPreferences;
 	private Context context;
+	private Database db;
 
-	//Tutti i tempi long sono espressi in milli secondi
+	//Variabili: Tutti i tempi long sono espressi in milli secondi
 	private long tempoIniziale;
 	private long tempoRimasto;
 	private long tempoFinale;
 	private long tempoTrascorso;
-	private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
+	int oreTimer, minutiTimer;
 	private StatoTimer statoTimer;
 	private StatoTimer statoTimerPrecedente;
 	private StatoTimerListener statoTimerListener;
+	private String nomeActivityAssociata;
 
 	//I timer per essere persistenti anche con l'activity chiusa necessitano di salvare delle informazioni nelle shared preferences
 	private final String SHARED_PREFS_TIMER = Utility.SHARED_PREFS_TIMER;
@@ -71,6 +76,8 @@ public class TimerFragment extends Fragment {
 	private final String STATO_TIMER = Utility.STATO_TIMER;
 	private final String STATO_TIMER_PRECEDENTE = Utility.STATO_TIMER_PRECEDENTE;
 	private final String PAUSA = Utility.PAUSA;
+	private final String ACTIVITY_ASSOCIATA = Utility.NOME_ACTIVITY_ASSOCIATA;
+	private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
 
 	// TODO: Rename and change types of parameters
 	private String mParam1;
@@ -147,7 +154,7 @@ public class TimerFragment extends Fragment {
 		setButtonListener();
 	}
 
-	/*  Metodo invocato all'avvio o al rientro in activity, permette la selezione del timer corretto
+	/*  Metodo invocato all'avvio o al rientro in fragment, permette la selezione del timer corretto
         recuperando i dati salvati del tempo già trascorso per avviare poi un nuovo timer.
     * */
 	@Override
@@ -155,24 +162,40 @@ public class TimerFragment extends Fragment {
 		super.onResume();
 		loadData();
 
-		//startCountDownTimer e startCountDownPausa usano lo stesso oggetto countDownTimer per il conteggio del tempo, a livello logico sono uguali
+		//startCountDownTimer e startCountDownPausa usano entrambi tempoRimasto e tempoFinale
 		if( statoTimer.isCountDown() || statoTimer.isPausa()){
 			aggiornaTimer();
 			tempoRimasto = tempoFinale - System.currentTimeMillis();    //Calcolo tempo rimanente
-			if( tempoRimasto < 0){
-				tempoRimasto = 0;
+			long milliSecondi = ((oreTimer*3600) +  (minutiTimer*60)) * 1000;
+			tempoTrascorso = milliSecondi - tempoRimasto;	//se tempoRimasto negativo allora tempoTrascorso eccederà la durata effettiva del pomodoro
+
+			if( tempoRimasto < 0){	//timer completato con fragment chiuso
+				tempoTrascorso = milliSecondi;
+
+				deleteTimer();
+				if( statoTimer.isCountDown()) {
+					addPomodoroCompletato();
+					statoTimerPrecedente.setValue( StatoTimer.COUNTDOWN);
+				}
+
+				tempoRimasto = milliSecondi;
 				statoTimer.setValue( StatoTimer.DISATTIVO);
+				aggiornaButtonsAndToolbar();
 				aggiornaTimer();
-			}else{
+
+			}else if( statoTimer.isCountDown()){
 				startCountDownTimer();
+
+			}else if( statoTimer.isPausa()){
+				startCountDownPausa();
 			}
 
 		}else if( statoTimer.isCountUp()){   //Gestione CountUpTimer
 
 			//Se tempoTrascorso == 0 significa che è un nuovo timer, non è necessario calcolare il tempo trascorso con l'activity chiusa
 			if(tempoTrascorso != 0){
-				//tempoFinale = System.currentTimeMillis() nel momento della onStop()
-				//Calcolo che considera il tempo trascorso con l'activity chiusa
+				//tempoFinale = System.currentTimeMillis() nel momento della onPause()
+				//Calcolo che considera il tempo trascorso con il fragment chiuso
 				tempoTrascorso = tempoTrascorso + (System.currentTimeMillis() - tempoFinale);
 			}
 
@@ -189,7 +212,9 @@ public class TimerFragment extends Fragment {
 		}
 		if(countUpTimer != null){
 			countUpTimer.cancel();
-			tempoFinale = System.currentTimeMillis();   //Si salva il momento di chiusura dell'activity
+			//tempoFinale non viene utilizzato da countUpTimer dato che non ha una fine, ma lo si
+			//usa solo per salvare il momento di chiusura del fragment
+			tempoFinale = System.currentTimeMillis();
 		}
 
 		saveData();
@@ -208,8 +233,9 @@ public class TimerFragment extends Fragment {
 		editor.putLong( TEMPO_RIMASTO, tempoRimasto);
 		editor.putLong( TEMPO_FINALE, tempoFinale);
 		editor.putLong( TEMPO_TRASCORSO, tempoTrascorso);
-		editor.putInt(STATO_TIMER, statoTimer.getValue());
-		editor.putInt(STATO_TIMER_PRECEDENTE, statoTimerPrecedente.getValue());
+		editor.putInt( STATO_TIMER, statoTimer.getValue());
+		editor.putInt( STATO_TIMER_PRECEDENTE, statoTimerPrecedente.getValue());
+		editor.putString( ACTIVITY_ASSOCIATA, nomeActivityAssociata);
 		editor.apply();
 	}
 
@@ -219,8 +245,11 @@ public class TimerFragment extends Fragment {
 		tempoRimasto = sharedPreferences.getLong( TEMPO_RIMASTO, tempoIniziale);
 		tempoFinale = sharedPreferences.getLong( TEMPO_FINALE, 0);
 		tempoTrascorso = sharedPreferences.getLong( TEMPO_TRASCORSO, 0);
+		oreTimer = sharedPreferences.getInt( ORE_TIMER, 0);
+		minutiTimer = sharedPreferences.getInt( MINUTI_TIMER, 30);
 		statoTimer = new StatoTimer( sharedPreferences.getInt(STATO_TIMER, StatoTimer.DISATTIVO));
 		statoTimerPrecedente = new StatoTimer( sharedPreferences.getInt(STATO_TIMER_PRECEDENTE, StatoTimer.DISATTIVO));
+		nomeActivityAssociata = sharedPreferences.getString( ACTIVITY_ASSOCIATA, "???");
 	}
 
 	private void setButtonListener() {
@@ -251,12 +280,46 @@ public class TimerFragment extends Fragment {
 
 	//Avvia un countdown timer
 	private void startCountDownTimer(){
-		tempoFinale = System.currentTimeMillis() + tempoRimasto;
+		if( statoTimer.isDisattivo() || statoTimerPrecedente.isDisattivo()){ //Ad inizio timer
+			tempoIniziale = System.currentTimeMillis();
+			tempoFinale = tempoIniziale + tempoRimasto;
+		}
 		statoTimer.setValue( StatoTimer.COUNTDOWN);
 		aggiornaButtonsAndToolbar();
 
 		//Oggetto countdown timer, con tempo rimanente alla fine timer, metodo onTick richiamato ogni 1000 millisecondi
 		countDownTimer = new CountDownTimer( tempoRimasto, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+				tempoRimasto = millisUntilFinished;
+				tempoTrascorso = tempoTrascorso + 1000;
+				aggiornaTimer();
+			}
+
+			@Override
+			public void onFinish() {
+				stopTimer();
+			}
+		}.start();
+	}
+
+	//Avvia un countdown timer per una pausa, modificando dati salvati e alcune views
+	private void startCountDownPausa(){
+		//Cancellare l'attuale timer
+		deleteTimer();
+
+		//Recuperare durata pausa e reimpostare tempi
+		long pausaMilliSecondi = 60000 * sharedPreferences.getInt(PAUSA, 5);
+		tempoRimasto = pausaMilliSecondi;
+		tempoFinale = System.currentTimeMillis() + tempoRimasto;
+		tempoTrascorso = 0;     //Il countUpTimer dovrà ripartire da 0 dopo la pausa
+		statoTimer.setValue( StatoTimer.PAUSA);
+		saveData();
+		aggiornaButtonsAndToolbar();
+
+
+		//Oggetto countdown timer, con tempo rimanente alla fine pausa, metodo onTick richiamato ogni 1000 millisecondi
+		countDownTimer = new CountDownTimer( tempoRimasto, 1000){
 			@Override
 			public void onTick(long millisUntilFinished) {
 				tempoRimasto = millisUntilFinished;
@@ -266,14 +329,28 @@ public class TimerFragment extends Fragment {
 			@Override
 			public void onFinish() {
 				statoTimer.setValue( StatoTimer.DISATTIVO);
-				aggiornaTimer();
 				aggiornaButtonsAndToolbar();
+
+				if( statoTimerPrecedente.isCountDown()){
+					//Riottieni i dati per il countdown e si aggiorna l'interfaccia
+					long milliSecondi = ((oreTimer*3600) +  (minutiTimer*60)) * 1000;
+					tempoRimasto = milliSecondi;
+					aggiornaTimer();
+
+				}else{	//countup
+					tempoTrascorso = 0;
+					aggiornaTimer();
+				}
 			}
 		}.start();
 	}
 
 	//Avvia un countup timer
 	private void startCountUpTimer() {
+		if( statoTimer.isDisattivo() || statoTimerPrecedente.isDisattivo()){ //Ad inizio timer
+			tempoIniziale = System.currentTimeMillis();
+		}
+
 		statoTimer.setValue( StatoTimer.COUNTUP);
 		aggiornaButtonsAndToolbar();
 
@@ -291,52 +368,6 @@ public class TimerFragment extends Fragment {
 		};
 
 		countUpTimer.start();
-	}
-
-	//Avvia un countdown timer per una pausa, modificando dati salvati e alcune views
-	private void startCountDownPausa(){
-		//Cancellare l'attuale timer
-		deleteTimer();
-
-		//Recuperare durata pausa e reimpostare tempi
-		long pausaMilliSecondi = 60000 * sharedPreferences.getInt(PAUSA, 5);
-		tempoIniziale = pausaMilliSecondi;
-		tempoRimasto = pausaMilliSecondi;
-		tempoFinale = System.currentTimeMillis() + tempoRimasto;
-		tempoTrascorso = 0;     //Il countUpTimer dovrà ripartire da 0 dopo la pausa
-		statoTimer.setValue( StatoTimer.PAUSA);
-		aggiornaButtonsAndToolbar();
-		saveData();
-
-		//Oggetto countdown timer, con tempo rimanente alla fine pausa, metodo onTick richiamato ogni 1000 millisecondi
-		countDownTimer = new CountDownTimer( tempoRimasto, 1000){
-			@Override
-			public void onTick(long millisUntilFinished) {
-				tempoRimasto = millisUntilFinished;
-				aggiornaTimer();
-			}
-
-			@Override
-			public void onFinish() {
-				statoTimer.setValue( StatoTimer.DISATTIVO);
-				aggiornaButtonsAndToolbar();
-
-				if( statoTimerPrecedente.isCountDown()){
-					//Riottieni i dati per il countdown e si aggiorna l'interfaccia
-					int ore = sharedPreferences.getInt(ORE_TIMER, 0);
-					int min = sharedPreferences.getInt(MINUTI_TIMER, 30);
-					long milliSecondi = ((ore*3600) +  (min*60)) * 1000;
-
-					tempoIniziale = milliSecondi;
-					tempoRimasto = milliSecondi;
-					aggiornaTimer();
-
-				}else{	//countup
-					tempoTrascorso = 0;
-					aggiornaTimer();
-				}
-			}
-		}.start();
 	}
 
 	//Aggiorna il timer, formattando una stringa in modo opportuno
@@ -357,10 +388,6 @@ public class TimerFragment extends Fragment {
 			secondi = (int) (tempoTrascorso / 1000) % 60;
 
 		}
-		/*else if( statoTimer.isDisattivo() && (statoTimerPrecedente.isCountDown() || statoTimerPrecedente.isCountUp()) ){
-			//stato disattivo prima di iniziare una pausa
-			minuti = sharedPreferences.getInt(PAUSA, 5);
-		}*/
 
 		if( ore > 0){
 			tempoFormattato = String.format(Locale.getDefault(),
@@ -394,23 +421,21 @@ public class TimerFragment extends Fragment {
 		}
 	}
 
-	//Ferma qualsiasi timer
+	//Ferma timer
 	private void stopTimer() {
 		//Cancellare l'attuale timer
 		deleteTimer();
-
-		int ore = sharedPreferences.getInt(ORE_TIMER, 0);
-		int min = sharedPreferences.getInt(MINUTI_TIMER, 30);
-		long milliSecondi = ((ore*3600) +  (min*60)) * 1000;
-
-		tempoIniziale = milliSecondi;
-		tempoRimasto = milliSecondi;
-		//tempoFinale = System.currentTimeMillis() + milliSecondi;
-		tempoTrascorso = 0;
-
-		if( !statoTimer.isPausa()){	//se setto statoPrecedente a pausa perdo quello stato che avevo prima
+		if( !statoTimer.isPausa()){
+			addPomodoroCompletato();
+			//statoTimerPrecedente mai settato a Pausa, per non perdere lo stato che avevo prima in modo da aggiornare l'interfaccia correttamente
 			statoTimerPrecedente.setValue( statoTimer.getValue());
 		}
+
+		//Riottieni i dati per il countdown e si aggiorna l'interfaccia
+		long milliSecondi = ((oreTimer*3600) +  (minutiTimer*60)) * 1000;
+
+		tempoRimasto = milliSecondi;
+		tempoTrascorso = 0;
 		statoTimer.setValue( StatoTimer.DISATTIVO);
 		aggiornaTimer();
 		aggiornaButtonsAndToolbar();
@@ -425,19 +450,14 @@ public class TimerFragment extends Fragment {
 		}
 	}
 
-	//Funzione puramente di debug, chiude i timer in corso resettando lo statoTimer e riportando alla homepage
-	private void reset(){
-		statoTimer.setValue( StatoTimer.DISATTIVO);
-		if( countDownTimer != null){
-			countDownTimer.cancel();
-		}
-		if( countUpTimer != null){
-			countUpTimer.cancel();
-		}
+	private boolean addPomodoroCompletato(){
+		db = Database.getInstance( context);
+		TablePomodoroModel pomodoro = new TablePomodoroModel();
 
-		saveData();
-		Intent i = new Intent( context, Homepage.class);
-		startActivity( i);
+		pomodoro.setName( nomeActivityAssociata);
+		pomodoro.setInizio( new Date( tempoIniziale));
+		pomodoro.setDurata( tempoTrascorso);
+
+		return db.addPomodoroCompletato( pomodoro);
 	}
-
 }

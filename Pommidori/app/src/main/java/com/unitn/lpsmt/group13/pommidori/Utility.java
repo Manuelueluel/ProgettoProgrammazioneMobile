@@ -11,8 +11,9 @@ public class Utility {
 	public static final String TEMPO_FINALE = "tempoFinale";
 	public static final String TEMPO_TRASCORSO = "tempoTrascorso";
 	public static final String STATO_TIMER = "statoTimer";
-	public static final String STATO_TIMER_PRECEDENTE = "statoTimerPrecedentePausa";
+	public static final String STATO_TIMER_PRECEDENTE = "statoTimerPrecedente";
 	public static final String PAUSA = "pausa";
+	public static final String NOME_ACTIVITY_ASSOCIATA = "nomeActivityAssociata";
 
 	//Costanti
 	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
