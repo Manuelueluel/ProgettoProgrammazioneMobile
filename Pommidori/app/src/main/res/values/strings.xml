@@ -26,5 +26,36 @@
     <string name="report">Report</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Arrays per provare alcune funzionalità -->
+    <string-array name="activitys_name">
+        <item name="lpsmt">Laboratorio di programmazione per sistemi mobile e tablet</item>
+        <item name="sistemi_operativi">Sistemi operativi</item>
+        <item name="algoritmi">Algoritmi</item>
+        <item name="fisica">Fisica</item>
+        <item name="reti">Reti</item>
+        <item name="ingegneria del software">Ingegneria del software</item>
+        <item name="embedded">Embedded</item>
+        <item name="analisi1">Analisi 1</item>
+        <item name="geometria">Geometria</item>
+        <item name="Compilatori">Compilatori</item>
+        <item name="machine_learning">Machine Learning</item>
+        <item name="programmazione1">Programmazione 1</item>
+        <item name="programmazione_oop">Programmazione orientata agli oggetti</item>
+        <item name="programmazione_funzionale">Programmazione Funzionale</item>
+        <item name="programmazione_web">Programmazione Web</item>
+        <item name="network_and_computer_security">Newtwork and Computer Security</item>
+        <item name="fondamenti">Fondamenti</item>
+        <item name="inglese_b1">Inglese B1</item>
+    </string-array>
+    <string-array name="daysOfWeekAbbreviated_En">
+        <item name="Monday">Mon</item>
+        <item name="Tuesday">Tue</item>
+        <item name="Wednesday">Wed</item>
+        <item name="Thursday">Thu</item>
+        <item name="Friday">Fri</item>
+        <item name="Saturday">Sat</item>
+        <item name="Sunday">Sun</item>
+    </string-array>
+
 
 </resources>

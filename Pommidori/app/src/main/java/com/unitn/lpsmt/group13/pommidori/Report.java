@@ -1,17 +1,26 @@
 package com.unitn.lpsmt.group13.pommidori;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.unitn.lpsmt.group13.pommidori.utils.ReportFragmentAdapter;
+
 public class Report extends AppCompatActivity {
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +28,12 @@ public class Report extends AppCompatActivity {
         setContentView(R.layout.activity_report);
 
         toolbar = findViewById(R.id.reportToolbar);
+        tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.view_pager);
 
 
         setToolbar();
+        setTabs();
     }
 
     @Override
@@ -41,9 +53,29 @@ public class Report extends AppCompatActivity {
         });
     }
 
-    private void setFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.placeholder_fragment_timer, fragment);
-        fragmentTransaction.commit();
+    private void setTabs(){
+        viewPager.setUserInputEnabled( false);
+        viewPager.setAdapter( new ReportFragmentAdapter( this));
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        switch (position){
+                            case 0:
+                                tab.setText("Chart");
+                                break;
+                            case 1:
+                                tab.setText("Progress");
+                                break;
+                            case 2:
+                                tab.setText("Rating");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }).attach();
     }
+
 }

@@ -10,4 +10,7 @@
     <color name="gray">#FFDDDDDD</color>
     <color name="red">#FFFF0000</color>
     <color name="light_blue">#FFDFFFFD</color>
+    <color name="duskYellow">#ffc922</color>
+    <color name="lightGrey">#dbdad6</color>
+    <color name="card_outline">#ADdbdad6</color>
 </resources>
