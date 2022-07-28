@@ -6,13 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".Report">
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/card_margin"
+        android:padding="@dimen/radio_group_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/radioButton_week"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_radio_button"
+            android:button="@android:color/transparent"
+            android:checked="true"
+            android:text="Settimana"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@drawable/selector_radio_button_text"
+            android:textStyle="bold"/>
+
+        <RadioButton
+            android:id="@+id/radioButton_month"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_radio_button"
+            android:button="@android:color/transparent"
+            android:text="Mese"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@drawable/selector_radio_button_text"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/radioButton_year"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_radio_button"
+            android:button="@android:color/transparent"
+            android:text="Anno"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@drawable/selector_radio_button_text"
+            android:textStyle="bold" />
+    </RadioGroup>
+
+    <include
+        android:id="@+id/include3"
+        layout="@layout/time_interval_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/card_margin"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        tools:layout_editor_absoluteX="0dp" />
+
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/card_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/include3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,7 @@
 package com.unitn.lpsmt.group13.pommidori.db;
 
+import android.graphics.Color;
+
 import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
@@ -44,9 +46,9 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
         this.id = 0000;
         this.name = "Nessuna attività"; //Attività di default associata alle sessioni che sono senza attività associate
         this.sigla = "";
-        this.colore = 0;
+        this.colore = Color.parseColor("#EE0000");  //Rosso default
         this.nomeScadenza = "";
-        this.scadenza = new Date(0l);; //new Date(0l);
+        this.scadenza = new Date(0l);
         this.avviso = null;
     }
     public TableActivityModel(int id, String name, String sigla, int colore, String nomeScadenza, Date scadenza, String avviso) {

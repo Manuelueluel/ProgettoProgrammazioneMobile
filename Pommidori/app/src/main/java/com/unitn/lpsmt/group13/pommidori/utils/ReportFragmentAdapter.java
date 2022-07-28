@@ -21,16 +21,13 @@ public class ReportFragmentAdapter extends FragmentStateAdapter {
 	@Override
 	public Fragment createFragment(int position) {
 		Fragment fragment;
-		System.out.println("createFragment position "+position);
+
 		switch (position){
 			case 0: fragment = PieChartFragment.newInstance(1);
-				System.out.println("PieChart new Instance");
 				break;
 			case 1: fragment = ProgressFragment.newInstance(2);
-				System.out.println("Progress new Instance");
 				break;
 			case 2: fragment = RatingFragment.newInstance(3);
-				System.out.println("Rating new Instance");
 				break;
 			default:
 				fragment = new Fragment();

@@ -10,6 +10,7 @@ public class TablePomodoroModel {
     public static final String COLUMN_NOME_ACTIVITY = "nome_attivita";
     public static final String COLUMN_DATA_INIZIO = "data_pomodoro";
     public static final String COLUMN_DURATA = "durata_pomodoro";
+    public static final String COLUMN_COLORE = "colore";
 
     public static final String queryCreate =
             "CREATE TABLE " + TABLE_NAME +
@@ -17,22 +18,25 @@ public class TablePomodoroModel {
                     COLUMN_NOME_ACTIVITY + " TEXT, " +
                     COLUMN_DATA_INIZIO + " INTEGER, " +    //viene salvato il numero di millisecondi dal 1/1/1970
                     COLUMN_DURATA + " INTEGER, " +         //viene salvato il numero di millisecondi dal 1/1/1970
+                    COLUMN_COLORE + " INTEGER NOT NULL, " +
                     "FOREIGN KEY (" + COLUMN_NOME_ACTIVITY +") REFERENCES " + TableActivityModel.TABLE_NAME + "(" + TableActivityModel.COLUMN_NOME +"));";
 
     //Modello
     private int id;
     private String name;
     private Date inizio;
-    private long durata;    //Durata espressa come intervallo da inizio a fine pomodoro in millisecondi
+    private long durata;
+    private int color;
 
     //Costrutori
     public TablePomodoroModel() {
     }
-    public TablePomodoroModel(int id, String name, Date inizio, long durata) {
+    public TablePomodoroModel(int id, String name, Date inizio, long durata, int color) {
         this.id = id;
         this.name = name;
         this.inizio = inizio;
         this.durata = durata;
+        this.color = color;
     }
 
     public int getId() {
@@ -66,4 +70,8 @@ public class TablePomodoroModel {
     public void setDurata(long durata) {
         this.durata = durata;
     }
+
+    public int getColor(){ return color; }
+
+    public void setColor(int color){ this.color = color; }
 }

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.method.TextKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,15 @@ import android.widget.TextView;
 
 import com.unitn.lpsmt.group13.pommidori.DayProgress;
 import com.unitn.lpsmt.group13.pommidori.R;
+import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.utils.ProgressAdapter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -95,10 +99,10 @@ public class ProgressFragment extends Fragment {
 
 		this.view = view;
 		selectedDate = LocalDate.now();
-		previous = view.findViewById(R.id.btn_previous_month);
-		next = view.findViewById(R.id.btn_successive_month);
-		meseAnno = view.findViewById(R.id.mese_anno);
-		meseAnno.setText( ""+ selectedDate.getMonth()+" "+ selectedDate.getYear());
+		previous = view.findViewById(R.id.btn_previous);
+		next = view.findViewById(R.id.btn_next);
+		meseAnno = view.findViewById(R.id.text_view_time_interval);
+		meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 		setHeaderDaysOfWeek();
 		setButtons();
 		aggiornaGriglia();
@@ -110,7 +114,7 @@ public class ProgressFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				selectedDate = selectedDate.minusMonths( 1);
-				meseAnno.setText( ""+ selectedDate.getMonth()+" "+ selectedDate.getYear());
+				meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 				aggiornaGriglia();
 			}
 		});
@@ -119,7 +123,7 @@ public class ProgressFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				selectedDate = selectedDate.plusMonths( 1);
-				meseAnno.setText( ""+ selectedDate.getMonth()+" "+ selectedDate.getYear());
+				meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 				aggiornaGriglia();
 			}
 		});
@@ -127,15 +131,19 @@ public class ProgressFragment extends Fragment {
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	private void aggiornaGriglia(){
-		LocalDate previousMonday = getPreviousMonday(selectedDate);
+		LocalDate monday = getFirstDayOfMonth(selectedDate);
+		if( !( monday.getDayOfWeek().equals( DayOfWeek.MONDAY))){
+			monday = getPreviousMonday( monday);
+		}
+
 		listaObbiettivi = new ArrayList<DayProgress>();
 
 		for(int i=0; i<ProgressAdapter.GRID_DAYS_CELLS; i++){
 			listaObbiettivi.add( new DayProgress(
 					ThreadLocalRandom.current().nextInt( 0, 101),
 					ThreadLocalRandom.current().nextInt( 0, 101),
-					previousMonday));
-			previousMonday = previousMonday.plusDays(1);
+					monday));
+			monday = monday.plusDays(1);
 		}
 
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_list_view);
@@ -148,13 +156,12 @@ public class ProgressFragment extends Fragment {
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	private LocalDate getPreviousMonday(LocalDate selectedDate){
-		LocalDate returnPreviousMonday = LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), 1);
-		if( !( returnPreviousMonday.getDayOfWeek().equals( DayOfWeek.MONDAY))){
-			returnPreviousMonday = returnPreviousMonday.with(TemporalAdjusters.previous( DayOfWeek.MONDAY));
-		}
-		System.out.println("MainActivity getPreviousMonday selectedDate = "+selectedDate);
-		System.out.println("MainActivity getPreviousMonday returnPreviousMonday = "+returnPreviousMonday);
-		return returnPreviousMonday;
+		return selectedDate.with(TemporalAdjusters.previous( DayOfWeek.MONDAY));
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	private LocalDate getFirstDayOfMonth(LocalDate selectedDate){
+		return LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), 1);
 	}
 
 	private void setHeaderDaysOfWeek(){
@@ -166,14 +173,12 @@ public class ProgressFragment extends Fragment {
 		TextView sixthDayOfWeek = view.findViewById(R.id.sixthDayOfWeek);
 		TextView seventhDayOfWeek = view.findViewById(R.id.seventhDayOfWeek);
 
-		String dayOfWeek[] = getResources().getStringArray(R.array.daysOfWeekAbbreviated_En);
-
-		firstDayOfWeek.setText( dayOfWeek[0]);
-		secondDayOfWeek.setText( dayOfWeek[1]);
-		thirdDayOfWeek.setText( dayOfWeek[2]);
-		fourthDayOfWeek.setText( dayOfWeek[3]);
-		fifthDayOfWeek.setText( dayOfWeek[4]);
-		sixthDayOfWeek.setText( dayOfWeek[5]);
-		seventhDayOfWeek.setText( dayOfWeek[6]);
+		firstDayOfWeek.setText( Utility.capitalize(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		secondDayOfWeek.setText( Utility.capitalize(DayOfWeek.TUESDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		thirdDayOfWeek.setText( Utility.capitalize(DayOfWeek.WEDNESDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		fourthDayOfWeek.setText( Utility.capitalize(DayOfWeek.THURSDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		fifthDayOfWeek.setText( Utility.capitalize(DayOfWeek.FRIDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		sixthDayOfWeek.setText( Utility.capitalize(DayOfWeek.SATURDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
+		seventhDayOfWeek.setText( Utility.capitalize(DayOfWeek.SUNDAY.getDisplayName(TextStyle.FULL, Locale.getDefault()).substring(0, 3)));
 	}
 }

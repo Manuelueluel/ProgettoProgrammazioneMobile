@@ -54,6 +54,7 @@ public class StartNewSessionFragment extends DialogFragment {
     private final String STATO_TIMER = Utility.STATO_TIMER;
     private final String STATO_TIMER_PRECEDENTE = Utility.STATO_TIMER_PRECEDENTE;
     private final String NOME_ACTIVITY_ASSOCIATA = Utility.NOME_ACTIVITY_ASSOCIATA;
+    private final String COLORE_ACTIVITY_ASSOCIATA = Utility.COLORE_ACTIVITY_ASSOCIATA;
 
 
     @Override
@@ -216,6 +217,7 @@ public class StartNewSessionFragment extends DialogFragment {
         editor.putInt(STATO_TIMER, statoTimer.getValue());
         editor.putInt(STATO_TIMER_PRECEDENTE, StatoTimer.DISATTIVO);
         editor.putString(NOME_ACTIVITY_ASSOCIATA, activitySelezionata.getName());
+        editor.putInt(COLORE_ACTIVITY_ASSOCIATA, activitySelezionata.getColore());
         editor.apply();
     }
 

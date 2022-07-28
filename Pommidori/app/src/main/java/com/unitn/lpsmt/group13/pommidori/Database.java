@@ -288,20 +288,21 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Pomodoro
-    public boolean addPomodoroCompletato(@NonNull TablePomodoroModel tablePomodoroModel){
+    public boolean addCompletedPomodoro(@NonNull TablePomodoroModel tablePomodoroModel){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(TablePomodoroModel.COLUMN_NOME_ACTIVITY, tablePomodoroModel.getName());
         cv.put(TablePomodoroModel.COLUMN_DATA_INIZIO, tablePomodoroModel.getInizio().getTime());
         cv.put(TablePomodoroModel.COLUMN_DURATA, tablePomodoroModel.getDurata());
+        cv.put(TablePomodoroModel.COLUMN_COLORE, tablePomodoroModel.getColor());
 
-        long result = db.insert(TableSessionProgModel.TABLE_NAME,null,cv);
+        long result = db.insert(TablePomodoroModel.TABLE_NAME,null,cv);
         db.close();
         return result == -1 ? false : true;
     }
 
-    public List<TablePomodoroModel> getPomodoroBySettimana(@NonNull LocalDate date){
+    public List<TablePomodoroModel> getPomodoroByWeek(@NonNull LocalDate date){
         //Date è un giorno qualsiasi della settimana, da cui ricavo inizio e fine settimana
         List<TablePomodoroModel> pomodoroSettimanali = new ArrayList<>();
         date = date.with( WeekFields.of(Locale.ITALY).dayOfWeek(), 1);  //Lunedì primo giorno della settimana
@@ -324,12 +325,14 @@ public class Database extends SQLiteOpenHelper {
                 String activityName = cursor.getString(1);
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
+                int color = cursor.getInt( 4);
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
-                        durataPomodoro
+                        durataPomodoro,
+                        color
                 );
 
                 pomodoroSettimanali.add(p);
@@ -342,7 +345,7 @@ public class Database extends SQLiteOpenHelper {
         return pomodoroSettimanali;
     }
 
-    public List<TablePomodoroModel> getPomodoroByMese(@NonNull LocalDate date){
+    public List<TablePomodoroModel> getPomodoroByMonth(@NonNull LocalDate date){
         //Date è un giorno qualsiasi del mese, da cui ricavo inizio e fine mese
         List<TablePomodoroModel> pomodoroMensili = new ArrayList<>();
         LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
@@ -364,12 +367,14 @@ public class Database extends SQLiteOpenHelper {
                 String activityName = cursor.getString(1);
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
+                int color = cursor.getInt( 4);
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
-                        durataPomodoro
+                        durataPomodoro,
+                        color
                 );
 
                 pomodoroMensili.add(p);
@@ -381,7 +386,7 @@ public class Database extends SQLiteOpenHelper {
         return pomodoroMensili;
     }
 
-    public List<TablePomodoroModel> getPomodoroByAnno(@NonNull  LocalDate date){
+    public List<TablePomodoroModel> getPomodoroByYear(@NonNull  LocalDate date){
         //Date è un giorno qualsiasi dell'anno, da cui ricavo inizio e fine anno
         List<TablePomodoroModel> pomodoroAnnuali = new ArrayList<>();
         LocalDateTime inizioAnno = date.withDayOfYear(1).atStartOfDay();    //Primo giorno dell'anno alle 00:00
@@ -403,12 +408,14 @@ public class Database extends SQLiteOpenHelper {
                 String activityName = cursor.getString(1);
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
+                int color = cursor.getInt( 4);
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
-                        durataPomodoro
+                        durataPomodoro,
+                        color
                 );
 
                 pomodoroAnnuali.add(p);

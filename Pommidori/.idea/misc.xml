@@ -22,15 +22,22 @@
         <entry key="..\:/Progetto/ProgettoProgrammazioneMobile/Pommidori/app/src/main/res/layout/old_custom_calendar_view.xml" value="0.3619791666666667" />
         <entry key="..\:/Progetto/ProgettoProgrammazioneMobile/Pommidori/app/src/main/res/layout/row.xml" value="0.3619791666666667" />
         <entry key="..\:/Progetto/ProgettoProgrammazioneMobile/Pommidori/app/src/main/res/layout/toolbar.xml" value="0.3625" />
+        <entry key="app/src/main/res/drawable/custom_radio_button.xml" value="0.2595" />
+        <entry key="app/src/main/res/drawable/custom_radio_button_regular.xml" value="0.2595" />
+        <entry key="app/src/main/res/drawable/custom_radio_button_text_selector.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/ic_arrow_right.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/ic_pause_24.xml" value="0.3859375" />
         <entry key="app/src/main/res/drawable/ic_settings_24.xml" value="0.3859375" />
+        <entry key="app/src/main/res/drawable/radio_flat_text_selector.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/selector_circle_progress.xml" value="0.2595" />
+        <entry key="app/src/main/res/drawable/selector_radio_button.xml" value="0.2595" />
+        <entry key="app/src/main/res/drawable/selector_radio_button_text.xml" value="0.2595" />
         <entry key="app/src/main/res/layout/activity_calendario.xml" value="0.36096014492753625" />
         <entry key="app/src/main/res/layout/activity_homepage.xml" value="0.28854166666666664" />
         <entry key="app/src/main/res/layout/activity_impostazioni.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/activity_report.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_timer.xml" value="0.36367753623188404" />
+        <entry key="app/src/main/res/layout/calendar_cell.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/content_report.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/content_timer.xml" value="0.3697916666666667" />
         <entry key="app/src/main/res/layout/custom_calendar_month_view.xml" value="0.35625" />
@@ -54,6 +61,7 @@
         <entry key="app/src/main/res/layout/new_activity_and_session.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/rating_card.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/row.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/time_interval_selection.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.36096014492753625" />
       </map>
     </option>

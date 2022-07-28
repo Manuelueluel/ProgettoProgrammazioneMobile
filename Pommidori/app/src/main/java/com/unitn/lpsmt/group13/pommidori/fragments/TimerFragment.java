@@ -3,7 +3,6 @@ package com.unitn.lpsmt.group13.pommidori.fragments;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -19,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unitn.lpsmt.group13.pommidori.CountUpTimer;
 import com.unitn.lpsmt.group13.pommidori.Database;
-import com.unitn.lpsmt.group13.pommidori.Homepage;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.Utility;
@@ -52,7 +50,7 @@ public class TimerFragment extends Fragment {
 	private CountUpTimer countUpTimer;          //Timer a contatore
 	private SharedPreferences sharedPreferences;
 	private Context context;
-	private Database db;
+	private Database database;
 
 	//Variabili: Tutti i tempi long sono espressi in milli secondi
 	private long tempoIniziale;
@@ -63,7 +61,6 @@ public class TimerFragment extends Fragment {
 	private StatoTimer statoTimer;
 	private StatoTimer statoTimerPrecedente;
 	private StatoTimerListener statoTimerListener;
-	private String nomeActivityAssociata;
 
 	//I timer per essere persistenti anche con l'activity chiusa necessitano di salvare delle informazioni nelle shared preferences
 	private final String SHARED_PREFS_TIMER = Utility.SHARED_PREFS_TIMER;
@@ -78,6 +75,7 @@ public class TimerFragment extends Fragment {
 	private final String PAUSA = Utility.PAUSA;
 	private final String ACTIVITY_ASSOCIATA = Utility.NOME_ACTIVITY_ASSOCIATA;
 	private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
+	private final String COLORE_ACTIVITY_ASSOCIATA = Utility.COLORE_ACTIVITY_ASSOCIATA;
 
 	// TODO: Rename and change types of parameters
 	private String mParam1;
@@ -235,7 +233,7 @@ public class TimerFragment extends Fragment {
 		editor.putLong( TEMPO_TRASCORSO, tempoTrascorso);
 		editor.putInt( STATO_TIMER, statoTimer.getValue());
 		editor.putInt( STATO_TIMER_PRECEDENTE, statoTimerPrecedente.getValue());
-		editor.putString( ACTIVITY_ASSOCIATA, nomeActivityAssociata);
+		editor.putString( ACTIVITY_ASSOCIATA, sharedPreferences.getString(ACTIVITY_ASSOCIATA, "Nessuna attività"));
 		editor.apply();
 	}
 
@@ -249,7 +247,6 @@ public class TimerFragment extends Fragment {
 		minutiTimer = sharedPreferences.getInt( MINUTI_TIMER, 30);
 		statoTimer = new StatoTimer( sharedPreferences.getInt(STATO_TIMER, StatoTimer.DISATTIVO));
 		statoTimerPrecedente = new StatoTimer( sharedPreferences.getInt(STATO_TIMER_PRECEDENTE, StatoTimer.DISATTIVO));
-		nomeActivityAssociata = sharedPreferences.getString( ACTIVITY_ASSOCIATA, "???");
 	}
 
 	private void setButtonListener() {
@@ -305,8 +302,7 @@ public class TimerFragment extends Fragment {
 
 	//Avvia un countdown timer per una pausa, modificando dati salvati e alcune views
 	private void startCountDownPausa(){
-		//Cancellare l'attuale timer
-		deleteTimer();
+		stopTimer();
 
 		//Recuperare durata pausa e reimpostare tempi
 		long pausaMilliSecondi = 60000 * sharedPreferences.getInt(PAUSA, 5);
@@ -451,13 +447,14 @@ public class TimerFragment extends Fragment {
 	}
 
 	private boolean addPomodoroCompletato(){
-		db = Database.getInstance( context);
+		database = Database.getInstance( context);
 		TablePomodoroModel pomodoro = new TablePomodoroModel();
 
-		pomodoro.setName( nomeActivityAssociata);
+		pomodoro.setName( sharedPreferences.getString(ACTIVITY_ASSOCIATA, "Nessuna attività"));
 		pomodoro.setInizio( new Date( tempoIniziale));
 		pomodoro.setDurata( tempoTrascorso);
+		pomodoro.setColor( sharedPreferences.getInt(COLORE_ACTIVITY_ASSOCIATA, 0));
 
-		return db.addPomodoroCompletato( pomodoro);
+		return database.addCompletedPomodoro( pomodoro);
 	}
 }

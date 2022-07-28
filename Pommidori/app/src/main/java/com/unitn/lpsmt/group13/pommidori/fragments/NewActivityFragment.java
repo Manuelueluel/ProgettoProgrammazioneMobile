@@ -102,6 +102,7 @@ public class NewActivityFragment extends Fragment {
                             @Override
                             public void onColorPicked(int c) {
                                 color = c;
+                                System.out.println("colore scelto "+c);
                                 colorPicker.setBackgroundColor(color);
                             }
                         });

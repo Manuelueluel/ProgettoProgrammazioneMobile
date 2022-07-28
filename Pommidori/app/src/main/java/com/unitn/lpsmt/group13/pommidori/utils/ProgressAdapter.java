@@ -49,8 +49,8 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 		this.selectedDate = selectedDate;
 		this.monday = getFirstDayOfMonth( selectedDate);
 		//Se il primo del mese è di lunedì, tengo quello, altrimenti cerco il lunedì precedente al primo del mese
-		if( !( monday.equals( DayOfWeek.MONDAY))){
-			monday = getPreviousMonday( selectedDate);
+		if( !( monday.getDayOfWeek().equals( DayOfWeek.MONDAY))){
+			monday = getPreviousMonday( monday);
 		}
 	}
 
@@ -93,12 +93,6 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 	@Override
 	public int getItemCount() {
 		return GRID_DAYS_CELLS;
-	}
-
-	public String getDayOfWeek( int position){
-		String arr[] = context.getResources().getStringArray( R.array.daysOfWeekAbbreviated_En);
-		if( position<7) return arr[position];
-		return null;
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
