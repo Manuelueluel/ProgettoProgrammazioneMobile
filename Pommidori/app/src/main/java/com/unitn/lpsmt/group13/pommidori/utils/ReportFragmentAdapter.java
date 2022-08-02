@@ -23,11 +23,11 @@ public class ReportFragmentAdapter extends FragmentStateAdapter {
 		Fragment fragment;
 
 		switch (position){
-			case 0: fragment = PieChartFragment.newInstance(1);
+			case 0: fragment = PieChartFragment.newInstance();
 				break;
-			case 1: fragment = ProgressFragment.newInstance(2);
+			case 1: fragment = ProgressFragment.newInstance();
 				break;
-			case 2: fragment = RatingFragment.newInstance(3);
+			case 2: fragment = RatingFragment.newInstance();
 				break;
 			default:
 				fragment = new Fragment();

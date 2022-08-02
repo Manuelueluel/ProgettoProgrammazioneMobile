@@ -1,12 +1,10 @@
 package com.unitn.lpsmt.group13.pommidori.fragments;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -23,7 +21,6 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.unitn.lpsmt.group13.pommidori.Database;
@@ -37,7 +34,6 @@ import java.time.Period;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,15 +45,6 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class PieChartFragment extends Fragment {
-
-	// TODO: Rename parameter arguments, choose names that match
-	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-	private static final String ARG_PARAM1 = "param1";
-	private static final String ARG_PARAM2 = "param2";
-
-	// TODO: Rename and change types of parameters
-	private int counter;
-	private String mParam2;
 
 	private PieChart pieChart;
 	private RadioButton week;
@@ -78,28 +65,18 @@ public class PieChartFragment extends Fragment {
 
 	/**
 	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
+	 * this fragment.
 	 *
-	 * @param counter Parameter 1.
 	 * @return A new instance of fragment PieChartFragment.
 	 */
 	// TODO: Rename and change types and number of parameters
-	public static PieChartFragment newInstance(int counter) {
-		PieChartFragment fragment = new PieChartFragment();
-		Bundle args = new Bundle();
-		args.putInt(ARG_PARAM1, counter);
-		//args.putString(ARG_PARAM2, param2);
-		fragment.setArguments(args);
-		return fragment;
+	public static PieChartFragment newInstance() {
+		return new PieChartFragment();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-			counter = getArguments().getInt(ARG_PARAM1);
-			//mParam2 = getArguments().getString(ARG_PARAM2);
-		}
 	}
 
 	@Override
@@ -123,10 +100,8 @@ public class PieChartFragment extends Fragment {
 		pieChart = view.findViewById(R.id.pie_chart);
 
 		setupPieChart();
-		//loadPieChartData();
 		setButtonListeners();
 
-		//TODO selezione intervallo di tempo da considerare settimana, mese, anno e la selezione tra essi
 	}
 
 	@Override
@@ -137,18 +112,16 @@ public class PieChartFragment extends Fragment {
 		radioGroup.check(R.id.radioButton_week);	//Selezionato di default
 		updateTimeInterval();
 		pomodoroList = database.getPomodoroByWeek( selectedDate);
-		load();
+		updatePieChart();
 	}
 
 	private void setButtonListeners(){
 		week.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//Selezionare tutti i pomodoro della settimana, intesa come lunedi-domenica
-				//timeInterval mostra la settimana selezionata
 				updateTimeInterval();
 				pomodoroList = database.getPomodoroByWeek( selectedDate);
-				load();
+				updatePieChart();
 			}
 		});
 
@@ -157,7 +130,7 @@ public class PieChartFragment extends Fragment {
 			public void onClick(View v) {
 				updateTimeInterval();
 				pomodoroList = database.getPomodoroByMonth( selectedDate);
-				load();
+				updatePieChart();
 			}
 		});
 
@@ -166,7 +139,7 @@ public class PieChartFragment extends Fragment {
 			public void onClick(View v) {
 				updateTimeInterval();
 				pomodoroList = database.getPomodoroByYear( selectedDate);
-				load();
+				updatePieChart();
 			}
 		});
 
@@ -191,7 +164,7 @@ public class PieChartFragment extends Fragment {
 						break;
 				}
 				updateTimeInterval();
-				load();
+				updatePieChart();
 			}
 		});
 
@@ -216,7 +189,7 @@ public class PieChartFragment extends Fragment {
 						break;
 				}
 				updateTimeInterval();
-				load();
+				updatePieChart();
 			}
 		});
 	}
@@ -254,7 +227,7 @@ public class PieChartFragment extends Fragment {
 		pieChart.getDescription().setEnabled(false);
 		pieChart.setRotationEnabled(false);
 		pieChart.setTouchEnabled(false);
-
+		//pieChart.animateY(1400, Easing.EaseInOutBack);
 
 		Legend l = pieChart.getLegend();
 		l.setVerticalAlignment( Legend.LegendVerticalAlignment.BOTTOM);
@@ -263,92 +236,36 @@ public class PieChartFragment extends Fragment {
 		l.setTextSize(12f);
 		l.setDrawInside(false);
 		l.setEnabled(true);
-
 	}
 
-	private void loadPieChartData(){
-		ArrayList<PieEntry> entries = new ArrayList<>();
-		entries.add( new PieEntry(0.2f, "Food & Dining"));
-		entries.add( new PieEntry(0.15f, "Medical"));
-		entries.add( new PieEntry(0.10f, "Entertainment"));
-		entries.add( new PieEntry(0.25f, "Electricity & gas"));
-		entries.add( new PieEntry(0.3f, "Housing"));
-
-		ArrayList<Integer> colors = new ArrayList<>();
-		for(int color: ColorTemplate.MATERIAL_COLORS){
-			colors.add( color);
-		}
-
-		for(int color: ColorTemplate.VORDIPLOM_COLORS){
-			colors.add( color);
-		}
-
-		PieDataSet dataSet = new PieDataSet(entries, "Expense category");
-		dataSet.setColors( colors);
-
-		PieData data = new PieData(dataSet);
-		data.setDrawValues(true);
-		data.setValueFormatter( new PercentFormatter(pieChart));
-		data.setValueTextSize(12f);
-		data.setValueTextColor(Color.BLACK);
-
-		pieChart.setData( data);
-		pieChart.invalidate();
-
-		pieChart.animateY(1400, Easing.EaseInOutBack);
-	}
-
-	private void load(){
+	private void updatePieChart(){
 		LinkedHashMap<String, Long> activityDuration = new LinkedHashMap<>();
+		ArrayList<Integer> colors = new ArrayList<>();
+		ArrayList<PieEntry> entries = new ArrayList<>();
+		long sumOfPomodoroTimes = 0;
 
-		/*	TODO problema colori: provare con una LinkedHashMap dove l'ordine di inserimento è quello di loop
-		 	usare una lista a parte per inserire i colori, quindi allo stesso indice dovrebbe corrispondere
-		 	activity con colore
-		 */
-
-
-		//Ricavare dalla pomodoroList le activity, e per ognuna di esse sommare i propri pomodoro
+		//Ricavare dalla pomodoroList le activity e i colori associati, e per ognuna di esse sommare i propri pomodoro
 		pomodoroList.forEach(pomodoro -> {
 			try {
 				if (activityDuration.containsKey(pomodoro.getName())) {
 					activityDuration.put(pomodoro.getName(), (pomodoro.getDurata() + activityDuration.get(pomodoro.getName())));
 				}else{
 					activityDuration.put( pomodoro.getName(), pomodoro.getDurata());
+					colors.add( pomodoro.getColor());
 				}
 			}catch (NullPointerException ex){
 				ex.getStackTrace();
 			}
 		});
 
-		ArrayList<Integer> col = new ArrayList<>();
-		for(int i=0; i<activityDuration.size(); i++){
-			col.add( pomodoroList.get(i).getColor());
-		}
-		System.out.println(activityDuration);
-		System.out.println(col);
-
-
-
-		/*
-		ArrayList<Integer> colors = new ArrayList<>();
-		for(int color: ColorTemplate.MATERIAL_COLORS){
-			colors.add( color);
-		}
-
-		for(int color: ColorTemplate.VORDIPLOM_COLORS){
-			colors.add( color);
-		}*/
-
-		long sum = 0;
-		ArrayList<PieEntry> entries = new ArrayList<>();
 		for( Map.Entry<String, Long> item : activityDuration.entrySet()){
-			sum = sum + item.getValue();
+			sumOfPomodoroTimes = sumOfPomodoroTimes + item.getValue();
 			entries.add( new PieEntry( item.getValue(), item.getKey()));
 		}
 
 		PieDataSet dataSet = new PieDataSet( entries,"");//"Pomodoros by activity"
-		dataSet.setColors( col);
-		pieChart.setCenterText( millisToHoursAndMinutes( sum));
+		dataSet.setColors( colors);
+		pieChart.setCenterText( millisToHoursAndMinutes( sumOfPomodoroTimes));
 
 		PieData data = new PieData(dataSet);
 		data.setDrawValues(true);
