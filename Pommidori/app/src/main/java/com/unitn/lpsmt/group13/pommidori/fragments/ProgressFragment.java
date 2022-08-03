@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.method.TextKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,12 +84,12 @@ public class ProgressFragment extends Fragment {
 		meseAnno = view.findViewById(R.id.text_view_time_interval);
 		meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 		setHeaderDaysOfWeek();
-		setButtons();
+		setButtonsListeners();
 		aggiornaGriglia();
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
-	private void setButtons(){
+	private void setButtonsListeners(){
 		previous.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -133,6 +132,15 @@ public class ProgressFragment extends Fragment {
 
 		adapter = new ProgressAdapter( view.getContext(), listaObbiettivi, selectedDate);
 		recyclerView.setAdapter( adapter);
+	}
+
+	private void updateGrid(){
+		/*	TODO ottenere le sessioni programmate del mese selezionato e i pomodori di quel mese
+		*
+		* 	(se i pomodori rientrano nelle sessioni programmate vengono contati nel completamento
+		* 	ma se non vi rientrano, contano comunque sul tempo di progressione del mese?
+		* 	possibile opzione selezionabile dalle impostazioni?)
+		* */
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
