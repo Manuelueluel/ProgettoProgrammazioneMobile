@@ -16,16 +16,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.DayProgress;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Utility;
+import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.utils.ProgressAdapter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,8 +47,9 @@ public class ProgressFragment extends Fragment {
 	private RecyclerView recyclerView;
 	private RecyclerView.Adapter adapter;
 	private RecyclerView.LayoutManager layoutManager;
-	private View view;
+	private Database database;
 
+	private View view;
 	private Button previous;
 	private Button next;
 	private TextView meseAnno;
@@ -86,6 +93,12 @@ public class ProgressFragment extends Fragment {
 		setHeaderDaysOfWeek();
 		setButtonsListeners();
 		aggiornaGriglia();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		database = Database.getInstance( this.getContext());
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
@@ -140,7 +153,29 @@ public class ProgressFragment extends Fragment {
 		* 	(se i pomodori rientrano nelle sessioni programmate vengono contati nel completamento
 		* 	ma se non vi rientrano, contano comunque sul tempo di progressione del mese?
 		* 	possibile opzione selezionabile dalle impostazioni?)
+		* 	Per ora rientrano
 		* */
+
+		List<TableSessionProgModel> sessioniProgrammate = database.getSessioniProgrammateByMese( selectedDate);
+		List<TablePomodoroModel> pomodoroCompletati = database.getPomodoroByMonth( selectedDate);
+		ArrayList<DayProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
+		ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset( selectedDate.atStartOfDay());
+
+		for(int i=1; i<=selectedDate.getMonth().length( selectedDate.isLeapYear()); i++){
+			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
+		}
+
+		//Calcolo obbiettivo giornaliero di studio, sommando la durata delle varie sessioni di studio programmate
+		sessioniProgrammate.forEach( sessione -> {
+			DayProgress dayProgress = monthlyProgress.get( sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth());
+			dayProgress.setObjective( dayProgress.getObjective()+(int) (sessione.getOraInizio().toInstant().toEpochMilli() - sessione.getOraFine().toInstant().toEpochMilli()));
+		});
+
+		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata
+		pomodoroCompletati.forEach( pomodoro -> {
+			DayProgress dayProgress = monthlyProgress.get( pomodoro.getInizio().toInstant().atZone( zoneOffset).getDayOfMonth());
+			dayProgress.setProgress( dayProgress.getProgress()+(int) (pomodoro.getDurata()));
+		});
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)

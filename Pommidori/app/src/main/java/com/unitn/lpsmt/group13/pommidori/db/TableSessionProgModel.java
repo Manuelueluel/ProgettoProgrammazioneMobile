@@ -48,7 +48,7 @@ public class TableSessionProgModel implements Comparable<TableSessionProgModel>{
         this.oraInizio = oraInizio;
         this.oraFine = oraFine;
         this.avviso = avviso;
-        this.ripetizione =ripetizione;
+        this.ripetizione = ripetizione;
     }
 
     public int getId() {

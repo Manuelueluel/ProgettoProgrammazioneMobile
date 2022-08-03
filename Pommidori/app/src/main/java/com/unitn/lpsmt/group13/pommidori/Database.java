@@ -286,6 +286,48 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
+    //TODO getSessioniProgrammateByMese da testare
+    public List<TableSessionProgModel> getSessioniProgrammateByMese(LocalDate date){
+        List<TableSessionProgModel> sessioniProgrammateMensili = new ArrayList<>();
+        LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
+        LocalDateTime fineMese = date.withDayOfMonth( date.getMonth().length( date.isLeapYear())).atTime(LocalTime.MAX); //Ultimo giorno del mese, alle 23:59:59
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(inizioMese);   //Zone orarie, GMT +02:00 per italia
+
+        String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME
+                + " WHERE " + TableSessionProgModel.COLUMN_ORA_INIZIO
+                + " BETWEEN " + inizioMese.toInstant(zoneOffset).toEpochMilli()
+                + " AND " + fineMese.toInstant(zoneOffset).toEpochMilli();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            //loop su tutti gli elementi
+            do{
+                int sessionId = cursor.getInt(0);
+                TableActivityModel activity = getActivity(sessionId);
+                long oraInizio = cursor.getLong(2);
+                long oraFine = cursor.getLong(3);
+                String avviso = cursor.getString(4);
+                String ripetizione = cursor.getString( 5);
+
+                TableSessionProgModel p = new TableSessionProgModel(
+                        sessionId,
+                        activity,
+                        new Date(oraInizio),
+                        new Date(oraFine),
+                        avviso,
+                        ripetizione
+                );
+
+                sessioniProgrammateMensili.add(p);
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return sessioniProgrammateMensili;
+    }
 
     //Pomodoro
     public boolean addCompletedPomodoro(@NonNull TablePomodoroModel tablePomodoroModel){
