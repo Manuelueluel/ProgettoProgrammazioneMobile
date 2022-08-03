@@ -69,7 +69,6 @@ public class PieChartFragment extends Fragment {
 	 *
 	 * @return A new instance of fragment PieChartFragment.
 	 */
-	// TODO: Rename and change types and number of parameters
 	public static PieChartFragment newInstance() {
 		return new PieChartFragment();
 	}
