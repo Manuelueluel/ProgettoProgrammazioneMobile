@@ -1,5 +1,13 @@
 package com.unitn.lpsmt.group13.pommidori;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+
 public class Utility {
 
 	//Shared preferences per gestione timer
@@ -25,6 +33,20 @@ public class Utility {
 			str = str.substring(0,1).toUpperCase() + str.substring(1);
 		}
 		return str;
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public static LocalDate getPreviousMonday(LocalDate selectedDate){
+		return selectedDate.with(TemporalAdjusters.previous( DayOfWeek.MONDAY));
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public static LocalDate getFirstDayOfMonth(LocalDate selectedDate){
+		return LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), 1);
+	}
+
+	public static String millisToHoursAndMinutes(long milliseconds){
+		return ((int) (milliseconds / 1000) / 3600) + "h " + (((int) (milliseconds / 1000) % 3600) / 60) + "m";
 	}
 }
 

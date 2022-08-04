@@ -264,7 +264,7 @@ public class PieChartFragment extends Fragment {
 
 		PieDataSet dataSet = new PieDataSet( entries,"");//"Pomodoros by activity"
 		dataSet.setColors( colors);
-		pieChart.setCenterText( millisToHoursAndMinutes( sumOfPomodoroTimes));
+		pieChart.setCenterText( Utility.millisToHoursAndMinutes( sumOfPomodoroTimes));
 
 		PieData data = new PieData(dataSet);
 		data.setDrawValues(true);

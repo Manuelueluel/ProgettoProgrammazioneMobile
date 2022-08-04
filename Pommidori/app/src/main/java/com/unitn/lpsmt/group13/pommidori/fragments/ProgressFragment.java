@@ -43,7 +43,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ProgressFragment extends Fragment {
 
 	private LocalDate selectedDate;
-	private ArrayList<DayProgress> listaObbiettivi;
 	private RecyclerView recyclerView;
 	private RecyclerView.Adapter adapter;
 	private RecyclerView.LayoutManager layoutManager;
@@ -92,13 +91,13 @@ public class ProgressFragment extends Fragment {
 		meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 		setHeaderDaysOfWeek();
 		setButtonsListeners();
-		aggiornaGriglia();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		database = Database.getInstance( this.getContext());
+		updateGrid();
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
@@ -108,7 +107,7 @@ public class ProgressFragment extends Fragment {
 			public void onClick(View view) {
 				selectedDate = selectedDate.minusMonths( 1);
 				meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
-				aggiornaGriglia();
+				updateGrid();
 			}
 		});
 
@@ -117,75 +116,74 @@ public class ProgressFragment extends Fragment {
 			public void onClick(View view) {
 				selectedDate = selectedDate.plusMonths( 1);
 				meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
-				aggiornaGriglia();
+				updateGrid();
 			}
 		});
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	private void aggiornaGriglia(){
-		LocalDate monday = getFirstDayOfMonth(selectedDate);
+	private void updateGrid(){
+		List<TableSessionProgModel> sessioniProgrammate = database.getSessioniProgrammateByMese( selectedDate);
+		List<TablePomodoroModel> pomodoroCompletati = database.getPomodoroByMonth( selectedDate);
+		ArrayList<DayProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
+		ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset( selectedDate.atStartOfDay());
+		int startIntervalOfSelectedMonth;
+		int endIntervalOfSelectedMonth;
+
+		//Identificare se il primo del mese selezionato è di lunedi, se non lo è usare l'ultimo lunedi del mese precedente
+		LocalDate monday = Utility.getFirstDayOfMonth( selectedDate);
 		if( !( monday.getDayOfWeek().equals( DayOfWeek.MONDAY))){
-			monday = getPreviousMonday( monday);
+			monday = Utility.getPreviousMonday( monday);
 		}
 
-		listaObbiettivi = new ArrayList<DayProgress>();
-
-		for(int i=0; i<ProgressAdapter.GRID_DAYS_CELLS; i++){
-			listaObbiettivi.add( new DayProgress(
-					ThreadLocalRandom.current().nextInt( 0, 101),
-					ThreadLocalRandom.current().nextInt( 0, 101),
-					monday));
-			monday = monday.plusDays(1);
+		startIntervalOfSelectedMonth = 0;
+		//Se monday non è il primo lunedì del mese selezionato, allora sarà l'ultimo lunedì del mese precedente
+		if( !(monday.getDayOfMonth() == 1)){
+			startIntervalOfSelectedMonth = monday.getMonth().length( monday.isLeapYear()) - monday.getDayOfMonth() + 1;
 		}
+
+		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.getMonth().length( selectedDate.isLeapYear());
+
+		//Inizializzazione monthlyProgress
+		//Primi x giorni nella griglia che non appartengono al mese selezionato
+		for(int i=0; i<startIntervalOfSelectedMonth; i++){
+			monthlyProgress.add( new DayProgress(0, 0, monday.plusDays(i)));
+		}
+
+		//Giorni del mese selezionato e i loro progressi
+		for(int i=1; i<=endIntervalOfSelectedMonth; i++){
+			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
+		}
+
+		//Ultimi x giorni nella griglia che non appartengono al mese selezionato
+		for(int i=endIntervalOfSelectedMonth; i<ProgressAdapter.GRID_DAYS_CELLS; i++){
+			monthlyProgress.add( new DayProgress(0, 0, monday.plusDays(i)));
+		}
+		System.out.println("startInter "+startIntervalOfSelectedMonth+
+				" month len "+selectedDate.getMonth().length( selectedDate.isLeapYear())+
+				" endInter "+endIntervalOfSelectedMonth+
+				" monthlyProgress.size "+monthlyProgress.size());
+		//TODO sessioniProgrammate non sono 42 come le celle, al più possono essere per 31 giorni
+		//Calcolo obbiettivo giornaliero di studio, sommando la durata delle varie sessioni di studio programmate
+		sessioniProgrammate.forEach( sessione -> {
+			int i = sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth();
+			monthlyProgress.get(i).setObjective(
+					monthlyProgress.get(i).getObjective()
+							+(int) (sessione.getOraFine().toInstant().toEpochMilli() - sessione.getOraInizio().toInstant().toEpochMilli()));
+			//TODO la sessione programmata può non avere una oraFine
+		});
+
+		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata
+		pomodoroCompletati.forEach( pomodoro -> {
+			int i = pomodoro.getInizio().toInstant().atZone( zoneOffset).getDayOfMonth();
+			monthlyProgress.get(i).setProgress( monthlyProgress.get(i).getProgress()+(int) (pomodoro.getDurata()));
+		});
 
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_list_view);
 		layoutManager = new GridLayoutManager( view.getContext(), 7);
 		recyclerView.setLayoutManager( layoutManager);
 
-		adapter = new ProgressAdapter( view.getContext(), listaObbiettivi, selectedDate);
+		adapter = new ProgressAdapter( view.getContext(), monthlyProgress, startIntervalOfSelectedMonth, endIntervalOfSelectedMonth);
 		recyclerView.setAdapter( adapter);
-	}
-
-	private void updateGrid(){
-		/*	TODO ottenere le sessioni programmate del mese selezionato e i pomodori di quel mese
-		*
-		* 	(se i pomodori rientrano nelle sessioni programmate vengono contati nel completamento
-		* 	ma se non vi rientrano, contano comunque sul tempo di progressione del mese?
-		* 	possibile opzione selezionabile dalle impostazioni?)
-		* 	Per ora rientrano
-		* */
-
-		List<TableSessionProgModel> sessioniProgrammate = database.getSessioniProgrammateByMese( selectedDate);
-		List<TablePomodoroModel> pomodoroCompletati = database.getPomodoroByMonth( selectedDate);
-		ArrayList<DayProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
-		ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset( selectedDate.atStartOfDay());
-
-		for(int i=1; i<=selectedDate.getMonth().length( selectedDate.isLeapYear()); i++){
-			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
-		}
-
-		//Calcolo obbiettivo giornaliero di studio, sommando la durata delle varie sessioni di studio programmate
-		sessioniProgrammate.forEach( sessione -> {
-			DayProgress dayProgress = monthlyProgress.get( sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth());
-			dayProgress.setObjective( dayProgress.getObjective()+(int) (sessione.getOraInizio().toInstant().toEpochMilli() - sessione.getOraFine().toInstant().toEpochMilli()));
-		});
-
-		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata
-		pomodoroCompletati.forEach( pomodoro -> {
-			DayProgress dayProgress = monthlyProgress.get( pomodoro.getInizio().toInstant().atZone( zoneOffset).getDayOfMonth());
-			dayProgress.setProgress( dayProgress.getProgress()+(int) (pomodoro.getDurata()));
-		});
-	}
-
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	private LocalDate getPreviousMonday(LocalDate selectedDate){
-		return selectedDate.with(TemporalAdjusters.previous( DayOfWeek.MONDAY));
-	}
-
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	private LocalDate getFirstDayOfMonth(LocalDate selectedDate){
-		return LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), 1);
 	}
 
 	private void setHeaderDaysOfWeek(){
