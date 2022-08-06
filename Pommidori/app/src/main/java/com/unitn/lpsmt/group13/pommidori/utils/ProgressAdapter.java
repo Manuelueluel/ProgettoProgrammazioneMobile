@@ -55,14 +55,22 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 
 	@Override
 	public void onBindViewHolder(@NonNull DayProgressHolder holder, int position) {
-		int progress = list.get( position).getProgress();
+		int progress = 0;
+		String str;
+		if( list.get(position).getObjective() != 0){
+			float pro = list.get( position).getProgress();
+			float obj = list.get(position).getObjective();
+			progress = (int) ((pro / obj) * 100.0);
+
+			str = context.getResources().getString(R.string.objective_toast)+Utility.millisToHoursAndMinutes(list.get(position).getObjective())
+					+"\n"+context.getResources().getString(R.string.progress_toast)+Utility.millisToHoursAndMinutes(list.get(position).getProgress());
+		}else{
+			progress = list.get(position).getProgress();
+			str = context.getResources().getString(R.string.progress_toast)+Utility.millisToHoursAndMinutes(list.get(position).getProgress());
+		}
 
 		holder.dayNumber.setText( Integer.toString( list.get( position).getDay().getDayOfMonth()));
-		holder.progressBar.setProgress( list.get( position).getProgress());
-		System.out.println(
-				"day "+list.get( position).getDay()
-						+" progress "+list.get( position).getProgress()
-						+" objective "+list.get( position).getObjective());
+		holder.progressBar.setProgress( progress);
 
 		//Se è del mese selezionato, seleziono la view e setto onClick, altrimenti deseleziono la view e la coloro di grigio
 		if( (position >= startIntervalOfSelectedMonth) && (position < endIntervalOfSelectedMonth)){
@@ -70,7 +78,7 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 			holder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					Toast.makeText(context, "Completamento obiettivo: "+ progress, Toast.LENGTH_LONG).show();
+					Toast.makeText(context, str, Toast.LENGTH_LONG).show();
 				}
 			});
 		}else{

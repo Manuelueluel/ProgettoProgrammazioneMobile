@@ -24,8 +24,9 @@
     <string name="pausa_in_corso">Pausa in corso</string>
 
     <string name="report">Report</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="objective_toast">Obbiettivo: </string>
+    <string name="progress_toast">Progressi: </string>
+
     <!-- Arrays per provare alcune funzionalità -->
     <string-array name="activitys_name">
         <item name="lpsmt">Laboratorio di programmazione per sistemi mobile e tablet</item>

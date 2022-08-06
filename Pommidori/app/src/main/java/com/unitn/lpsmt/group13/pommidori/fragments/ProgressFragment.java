@@ -87,6 +87,9 @@ public class ProgressFragment extends Fragment {
 		selectedDate = LocalDate.now();
 		previous = view.findViewById(R.id.btn_previous);
 		next = view.findViewById(R.id.btn_next);
+		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_list_view);
+		layoutManager = new GridLayoutManager( view.getContext(), 7);
+		recyclerView.setLayoutManager( layoutManager);
 		meseAnno = view.findViewById(R.id.text_view_time_interval);
 		meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
 		setHeaderDaysOfWeek();
@@ -135,10 +138,11 @@ public class ProgressFragment extends Fragment {
 			monday = Utility.getPreviousMonday( monday);
 		}
 
-		startIntervalOfSelectedMonth = 0;
 		//Se monday non è il primo lunedì del mese selezionato, allora sarà l'ultimo lunedì del mese precedente
 		if( !(monday.getDayOfMonth() == 1)){
 			startIntervalOfSelectedMonth = monday.getMonth().length( monday.isLeapYear()) - monday.getDayOfMonth() + 1;
+		}else{
+			startIntervalOfSelectedMonth = 0;
 		}
 
 		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.getMonth().length( selectedDate.isLeapYear());
@@ -150,7 +154,7 @@ public class ProgressFragment extends Fragment {
 		}
 
 		//Giorni del mese selezionato e i loro progressi
-		for(int i=1; i<=endIntervalOfSelectedMonth; i++){
+		for(int i=1; i<=selectedDate.getMonth().length( selectedDate.isLeapYear()); i++){
 			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
 		}
 
@@ -158,14 +162,10 @@ public class ProgressFragment extends Fragment {
 		for(int i=endIntervalOfSelectedMonth; i<ProgressAdapter.GRID_DAYS_CELLS; i++){
 			monthlyProgress.add( new DayProgress(0, 0, monday.plusDays(i)));
 		}
-		System.out.println("startInter "+startIntervalOfSelectedMonth+
-				" month len "+selectedDate.getMonth().length( selectedDate.isLeapYear())+
-				" endInter "+endIntervalOfSelectedMonth+
-				" monthlyProgress.size "+monthlyProgress.size());
-		//TODO sessioniProgrammate non sono 42 come le celle, al più possono essere per 31 giorni
+
 		//Calcolo obbiettivo giornaliero di studio, sommando la durata delle varie sessioni di studio programmate
 		sessioniProgrammate.forEach( sessione -> {
-			int i = sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth();
+			int i = startIntervalOfSelectedMonth + sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth()-1;
 			monthlyProgress.get(i).setObjective(
 					monthlyProgress.get(i).getObjective()
 							+(int) (sessione.getOraFine().toInstant().toEpochMilli() - sessione.getOraInizio().toInstant().toEpochMilli()));
@@ -174,13 +174,9 @@ public class ProgressFragment extends Fragment {
 
 		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata
 		pomodoroCompletati.forEach( pomodoro -> {
-			int i = pomodoro.getInizio().toInstant().atZone( zoneOffset).getDayOfMonth();
+			int i = startIntervalOfSelectedMonth + pomodoro.getInizio().toInstant().atZone( zoneOffset).getDayOfMonth()-1;
 			monthlyProgress.get(i).setProgress( monthlyProgress.get(i).getProgress()+(int) (pomodoro.getDurata()));
 		});
-
-		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_list_view);
-		layoutManager = new GridLayoutManager( view.getContext(), 7);
-		recyclerView.setLayoutManager( layoutManager);
 
 		adapter = new ProgressAdapter( view.getContext(), monthlyProgress, startIntervalOfSelectedMonth, endIntervalOfSelectedMonth);
 		recyclerView.setAdapter( adapter);
