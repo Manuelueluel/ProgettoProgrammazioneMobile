@@ -12,11 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Rating;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionModel;
 import com.unitn.lpsmt.group13.pommidori.utils.RatingAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -29,8 +36,7 @@ public class RatingFragment extends Fragment {
 	private RecyclerView recyclerView;
 	private RecyclerView.Adapter adapter;
 	private RecyclerView.LayoutManager layoutManager;
-	private ArrayList<Rating> list;
-	private String names[];
+	private Database database;
 
 	public RatingFragment() {
 		// Required empty public constructor
@@ -62,17 +68,38 @@ public class RatingFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		names = getResources().getStringArray(R.array.activitys_name);
-		list = generaListaRatings();
-
 		recyclerView = view.findViewById(R.id.recyclerview_ratings);
 		layoutManager = new LinearLayoutManager( view.getContext());
-		adapter = new RatingAdapter( list);
 		recyclerView.setLayoutManager( layoutManager);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		database = Database.getInstance( this.getContext());
+		getListOfRatings();
+	}
+
+	//TODO getListOfRatings da testare
+	private void getListOfRatings(){
+		List<TableSessionModel> sessionsList = database.getAllSessions();
+		Set<Rating> ratings = new HashSet<>();
+
+		sessionsList.forEach( sessionModel -> {
+			Rating r = new Rating( sessionModel.getValutazione(), sessionModel.getName());
+			if( ratings.contains(r)){
+				ratings.add( new Rating( sessionModel.getValutazione()+r.getRating(), r.getActivityName()));
+			}else{
+				ratings.add(r);
+			}
+		});
+
+		ArrayList<Rating> list = new ArrayList<>( ratings);
+		adapter = new RatingAdapter( list);
 		recyclerView.setAdapter( adapter);
 	}
 
-	//TODO togliere al completamento, usata come prova
+	/*
 	private ArrayList<Rating> generaListaRatings(){
 		ArrayList<Rating> returnList = new ArrayList<>();
 		int size = ThreadLocalRandom.current().nextInt(2, names.length);
@@ -91,4 +118,6 @@ public class RatingFragment extends Fragment {
 		float f = (ThreadLocalRandom.current().nextFloat() * 10) % 5;
 		return 	f;
 	}
+
+	 */
 }

@@ -121,7 +121,7 @@ public class CustomCalendarMonthFragment extends Fragment {
     }
 
     public void addEvents(){
-        List<TableSessionProgModel> sessProg = db.getAllSessioniProgrammate();
+        List<TableSessionProgModel> sessProg = db.getAllProgrammedSessions();
         for(TableSessionProgModel tb : sessProg){
             Event e = new Event(tb.getActivity().getColore(),tb.getOraInizio().getTime(),tb.toString());
             compactCalendarView.addEvent(e);

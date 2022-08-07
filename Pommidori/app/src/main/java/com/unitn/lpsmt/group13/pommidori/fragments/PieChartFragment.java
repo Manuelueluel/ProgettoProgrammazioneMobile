@@ -15,14 +15,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Utility;
@@ -110,7 +108,7 @@ public class PieChartFragment extends Fragment {
 		selectedDate = LocalDate.now();
 		radioGroup.check(R.id.radioButton_week);	//Selezionato di default
 		updateTimeInterval();
-		pomodoroList = database.getPomodoroByWeek( selectedDate);
+		pomodoroList = database.getPomodorosByWeek( selectedDate);
 		updatePieChart();
 	}
 
@@ -119,7 +117,7 @@ public class PieChartFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				updateTimeInterval();
-				pomodoroList = database.getPomodoroByWeek( selectedDate);
+				pomodoroList = database.getPomodorosByWeek( selectedDate);
 				updatePieChart();
 			}
 		});
@@ -128,7 +126,7 @@ public class PieChartFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				updateTimeInterval();
-				pomodoroList = database.getPomodoroByMonth( selectedDate);
+				pomodoroList = database.getPomodorosByMonth( selectedDate);
 				updatePieChart();
 			}
 		});
@@ -137,7 +135,7 @@ public class PieChartFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				updateTimeInterval();
-				pomodoroList = database.getPomodoroByYear( selectedDate);
+				pomodoroList = database.getPomodorosByYear( selectedDate);
 				updatePieChart();
 			}
 		});
@@ -149,15 +147,15 @@ public class PieChartFragment extends Fragment {
 				switch ( radioGroup.getCheckedRadioButtonId() ){
 					case R.id.radioButton_week:
 						selectedDate = selectedDate.plusWeeks(1);
-						pomodoroList = database.getPomodoroByWeek( selectedDate);
+						pomodoroList = database.getPomodorosByWeek( selectedDate);
 						break;
 					case R.id.radioButton_month:
 						selectedDate = selectedDate.plusMonths(1);
-						pomodoroList = database.getPomodoroByMonth( selectedDate);
+						pomodoroList = database.getPomodorosByMonth( selectedDate);
 						break;
 					case R.id.radioButton_year:
 						selectedDate = selectedDate.plusYears(1);
-						pomodoroList = database.getPomodoroByYear( selectedDate);
+						pomodoroList = database.getPomodorosByYear( selectedDate);
 						break;
 					default:
 						break;
@@ -174,15 +172,15 @@ public class PieChartFragment extends Fragment {
 				switch ( radioGroup.getCheckedRadioButtonId()){
 					case R.id.radioButton_week:
 						selectedDate = selectedDate.minusWeeks(1);
-						pomodoroList = database.getPomodoroByWeek( selectedDate);
+						pomodoroList = database.getPomodorosByWeek( selectedDate);
 						break;
 					case R.id.radioButton_month:
 						selectedDate = selectedDate.minusMonths(1);
-						pomodoroList = database.getPomodoroByMonth( selectedDate);
+						pomodoroList = database.getPomodorosByMonth( selectedDate);
 						break;
 					case R.id.radioButton_year:
 						selectedDate = selectedDate.minusYears(1);
-						pomodoroList = database.getPomodoroByYear( selectedDate);
+						pomodoroList = database.getPomodorosByYear( selectedDate);
 						break;
 					default:
 						break;

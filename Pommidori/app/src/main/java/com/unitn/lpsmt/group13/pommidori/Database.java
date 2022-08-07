@@ -19,7 +19,6 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,7 +88,7 @@ public class Database extends SQLiteOpenHelper {
         return result == -1 ? false : true;
     }
 
-    public List<TableActivityModel> getAllActivity(){
+    public List<TableActivityModel> getAllActivities(){
         List<TableActivityModel> returnActivity = new ArrayList<>();
 
         //get data from the database
@@ -123,9 +122,9 @@ public class Database extends SQLiteOpenHelper {
         return returnActivity;
     }
 
-    public List<TableActivityModel> getAllActivityFromNow(){
+    public List<TableActivityModel> getAllActivitiesFromNow(){
         List<TableActivityModel> returnActivity = new ArrayList<>();
-        List<TableActivityModel> getActivity = getAllActivity();
+        List<TableActivityModel> getActivity = getAllActivities();
 
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
@@ -183,8 +182,40 @@ public class Database extends SQLiteOpenHelper {
         return result == -1 ? false : true;
     }
 
+    //Sessioni
+    public List<TableSessionModel> getAllSessions(){
+        List<TableSessionModel> sessions = new ArrayList<>();
+
+        //get data from the database
+        String query = "SELECT * FROM " + TableSessionModel.TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            //loop su tutti gli elementi
+            do{
+               int sessionId = cursor.getInt(0);
+               String activity = cursor.getString(1);
+               Date scadenza = new Date(cursor.getLong(2));
+               int valutazione = cursor.getInt(3);
+               TableSessionModel t = new TableSessionModel(sessionId, activity, scadenza, valutazione);
+
+                sessions.add(t);
+            }while (cursor.moveToNext());
+        } else{
+            //fallimento nell'accedere al database
+            sessions.add(new TableSessionModel());
+        }
+
+        cursor.close();
+        db.close();
+
+        return sessions;
+    }
+
     //Sessioni Programmate
-    public boolean addSessioneProgrammata(TableSessionProgModel tableSessionProgModel){
+    public boolean addProgrammedSession(TableSessionProgModel tableSessionProgModel){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -200,7 +231,7 @@ public class Database extends SQLiteOpenHelper {
         return result == -1 ? false : true;
     }
 
-    public List<TableSessionProgModel> getAllSessioniProgrammate(){
+    public List<TableSessionProgModel> getAllProgrammedSessions(){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
 
         //get data from the database
@@ -234,9 +265,9 @@ public class Database extends SQLiteOpenHelper {
         return returnSession;
     }
 
-    public List<TableSessionProgModel> getAllSessioniProgrammateByActivity(String attivita){
+    public List<TableSessionProgModel> getAllProgrammedSessionsByActivity(String attivita){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
-        List<TableSessionProgModel> getSession = getAllSessioniProgrammate();
+        List<TableSessionProgModel> getSession = getAllProgrammedSessions();
 
         //loop su tutti gli elementi
         for(TableSessionProgModel s : getSession) {
@@ -248,14 +279,14 @@ public class Database extends SQLiteOpenHelper {
         return returnSession;
     }
 
-    public List<TableSessionProgModel> getFirstSessionByActivityFromNow(){
+    public List<TableSessionProgModel> getFirstProgrammedSessionFromEveryActivityFromNow(){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
-        List<TableActivityModel> getActivity = getAllActivityFromNow();
+        List<TableActivityModel> getActivity = getAllActivitiesFromNow();
 
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
             List<TableSessionProgModel> returnTemp = new ArrayList<>();
-            List<TableSessionProgModel> getSession = getAllSessioniProgrammateByActivity(a.getName());
+            List<TableSessionProgModel> getSession = getAllProgrammedSessionsByActivity(a.getName());
 
             //loop su tutti gli elementi
             for(TableSessionProgModel s : getSession) {
@@ -271,9 +302,9 @@ public class Database extends SQLiteOpenHelper {
         return returnSession;
     }
 
-    public List<TableSessionProgModel> getSessionByDay(Date date){
+    public List<TableSessionProgModel> getAllProgrammedSessionsByDay(Date date){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
-        List<TableSessionProgModel> getSession= getAllSessioniProgrammate();
+        List<TableSessionProgModel> getSession= getAllProgrammedSessions();
 
         SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -286,8 +317,8 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
-    //TODO getSessioniProgrammateByMese da testare
-    public List<TableSessionProgModel> getSessioniProgrammateByMese(LocalDate date){
+    //TODO getAllProgrammedSessionsByMonth da testare
+    public List<TableSessionProgModel> getAllProgrammedSessionsByMonth(LocalDate date){
         List<TableSessionProgModel> sessioniProgrammateMensili = new ArrayList<>();
         LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
         LocalDateTime fineMese = date.withDayOfMonth( date.getMonth().length( date.isLeapYear())).atTime(LocalTime.MAX); //Ultimo giorno del mese, alle 23:59:59
@@ -344,7 +375,7 @@ public class Database extends SQLiteOpenHelper {
         return result == -1 ? false : true;
     }
 
-    public List<TablePomodoroModel> getPomodoroByWeek(@NonNull LocalDate date){
+    public List<TablePomodoroModel> getPomodorosByWeek(@NonNull LocalDate date){
         //Date è un giorno qualsiasi della settimana, da cui ricavo inizio e fine settimana
         List<TablePomodoroModel> pomodoroSettimanali = new ArrayList<>();
         date = date.with( WeekFields.of(Locale.ITALY).dayOfWeek(), 1);  //Lunedì primo giorno della settimana
@@ -387,7 +418,7 @@ public class Database extends SQLiteOpenHelper {
         return pomodoroSettimanali;
     }
 
-    public List<TablePomodoroModel> getPomodoroByMonth(@NonNull LocalDate date){
+    public List<TablePomodoroModel> getPomodorosByMonth(@NonNull LocalDate date){
         //Date è un giorno qualsiasi del mese, da cui ricavo inizio e fine mese
         List<TablePomodoroModel> pomodoroMensili = new ArrayList<>();
         LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
@@ -428,7 +459,7 @@ public class Database extends SQLiteOpenHelper {
         return pomodoroMensili;
     }
 
-    public List<TablePomodoroModel> getPomodoroByYear(@NonNull  LocalDate date){
+    public List<TablePomodoroModel> getPomodorosByYear(@NonNull  LocalDate date){
         //Date è un giorno qualsiasi dell'anno, da cui ricavo inizio e fine anno
         List<TablePomodoroModel> pomodoroAnnuali = new ArrayList<>();
         LocalDateTime inizioAnno = date.withDayOfYear(1).atStartOfDay();    //Primo giorno dell'anno alle 00:00

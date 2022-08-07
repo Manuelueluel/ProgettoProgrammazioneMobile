@@ -141,7 +141,7 @@ public class NewSessionFragment extends Fragment {
                     }
                 }
 
-                if (db.addSessioneProgrammata(s)) {
+                if (db.addProgrammedSession(s)) {
                     Toast.makeText(getContext(), "Sessione creata!", Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 } else {
@@ -237,7 +237,7 @@ public class NewSessionFragment extends Fragment {
 
     private void setDropDownLists(){
         db = Database.getInstance( getContext());
-        activity = db.getAllActivity();
+        activity = db.getAllActivities();
         List<String> activityName = new ArrayList<>();
 
         if(activity.isEmpty()){

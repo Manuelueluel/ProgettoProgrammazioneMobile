@@ -177,7 +177,7 @@ public class StartNewSessionFragment extends DialogFragment {
 
     private void setDropDownLists(){
         Database db = Database.getInstance( getContext());
-        List<TableActivityModel> allActivity = db.getAllActivity();
+        List<TableActivityModel> allActivity = db.getAllActivities();
 
         if(allActivity.isEmpty()){
             allActivity.add(new TableActivityModel());

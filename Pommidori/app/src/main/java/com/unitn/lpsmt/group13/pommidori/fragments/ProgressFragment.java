@@ -29,11 +29,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.TextStyle;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -125,8 +123,8 @@ public class ProgressFragment extends Fragment {
 	}
 
 	private void updateGrid(){
-		List<TableSessionProgModel> sessioniProgrammate = database.getSessioniProgrammateByMese( selectedDate);
-		List<TablePomodoroModel> pomodoroCompletati = database.getPomodoroByMonth( selectedDate);
+		List<TableSessionProgModel> sessioniProgrammate = database.getAllProgrammedSessionsByMonth( selectedDate);
+		List<TablePomodoroModel> pomodoroCompletati = database.getPomodorosByMonth( selectedDate);
 		ArrayList<DayProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
 		ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset( selectedDate.atStartOfDay());
 		int startIntervalOfSelectedMonth;
