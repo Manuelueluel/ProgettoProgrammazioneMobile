@@ -22,9 +22,7 @@ import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.StartNewSessionFragment;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -158,8 +156,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     private void setDropDownLists(){
         db = Database.getInstance( Homepage.this);
-        List<TableActivityModel> activity = db.getAllActivityFromNow();
-        List<TableSessionProgModel> session = db.getFirstSessionByActivityFromNow();
+        List<TableActivityModel> activity = db.getAllActivitiesFromNow();
+        List<TableSessionProgModel> session = db.getFirstProgrammedSessionFromEveryActivityFromNow();
 
         //L'activity di default non deve essere visualizzata
         TableActivityModel nessunaActivity = new TableActivityModel();

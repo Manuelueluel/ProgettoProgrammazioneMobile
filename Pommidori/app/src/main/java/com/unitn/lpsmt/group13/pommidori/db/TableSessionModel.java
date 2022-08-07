@@ -9,30 +9,30 @@ public class TableSessionModel implements Comparable<TableSessionModel>{
     public static final String COLUMN_SESSION_ID = "_id";
     public static final String COLUMN_NOME_ACTIVITY = "nome_attivita";
     public static final String COLUMN_DATA = "data_session";
-    public static final String COLUMN_AUTOVALUTAZIONE = "autovalutazione";
+    public static final String COLUMN_VALUTAZIONE = "valutazione";
 
     public static final String queryCreate =
             "CREATE TABLE " + TABLE_NAME +
                     " (" + COLUMN_SESSION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NOME_ACTIVITY + " TEXT, " +
                     COLUMN_DATA + " INTEGER, " +                            //viene salvato il numero di millisecondi dal 1/1/1970
-                    COLUMN_AUTOVALUTAZIONE + " INTEGER NOT NULL, " +
+                    COLUMN_VALUTAZIONE + " INTEGER NOT NULL, " +
                     "FOREIGN KEY (" + COLUMN_NOME_ACTIVITY +") REFERENCES " + TableActivityModel.TABLE_NAME + "(" + TableActivityModel.COLUMN_NOME +"));";
 
     //Modello
     private int id;
     private String name;
     private Date scadenza;
-    private int autovalutazione;
+    private int valutazione;
 
     //Costruttori
     public TableSessionModel() {
     }
-    public TableSessionModel(int id, String name, Date scadenza, int autovalutazione) {
+    public TableSessionModel(int id, String name, Date scadenza, int valutazione) {
         this.id = id;
         this.name = name;
         this.scadenza = scadenza;
-        this.autovalutazione = autovalutazione;
+        this.valutazione = valutazione;
     }
 
     public int getId() {
@@ -59,12 +59,12 @@ public class TableSessionModel implements Comparable<TableSessionModel>{
         this.scadenza = scadenza;
     }
 
-    public int getAutovalutazione() {
-        return autovalutazione;
+    public int getValutazione() {
+        return valutazione;
     }
 
-    public void setAutovalutazione(int autovalutazione) {
-        this.autovalutazione = autovalutazione;
+    public void setValutazione(int valutazione) {
+        this.valutazione = valutazione;
     }
 
     @Override
