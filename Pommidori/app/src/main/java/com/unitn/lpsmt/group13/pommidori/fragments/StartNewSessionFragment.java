@@ -32,13 +32,13 @@ import androidx.fragment.app.DialogFragment;
 public class StartNewSessionFragment extends DialogFragment {
 
     //Variabili
-    Button menoDurataOre, piuDurataOre, menoDurataMin, piuDurataMin, avvia;
-    TextView durataPerOre,durataPerMin;
-    CheckBox checkDurataLibera;
-    LinearLayout riquadroSelezioneTimer;
-    StatoTimer statoTimer;
-    TableActivityModel activitySelezionata;
-    AutoCompleteTextView dropdownSessionePers;
+    private Button menoDurataOre, piuDurataOre, menoDurataMin, piuDurataMin, avvia;
+    private TextView durataPerOre,durataPerMin;
+    private CheckBox checkDurataLibera;
+    private LinearLayout riquadroSelezioneTimer;
+    private StatoTimer statoTimer;
+    private TableActivityModel activitySelezionata;
+    private AutoCompleteTextView dropdownSessionePers;
 
     //valori pausa
     int ore, min;

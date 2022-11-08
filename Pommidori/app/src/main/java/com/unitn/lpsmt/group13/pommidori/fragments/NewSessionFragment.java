@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -33,19 +35,20 @@ import java.util.Locale;
 
 public class NewSessionFragment extends Fragment {
 
+    private final int START_HOUR_SELECTED = 0;
+    private final int END_HOUR_SELECTED = 1;
+
     private DatePickerDialog datePickerDialog;
     private Button dateButton,hourStartButton,hourEndButton, creaButton, annullaButton;
-    private CheckBox hourEndCheckBox;
     private TableActivityModel activityModel;
 
-    AutoCompleteTextView listaAttivita,listaAvviso,listaRipetizione;
-    Database db;
-    List<TableActivityModel> activity;
-    View view;
-    LinearLayout layoutEndSession;
+    private AutoCompleteTextView listaAttivita,listaAvviso,listaRipetizione;
+    private Database db;
+    private List<TableActivityModel> activity;
 
     //Dati
     int year, month, day, startHour, startMinute, endHour, endMinute;
+    boolean hasSelectedStartHour, hasSelectedEndHour;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,33 +58,41 @@ public class NewSessionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_new_session, container, false);
+        return inflater.inflate(R.layout.fragment_new_session, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         listaAttivita = (AutoCompleteTextView) view.findViewById( R.id.dropdown_activity_new_session);
         listaAvviso = (AutoCompleteTextView) view.findViewById( R.id.dropdown_avviso_new_session);
         listaRipetizione = (AutoCompleteTextView) view.findViewById( R.id.dropdown_ripetizione_new_session);
 
         dateButton = view.findViewById(R.id.date_session_picker);
-        dateButton.setText(getTodayDate());
         hourStartButton = view.findViewById(R.id.start_hour_picker);
         hourEndButton = view.findViewById(R.id.end_hour_picker);
-        hourStartButton.setText(getNowHour());
-        hourEndButton.setText(getNowHour());
-
-        layoutEndSession = view.findViewById(R.id.layout_end_session);
-        hourEndCheckBox = view.findViewById(R.id.checkbox_end_hour);
-        hourEndCheckBox.setChecked(false);
-
         creaButton = view.findViewById(R.id.crea_session);
         annullaButton = view.findViewById(R.id.annulla_session);
+        dateButton.setText(R.string.date_not_selected);
+        hourStartButton.setText(R.string.hour_not_selected);
+        hourEndButton.setText(R.string.hour_not_selected);
+
+        day = 0;
+        month = 0;
+        year = 0;
+        startHour = 0;
+        startMinute = 0;
+        endHour = 0;
+        endMinute = 0;
+
+        hasSelectedStartHour = false;
+        hasSelectedEndHour = false;
 
         //Metodi
         initDatePicker();
         setButtonListeners();
         setDropDownLists();
-
-        return view;
     }
 
     private void setButtonListeners(){
@@ -91,25 +102,21 @@ public class NewSessionFragment extends Fragment {
                 datePickerDialog.show();
             }
         });
+
         hourStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popTimePiker(true);
+                popTimePiker(START_HOUR_SELECTED);
             }
         });
+
         hourEndButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popTimePiker(false);
+                popTimePiker(END_HOUR_SELECTED);
             }
         });
-        hourEndCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Disattiva/Riattiva selezione ore e minuti
-                setViewAndChildrenEnabled(layoutEndSession, !hourEndCheckBox.isChecked());
-            }
-        });
+
         listaAttivita.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -119,60 +126,51 @@ public class NewSessionFragment extends Fragment {
                 }
             }
         });
+
         creaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TableSessionProgModel s = new TableSessionProgModel();
                 s.setActivity(activityModel);
-                try {
-                    String start = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute;
-                    s.setOraInizio(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.ITALY).parse(start));
-                } catch (Exception e){
-                    return;
-                }
-                if (hourEndCheckBox.isChecked()) {   //una attività "infinita" ha la data settata all'anno 0 (1/1/1970)
-                    s.setOraFine(new Date(0));
-                } else {
+
+                //Controllo selezione campi
+                if( year == 0 || month == 0 || day == 0 ){
+                    Toast.makeText(getContext(), R.string.select_date_for_programmed_session, Toast.LENGTH_SHORT).show();
+                }else if( !hasSelectedStartHour){
+                    Toast.makeText(getContext(), R.string.select_start_hour_for_programmed_session, Toast.LENGTH_SHORT).show();
+                }else if( !hasSelectedEndHour){
+                    Toast.makeText(getContext(), R.string.select_end_hour_for_programmed_session, Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        String start = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute;
+                        s.setOraInizio(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.getDefault()).parse(start));
+                    } catch (Exception e){
+                        return;
+                    }
+
                     try {
                         String end = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute;
                         s.setOraFine(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.ITALY).parse(end));
                     } catch (Exception e){
                         return;
                     }
-                }
 
-                if (db.addProgrammedSession(s)) {
-                    Toast.makeText(getContext(), "Sessione creata!", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                } else {
-                    Toast.makeText(getContext(), "Errore creazione sessione", Toast.LENGTH_SHORT).show();
+                    if (db.addProgrammedSession(s)) {
+                        Toast.makeText(getContext(), R.string.programmed_session_created_successfully, Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    } else {
+                        Toast.makeText(getContext(), R.string.programmed_session_creation_error, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
+
         annullaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().finish();
             }
         });
-    }
-
-    private String getTodayDate(){
-        Calendar cal = Calendar.getInstance();
-        year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH)+1;
-        day = cal.get(Calendar.DAY_OF_MONTH);
-
-        return "--/--/--";  //non visualizzo la data così da far capire che bisogna selezionarla
-    }
-    private String getNowHour(){
-        Calendar cal = Calendar.getInstance();
-        startHour = cal.get(Calendar.HOUR);
-        endHour = cal.get(Calendar.HOUR);
-        startMinute = cal.get(Calendar.MINUTE);
-        endMinute = cal.get(Calendar.MINUTE);
-
-        return "--:--"; //non visualizzo la data così da far capire che bisogna selezionarla
     }
 
     private void initDatePicker() {
@@ -189,37 +187,44 @@ public class NewSessionFragment extends Fragment {
         };
 
         Calendar cal = Calendar.getInstance();
-        year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH);
-        day = cal.get(Calendar.DAY_OF_MONTH);
 
-        datePickerDialog = new DatePickerDialog(this.getContext(),dateSetListener,year,month,day);
+        datePickerDialog = new DatePickerDialog(this.getContext(),dateSetListener,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH));
     }
 
-    private void popTimePiker(boolean b){
+    private void popTimePiker(int selected){
 
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                if(b){
-                    startHour = selectedHour;
-                    startMinute = selectedMinute;
-                    String time = startHour+":"+(startMinute<10?"0"+startMinute:startMinute);
-                    //testo bottone timePicker
-                    hourStartButton.setText(time);
-                }else {
-                    endHour = selectedHour;
-                    endMinute = selectedMinute;
-                    String time = endHour+":"+(endMinute<10?"0"+endMinute:endMinute);
-                    //testo bottone timePicker
-                    hourEndButton.setText(time);
+                String time = "";
+                switch (selected){
+                    case START_HOUR_SELECTED:
+                        startHour = selectedHour;
+                        startMinute = selectedMinute;
+                        hasSelectedStartHour = true;
+                        time = startHour+":"+(startMinute<10?"0"+startMinute:startMinute);
+                        //testo bottone timePicker
+                        hourStartButton.setText(time);
+                        break;
+                    case END_HOUR_SELECTED:
+                        endHour = selectedHour;
+                        endMinute = selectedMinute;
+                        hasSelectedEndHour = true;
+                        time = endHour+":"+(endMinute<10?"0"+endMinute:endMinute);
+                        //testo bottone timePicker
+                        hourEndButton.setText(time);
+                        break;
+                    default:
+                        break;
                 }
             }
         };
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this.getContext(), onTimeSetListener, startHour, startMinute, true);
 
-        timePickerDialog.setTitle("Scegli l'ora");
         timePickerDialog.show();
     }
 

@@ -72,6 +72,10 @@ public class TimerFragment extends Fragment {
 	private final long DURATA_MASSIMA_COUNTUP_TIMER = Utility.DURATA_MASSIMA_COUNTUP_TIMER;
 	private final String COLORE_ACTIVITY_ASSOCIATA = Utility.COLORE_ACTIVITY_ASSOCIATA;
 
+	//Interfaccia che al cambio di stato del timer, aggiorna il titolo della toolbar
+	public interface StatoTimerListener {
+		public void cambioStatoToolbarTimer(int stato);
+	}
 
 	public TimerFragment() {
 		// Required empty public constructor
@@ -85,11 +89,6 @@ public class TimerFragment extends Fragment {
 	 */
 	public static TimerFragment newInstance() {
 		return new TimerFragment();
-	}
-
-	//Interfaccia che al cambio di stato del timer, aggiorna il titolo della toolbar
-	public interface StatoTimerListener {
-		public void cambioStatoToolbarTimer(int stato);
 	}
 
 	@Override

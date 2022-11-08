@@ -16,9 +16,7 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
     public static final String TABLE_NAME = "attivita";
     public static final String COLUMN_ACTIVITY_ID = "_id";
     public static final String COLUMN_NOME = "nome";
-    public static final String COLUMN_SIGLA = "sigla";
     public static final String COLUMN_COLORE = "colore";
-    public static final String COLUMN_NOME_SCADENZA = "nome_scadenza";
     public static final String COLUMN_SCADENZA = "scadenza";
     public static final String COLUMN_AVVISO = "avviso";
 
@@ -26,18 +24,14 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
             "CREATE TABLE " + TABLE_NAME +
                     " (" + COLUMN_ACTIVITY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NOME + " TEXT UNIQUE NOT NULL, " +
-                    COLUMN_SIGLA + " TEXT UNIQUE NOT NULL, " +
                     COLUMN_COLORE + " INTEGER NOT NULL, " +
-                    COLUMN_NOME_SCADENZA + " TEXT NOT NULL, " +
                     COLUMN_SCADENZA + " INTEGER, " +    //viene salvato il numero di millisecondi dal 1/1/1970
                     COLUMN_AVVISO + " TEXT);";
 
     //Model
     private int id;
     private String name;
-    private String sigla;
     private int colore;
-    private String nomeScadenza;
     private Date scadenza;
     private String avviso;
 
@@ -45,18 +39,14 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
     public TableActivityModel() {
         this.id = 0000;
         this.name = "Nessuna attività"; //Attività di default associata alle sessioni che sono senza attività associate
-        this.sigla = "";
         this.colore = Color.parseColor("#EE0000");  //Rosso default
-        this.nomeScadenza = "";
         this.scadenza = new Date(0l);
         this.avviso = null;
     }
-    public TableActivityModel(int id, String name, String sigla, int colore, String nomeScadenza, Date scadenza, String avviso) {
+    public TableActivityModel(int id, String name, int colore, Date scadenza, String avviso) {
         this.id = id;
         this.name = name;
-        this.sigla = sigla;
         this.colore = colore;
-        this.nomeScadenza = nomeScadenza;
         this.scadenza = scadenza;
         this.avviso = avviso;
     }
@@ -77,28 +67,12 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
         this.name = name;
     }
 
-    public String getSigla() {
-        return sigla;
-    }
-
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
-    }
-
     public int getColore() {
         return colore;
     }
 
     public void setColore(int colore) {
         this.colore = colore;
-    }
-
-    public String getNomeScadenza() {
-        return nomeScadenza;
-    }
-
-    public void setNomeScadenza(String nomeScadenza) {
-        this.nomeScadenza = nomeScadenza;
     }
 
     public Date getScadenza() {
@@ -119,9 +93,9 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
 
     @Override
     public String toString() {
-        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
-        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm", Locale.ITALY);
-        return scadenza.getTime()==0 ? "["+sigla.toUpperCase()+"] "+name.toUpperCase() : "["+sigla.toUpperCase()+"] "+ nomeScadenza +" ore "+smHour.format(scadenza) +" "+ smDate.format(scadenza);
+        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat smHour = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return name + " " + smHour.format(scadenza) + " " + smDate.format(scadenza);
     }
 
     @Override
@@ -129,12 +103,12 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TableActivityModel that = (TableActivityModel) o;
-        return getId() == that.getId() && getColore() == that.getColore() && getName().equals(that.getName()) && getSigla().equals(that.getSigla()) && getNomeScadenza().equals(that.getNomeScadenza()) && getScadenza().equals(that.getScadenza()) && getAvviso().equals(that.getAvviso());
+        return getId() == that.getId() && getColore() == that.getColore() && getName().equals(that.getName()) && getScadenza().equals(that.getScadenza()) && getAvviso().equals(that.getAvviso());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getSigla(), getColore(), getNomeScadenza(), getScadenza(), getAvviso());
+        return Objects.hash(getId(), getName(), getColore(), getScadenza(), getAvviso());
     }
 
     @Override

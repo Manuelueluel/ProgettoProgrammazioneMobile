@@ -45,14 +45,16 @@ public class CustomCalendarWeekFragment extends Fragment implements CalendarAdap
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.custom_calendar_week_view,container,false);
+    }
 
-        view = inflater.inflate(R.layout.custom_calendar_week_view,container,false);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         initializeLayout();
         setWeekView();
         setButtonListeners();
-
-        return view;
     }
 
     @Override

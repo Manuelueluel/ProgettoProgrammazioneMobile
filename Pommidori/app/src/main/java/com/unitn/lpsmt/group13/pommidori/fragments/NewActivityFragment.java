@@ -37,7 +37,7 @@ public class NewActivityFragment extends Fragment {
     private DatePickerDialog datePickerDialog;
     private Button dateButton,hourButton, creaButton, annullaButton;
     private CheckBox dateCheckBox;
-    private TextInputLayout editNome, editSigla, editNomeScad;
+    private TextInputLayout editNome;
 
     AutoCompleteTextView dropdownAvviso;
 
@@ -66,8 +66,6 @@ public class NewActivityFragment extends Fragment {
         color = c.getColor();
 
         editNome = view.findViewById(R.id.nome_attivita);
-        editSigla = view.findViewById(R.id.sigla_attivita);
-        editNomeScad = view.findViewById(R.id.nome_scadenza);
 
         dateButton = view.findViewById(R.id.date_picker);
         dateButton.setText(getTodayDate());
@@ -86,7 +84,7 @@ public class NewActivityFragment extends Fragment {
         //Metodi
         initDatePicker();
         setButtonListeners();
-        setEdidTextListener();
+        setEditTextListener();
         setDropDownLists();
 
         return view;
@@ -127,17 +125,16 @@ public class NewActivityFragment extends Fragment {
                 setViewAndChildrenEnabled(dateLayout, !dateCheckBox.isChecked());
             }
         });
+
         creaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!validateName() | !validateNameScadenza() | !validateSigla()){
+                if(!validateName()){
                     return;
                 }
 
                 TableActivityModel m = new TableActivityModel();
                 m.setName(editNome.getEditText().getText().toString().trim());
-                m.setSigla(editSigla.getEditText().getText().toString().trim());
-                m.setNomeScadenza(editNomeScad.getEditText().getText().toString().trim());
                 m.setColore(color);
 
                 if (dateCheckBox.isChecked()) {   //una attività "infinita" ha la data settata all'anno 0 (1/1/1970)
@@ -165,18 +162,14 @@ public class NewActivityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 editNome.getEditText().setText("");
-                editNomeScad.getEditText().setText("");
-                editSigla.getEditText().setText("");
 
                 getActivity().finish();
             }
         });
     }
 
-    private void setEdidTextListener(){
+    private void setEditTextListener(){
         editNome.getEditText().addTextChangedListener(editText);
-        editNomeScad.getEditText().addTextChangedListener(editText);
-        editSigla.getEditText().addTextChangedListener(editText);
     }
 
     private TextWatcher editText = new TextWatcher() {
@@ -188,15 +181,9 @@ public class NewActivityFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String name = editNome.getEditText().getText().toString().trim();
-            String nameScad = editNomeScad.getEditText().getText().toString().trim();
-            String sigla = editSigla.getEditText().getText().toString().trim();
 
             if(!name.isEmpty())
                 editNome.setError(null);
-            if(!nameScad.isEmpty())
-                editNomeScad.setError(null);
-            if(!sigla.isEmpty())
-                editSigla.setError(null);
         }
 
         @Override
@@ -213,6 +200,7 @@ public class NewActivityFragment extends Fragment {
 
         return "--/--/--"; //non visualizzo la data così da far capire che bisogna selezionarla
     }
+
     private String getNowHour(){
         Calendar cal = Calendar.getInstance();
         hour = cal.get(Calendar.HOUR);
@@ -272,6 +260,7 @@ public class NewActivityFragment extends Fragment {
             }
         }
     }
+
     private void setDropDownLists(){
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -296,34 +285,5 @@ public class NewActivityFragment extends Fragment {
             return true;
         }
     }
-    private boolean validateNameScadenza(){
-        String nameScad = editNomeScad.getEditText().getText().toString().trim();
 
-        if(!dateCheckBox.isChecked()) {
-            if (nameScad.isEmpty()) {
-                editNomeScad.setError("Campo obbligatorio");
-                return false;
-            } else {
-                editNomeScad.setError(null);
-                return true;
-            }
-        }else{
-            editNomeScad.setError(null);
-            return true;
-        }
-    }
-    private boolean validateSigla(){
-        String sigla = editSigla.getEditText().getText().toString().trim();
-
-        if(sigla.isEmpty()){
-            editSigla.setError("Campo obbligatorio");
-            return  false;
-        }else if(sigla.length()<3 || sigla.length()>3){
-            editSigla.setError("3 caratteri");
-            return false;
-        }else{
-            editSigla.setError(null);
-            return true;
-        }
-    }
 }

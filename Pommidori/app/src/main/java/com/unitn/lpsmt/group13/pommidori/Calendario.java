@@ -11,12 +11,22 @@ import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unitn.lpsmt.group13.pommidori.fragments.CustomCalendarMonthFragment;
+import com.unitn.lpsmt.group13.pommidori.fragments.ModifySessionFragment;
 
-public class Calendario extends AppCompatActivity {
+import java.util.Date;
+
+public class Calendario extends AppCompatActivity implements ModifySessionFragment.UpdateCalendarEventListListener {
 
     private Toolbar toolbar;
-    //OldCustomCalendarView oldCustomCalendarView;
     private FloatingActionButton floatingActionButton;
+    private CustomCalendarMonthFragment calendarMonthFragment;
+
+    @Override
+    public void updateEventList() {
+        calendarMonthFragment.clearCalendar();
+        calendarMonthFragment.showEventsToCalendar();
+        calendarMonthFragment.loadCalendarEventList( new Date());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +34,6 @@ public class Calendario extends AppCompatActivity {
         setContentView(R.layout.activity_calendario);
 
         toolbar = findViewById(R.id.calendarToolbar);
-        //oldCustomCalendarView = (OldCustomCalendarView) findViewById(R.id.custom_calendar_view);
         floatingActionButton = findViewById(R.id.floatingActionButton);
 
         //Metodi
@@ -40,7 +49,7 @@ public class Calendario extends AppCompatActivity {
 
     private void setToolbar(){
         //settare titolo e icona del toolbar
-        toolbar.setTitle("Calendario");
+        toolbar.setTitle(R.string.calendar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -63,7 +72,8 @@ public class Calendario extends AppCompatActivity {
     public void setFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.calendar_fragment, new CustomCalendarMonthFragment());
+        calendarMonthFragment = new CustomCalendarMonthFragment();
+        fragmentTransaction.replace(R.id.calendar_fragment, calendarMonthFragment);
         fragmentTransaction.commit();
     }
 }

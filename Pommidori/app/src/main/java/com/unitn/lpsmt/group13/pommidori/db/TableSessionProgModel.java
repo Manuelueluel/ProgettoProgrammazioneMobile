@@ -42,6 +42,7 @@ public class TableSessionProgModel implements Comparable<TableSessionProgModel>{
         this.avviso = "???";
         this.ripetizione = "???";
     }
+
     public TableSessionProgModel(int id ,TableActivityModel activity, Date oraInizio, Date oraFine, String avviso, String ripetizione) {
         this.id = id;
         this.activity = activity;
@@ -103,7 +104,7 @@ public class TableSessionProgModel implements Comparable<TableSessionProgModel>{
     public String toString() {
         SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm",Locale.ITALY);
-        return "["+activity.getSigla().toUpperCase()+"]  " + smHour.format(oraInizio)+ "/"+smHour.format(oraFine)+" "+smDate.format(oraInizio);
+        return activity.getName() + " " + smHour.format(oraInizio) + "/" + smHour.format(oraFine) + " " + smDate.format(oraInizio);
 
     }
 

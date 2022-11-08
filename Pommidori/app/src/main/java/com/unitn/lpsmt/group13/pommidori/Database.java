@@ -76,9 +76,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(TableActivityModel.COLUMN_NOME, tableActivityModel.getName());
-        cv.put(TableActivityModel.COLUMN_SIGLA, tableActivityModel.getSigla());
         cv.put(TableActivityModel.COLUMN_COLORE, tableActivityModel.getColore());
-        cv.put(TableActivityModel.COLUMN_NOME_SCADENZA, tableActivityModel.getNomeScadenza());
         cv.put(TableActivityModel.COLUMN_SCADENZA, tableActivityModel.getScadenza().getTime());
         cv.put(TableActivityModel.COLUMN_AVVISO, tableActivityModel.getAvviso());
 
@@ -102,12 +100,10 @@ public class Database extends SQLiteOpenHelper {
             do{
                 int activityId = cursor.getInt(0);
                 String activityName = cursor.getString(1);
-                String activitySigla = cursor.getString(2);
-                int activityColor = cursor.getInt(3);
-                String activityNameScad = cursor.getString(4);
-                Date activityDate = new Date(cursor.getLong(5));
-                String activityAvviso = cursor.getString(6);
-                TableActivityModel t = new TableActivityModel(activityId,activityName,activitySigla,activityColor,activityNameScad,activityDate,activityAvviso);
+                int activityColor = cursor.getInt(2);
+                Date activityDate = new Date(cursor.getLong(3));
+                String activityAvviso = cursor.getString(4);
+                TableActivityModel t = new TableActivityModel(activityId,activityName,activityColor,activityDate,activityAvviso);
 
                 returnActivity.add(t);
             }while (cursor.moveToNext());
@@ -147,17 +143,13 @@ public class Database extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             String activityName = cursor.getString(1);
-            String activitySigla = cursor.getString(2);
-            int activityColor = cursor.getInt(3);
-            String activityNameScad = cursor.getString(4);
-            Date activityDate = new Date(cursor.getLong(5));
-            String activityAvviso = cursor.getString(5);
+            int activityColor = cursor.getInt(2);
+            Date activityDate = new Date(cursor.getLong(3));
+            String activityAvviso = cursor.getString(4);
 
             result.setId(id);
             result.setName(activityName);
-            result.setSigla(activitySigla);
             result.setColore(activityColor);
-            result.setNomeScadenza(activityNameScad);
             result.setScadenza(activityDate);
             result.setAvviso(activityAvviso);
         } else{
@@ -171,13 +163,31 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public boolean deleteActivity(int id){
-
         String s_id = Integer.toString(id);
         SQLiteDatabase db = this.getWritableDatabase();
 
-        //String query = "DELETE FROM " + TableActivityModel.TABLE_NAME + " WHERE " + TableActivityModel.COLUMN_ACTIVITY_ID + " = " + id;
+        deleteAllProgrammedSessionsOfSelectedActivity( id);
 
+        //String query = "DELETE FROM " + TableActivityModel.TABLE_NAME + " WHERE " + TableActivityModel.COLUMN_ACTIVITY_ID + " = " + id;
         long result = db.delete(TableActivityModel.TABLE_NAME, TableActivityModel.COLUMN_ACTIVITY_ID + "=" + s_id,null);
+
+        if( db.isOpen())    db.close();
+
+        return result == -1 ? false : true;
+    }
+
+    public boolean updateActivty(int id, TableActivityModel activity){
+        String s_id = Integer.toString(id);
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(TableActivityModel.COLUMN_ACTIVITY_ID , activity.getId());
+        cv.put(TableActivityModel.COLUMN_NOME, activity.getName());
+        cv.put(TableActivityModel.COLUMN_COLORE, activity.getColore());
+        cv.put(TableActivityModel.COLUMN_SCADENZA, activity.getScadenza().getTime());
+        cv.put(TableActivityModel.COLUMN_AVVISO, activity.getAvviso());
+
+        long result = db.update(TableActivityModel.TABLE_NAME, cv, "_id = ?", new String[]{s_id});
 
         return result == -1 ? false : true;
     }
@@ -282,6 +292,7 @@ public class Database extends SQLiteOpenHelper {
     public List<TableSessionProgModel> getFirstProgrammedSessionFromEveryActivityFromNow(){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
         List<TableActivityModel> getActivity = getAllActivitiesFromNow();
+        getActivity.add( getActivity(0000));    //aggiunta l'activity di default
 
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
@@ -317,7 +328,7 @@ public class Database extends SQLiteOpenHelper {
 
         return returnSession;
     }
-    //TODO getAllProgrammedSessionsByMonth da testare
+
     public List<TableSessionProgModel> getAllProgrammedSessionsByMonth(LocalDate date){
         List<TableSessionProgModel> sessioniProgrammateMensili = new ArrayList<>();
         LocalDateTime inizioMese = date.withDayOfMonth(1).atStartOfDay();   //Primo giorno del mese, alle 00:00
@@ -358,6 +369,64 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return sessioniProgrammateMensili;
+    }
+
+    public TableSessionProgModel getProgrammedSession(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME + " WHERE _id = " + id;
+
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        int sessionId = cursor.getInt(0);
+        int sessionActivityId = cursor.getInt(1);
+        TableActivityModel sessionActivity = getActivity(sessionActivityId);
+        Date sessionStartDate = new Date(cursor.getLong(2));
+        Date sessionEndDate = new Date(cursor.getLong(3));
+        String sessionAvviso = cursor.getString(4);
+        String sessionRipetizione = cursor.getString(5);
+        TableSessionProgModel t = new TableSessionProgModel(sessionId,sessionActivity,sessionStartDate,sessionEndDate,sessionAvviso,sessionRipetizione);
+
+        return t;
+    }
+
+    public boolean deleteProgrammedSession(int id){
+        String s_id = Integer.toString(id);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        long result = db.delete(
+                TableSessionProgModel.TABLE_NAME,
+                TableSessionProgModel.COLUMN_SESSION_ID + "=" + s_id,null);
+        db.close();
+
+        return result == -1 ? false : true;
+    }
+
+    public boolean deleteAllProgrammedSessionsOfSelectedActivity(int activity_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        long result = db.delete(
+                TableSessionProgModel.TABLE_NAME,
+                TableSessionProgModel.COLUMN_ID_ACTIVITY + "=" + activity_id,
+                null
+        );
+
+        return result == -1 ? false : true;
+    }
+
+    public boolean updateProgrammedSession(int id, TableSessionProgModel session){
+        String s_id = Integer.toString(id);
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(TableSessionProgModel.COLUMN_ID_ACTIVITY,session.getActivity().getId());
+        cv.put(TableSessionProgModel.COLUMN_ORA_INIZIO,session.getOraInizio().getTime());
+        cv.put(TableSessionProgModel.COLUMN_ORA_FINE, session.getOraFine().getTime());
+        cv.put(TableSessionProgModel.COLUMN_AVVISO, session.getAvviso());
+        cv.put(TableSessionProgModel.COLUMN_RIPETIZIONE, session.getRipetizione());
+
+        long result = db.update(TableSessionProgModel.TABLE_NAME, cv, "_id = ?", new String[]{s_id});
+
+        return result == -1 ? false : true;
     }
 
     //Pomodoro

@@ -107,7 +107,7 @@
             android:layout_marginBottom="80dp"
             android:layout_marginHorizontal="@dimen/marginHorizontal_homepage"
             android:paddingVertical="15dp"
-            android:text="@string/calendario"
+            android:text="@string/calendar"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/hp_newSession"
             app:layout_constraintEnd_toEndOf="parent"

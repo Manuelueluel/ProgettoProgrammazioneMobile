@@ -40,7 +40,7 @@ public class CustomArrayAdapter extends ArrayAdapter {
         TableSessionProgModel tSPM = (TableSessionProgModel) getItem(position);
 
         TextView text = v.findViewById(R.id.row_text);
-        text.setText("["+tSPM.getActivity().getSigla().toUpperCase()+"]");
+        text.setText( tSPM.getActivity().getName());
 
         v.setBackgroundColor(tSPM.getActivity().getColore());
 
