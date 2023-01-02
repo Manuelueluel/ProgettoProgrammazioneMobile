@@ -189,7 +189,7 @@ public class StartNewSessionFragment extends DialogFragment {
                 allActivity
         );
 
-        dropdownSessionePers.setText( ((TableActivityModel)adapter.getItem(0)).toString());
+        dropdownSessionePers.setText( ((TableActivityModel)adapter.getItem(0)).getName());
         dropdownSessionePers.setAdapter( adapter);
 
         dropdownSessionePers.setOnItemClickListener(new AdapterView.OnItemClickListener() {

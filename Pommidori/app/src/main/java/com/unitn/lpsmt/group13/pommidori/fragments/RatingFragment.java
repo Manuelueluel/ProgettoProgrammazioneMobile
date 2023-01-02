@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import com.unitn.lpsmt.group13.pommidori.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Rating;
+import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionModel;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.utils.RatingAdapter;
 
 import java.util.ArrayList;
@@ -82,8 +84,18 @@ public class RatingFragment extends Fragment {
 
 	//TODO getListOfRatings da testare
 	private void getListOfRatings(){
+		List<TableSessionProgModel> progSessionsList = database.getAllPastProgrammedSessions();
+		List<TablePomodoroModel> pomodoroList = database.getAllPastPomodoro();
+
 		List<TableSessionModel> sessionsList = database.getAllSessions();
-		Set<Rating> ratings = new HashSet<>();
+		HashSet<Rating> ratings = new HashSet<>();
+
+		/*
+			ogni activity ha un rating
+			il rating è dato da cosa?
+
+		* */
+
 
 		sessionsList.forEach( sessionModel -> {
 			Rating r = new Rating( sessionModel.getValutazione(), sessionModel.getName());
@@ -93,6 +105,8 @@ public class RatingFragment extends Fragment {
 				ratings.add(r);
 			}
 		});
+
+
 
 		ArrayList<Rating> list = new ArrayList<>( ratings);
 		adapter = new RatingAdapter( list);

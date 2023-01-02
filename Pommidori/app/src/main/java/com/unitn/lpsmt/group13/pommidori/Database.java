@@ -217,7 +217,6 @@ public class Database extends SQLiteOpenHelper {
             //fallimento nell'accedere al database
             sessions.add(new TableSessionModel());
         }
-
         cursor.close();
         db.close();
 
@@ -371,6 +370,42 @@ public class Database extends SQLiteOpenHelper {
         return sessioniProgrammateMensili;
     }
 
+    public List<TableSessionProgModel> getAllPastProgrammedSessions(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<TableSessionProgModel> returnSessions = new ArrayList<>();
+
+        Date now = new Date();
+        Cursor cursor = db.query(TableSessionProgModel.TABLE_NAME, null,
+                TableSessionProgModel.COLUMN_ORA_INIZIO + " <= ?",
+                new String[]{now.toInstant().toString()},
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()){
+            do{
+                int sessionId = cursor.getInt(0);
+                int sessionActivityId = cursor.getInt(1);
+                TableActivityModel sessionActivity = getActivity(sessionActivityId);
+                Date sessionStartDate = new Date(cursor.getLong(2));
+                Date sessionEndDate = new Date(cursor.getLong(3));
+                String sessionAvviso = cursor.getString(4);
+                String sessionRipetizione = cursor.getString(5);
+                TableSessionProgModel t = new TableSessionProgModel(sessionId,sessionActivity,sessionStartDate,sessionEndDate,sessionAvviso,sessionRipetizione);
+
+                returnSessions.add(t);
+            }while(cursor.moveToNext());
+        }else {
+            returnSessions = null;
+        }
+
+        cursor.close();
+        db.close();
+
+        return returnSessions;
+    }
+
     public TableSessionProgModel getProgrammedSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME + " WHERE _id = " + id;
@@ -442,6 +477,40 @@ public class Database extends SQLiteOpenHelper {
         long result = db.insert(TablePomodoroModel.TABLE_NAME,null,cv);
         db.close();
         return result == -1 ? false : true;
+    }
+
+    public List<TablePomodoroModel> getAllPastPomodoro(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<TablePomodoroModel> returnPomodoros = new ArrayList<>();
+
+        Date now = new Date();
+        Cursor cursor = db.query(TablePomodoroModel.TABLE_NAME, null,
+                TablePomodoroModel.COLUMN_DATA_INIZIO + " <= ?",
+                new String[]{now.toInstant().toString()},
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()){
+            do{
+                int pomodoroId = cursor.getInt(0);
+                String activityName = cursor.getString(1);
+                Date inizio = new Date( cursor.getLong(2));
+                long durata = cursor.getLong(3);
+                int color = cursor.getInt(4);
+                TablePomodoroModel t = new TablePomodoroModel(pomodoroId, activityName, inizio, durata, color);
+
+                returnPomodoros.add(t);
+            }while(cursor.moveToNext());
+        }else {
+            returnPomodoros = null;
+        }
+
+        cursor.close();
+        db.close();
+
+        return returnPomodoros;
     }
 
     public List<TablePomodoroModel> getPomodorosByWeek(@NonNull LocalDate date){
