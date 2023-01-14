@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -209,5 +210,17 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
         if( statoTimer.isDisattivo()) return false;
         return true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Homepage", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Homepage", "onDestroy");
     }
 }

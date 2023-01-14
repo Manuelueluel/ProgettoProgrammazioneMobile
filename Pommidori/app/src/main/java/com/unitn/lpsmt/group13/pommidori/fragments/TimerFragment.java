@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -184,6 +185,7 @@ public class TimerFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
+		Log.d("TimerFragment", "onPause");
 		if(countDownTimer != null){
 			countDownTimer.cancel();
 		}
@@ -198,9 +200,22 @@ public class TimerFragment extends Fragment {
 	}
 
 	@Override
+	public void onStop() {
+		super.onStop();
+		Log.d("TimerFragment", "onStop");
+
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
 		statoTimerListener = null;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.d("TimerFragment", "onDestroy");
 	}
 
 	//Salva i dati nelle shared preferences

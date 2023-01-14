@@ -31,8 +31,6 @@ import static com.unitn.lpsmt.group13.pommidori.utils.CalendarUtils.monthYearFor
 
 public class CustomCalendarWeekFragment extends Fragment implements CalendarAdapter.OnItemListener{
 
-    private View view;
-
     private TextView monthYearText;
     private Button toMonthlyyView, previousWeek, nextWeek;
     private RecyclerView calendarRecycleView;
@@ -52,7 +50,7 @@ public class CustomCalendarWeekFragment extends Fragment implements CalendarAdap
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initializeLayout();
+        initializeLayout( view);
         setWeekView();
         setButtonListeners();
     }
@@ -64,7 +62,7 @@ public class CustomCalendarWeekFragment extends Fragment implements CalendarAdap
         addEvents();
     }
 
-    private void initializeLayout() {
+    private void initializeLayout( View view) {
         toMonthlyyView = view.findViewById(R.id.to_monthly_view_btn);
         previousWeek = view.findViewById(R.id.previous_month_btn_week);
         nextWeek = view.findViewById(R.id.next_month_btn_week);

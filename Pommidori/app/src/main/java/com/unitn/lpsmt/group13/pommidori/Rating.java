@@ -2,6 +2,10 @@ package com.unitn.lpsmt.group13.pommidori;
 
 import java.util.Objects;
 
+
+/**	Ogni activity ha un rating, cioè una valutazine della qualità delle sessioni svolte
+ *
+ */
 public class Rating {
 	private float rating;
 	private String activityName;

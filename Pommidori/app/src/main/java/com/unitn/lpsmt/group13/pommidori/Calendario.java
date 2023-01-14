@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -75,5 +76,11 @@ public class Calendario extends AppCompatActivity implements ModifySessionFragme
         calendarMonthFragment = new CustomCalendarMonthFragment();
         fragmentTransaction.replace(R.id.calendar_fragment, calendarMonthFragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Calendario", "onStop");
     }
 }
