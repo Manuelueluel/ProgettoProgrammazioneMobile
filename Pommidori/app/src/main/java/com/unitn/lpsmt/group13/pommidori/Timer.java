@@ -61,4 +61,9 @@ public class Timer extends AppCompatActivity implements TimerFragment.StatoTimer
             toolbar.setTitle( stato);
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 }

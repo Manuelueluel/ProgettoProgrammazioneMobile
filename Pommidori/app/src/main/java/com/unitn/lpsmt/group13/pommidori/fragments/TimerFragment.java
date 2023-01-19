@@ -139,7 +139,6 @@ public class TimerFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		loadData();
-
 		//startCountDownTimer e startCountDownPausa usano entrambi tempoRimasto e tempoFinale
 		if( statoTimer.isCountDown() || statoTimer.isPausa()){
 			aggiornaTimer();
