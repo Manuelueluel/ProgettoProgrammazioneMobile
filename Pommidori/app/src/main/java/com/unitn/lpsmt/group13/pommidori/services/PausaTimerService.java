@@ -50,18 +50,16 @@ public class PausaTimerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-
         statoTimer = new StatoTimer( StatoTimer.PAUSA);
         statoTimerPrecedente = new StatoTimer();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
         isRunning = true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         loadSharedPreferences();
         statoTimer.setValue( StatoTimer.PAUSA);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();
@@ -91,23 +89,11 @@ public class PausaTimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        statoTimer.setValue( StatoTimer.DISATTIVO);
         if( countdownTimer != null){
             countdownTimer.cancel();
         }
-
-//        if( statoTimerPrecedente.isCountDown()){
-//            statoTimer.setValue( StatoTimer.COUNTDOWN);
-//        }else{
-//            statoTimer.setValue( StatoTimer.COUNTUP);
-//        }
-        statoTimer.setValue( StatoTimer.DISATTIVO);
-
         saveSharedPreferences();
-
-//        Intent intentUI = new Intent();
-//        intentUI.setAction(TOOLBAR_BUTTONS_ACTION_INTENT);
-//        intentUI.putExtra(TOOLBAR_BUTTONS_STATO_TIMER, R.string.pomodoro_disattivo);
-//        localBroadcastManager.sendBroadcast(intentUI);
 
         Intent intentSwitch = new Intent();
         intentSwitch.setAction(END_OF_PAUSA_INTENT);

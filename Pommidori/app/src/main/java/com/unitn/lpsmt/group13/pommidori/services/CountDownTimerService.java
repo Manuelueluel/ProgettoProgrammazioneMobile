@@ -55,18 +55,19 @@ public class CountDownTimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate");
         this.tempoIniziale = System.currentTimeMillis();
         this.tempoTrascorso = 0;
         this.statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         isRunning = true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         loadSharedPreferences();
         statoTimer.setValue( StatoTimer.COUNTDOWN);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();

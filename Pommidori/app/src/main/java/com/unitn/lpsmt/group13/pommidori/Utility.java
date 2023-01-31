@@ -33,8 +33,7 @@ public class Utility {
 	public static final String END_OF_PAUSA_TIMER = "END_OF_PAUSA_TIMER";
 
 	//Costanti
-	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 60000;	//Usato per CountUpTimer, corrisponde a 24 ore
-	//86400000
+	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
 
 	public static String capitalize( String str){
 		if( !(str == null || str.isEmpty())){

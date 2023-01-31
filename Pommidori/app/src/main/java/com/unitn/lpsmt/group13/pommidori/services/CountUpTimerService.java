@@ -57,14 +57,14 @@ public class CountUpTimerService extends Service {
         this.tempoIniziale = System.currentTimeMillis();
         this.tempoTrascorso = 0;
         this.statoTimer = new StatoTimer( StatoTimer.COUNTUP);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
         isRunning = true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         statoTimer.setValue( StatoTimer.PAUSA);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();
@@ -121,7 +121,6 @@ public class CountUpTimerService extends Service {
     }
 
     private void saveSharedPreferences() {
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt( STATO_TIMER, statoTimer.getValue());
 
