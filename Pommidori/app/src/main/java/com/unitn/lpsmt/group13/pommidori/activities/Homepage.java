@@ -1,4 +1,8 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.activities;
+
+import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -6,11 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,14 +23,24 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.google.android.material.navigation.NavigationView;
+import com.unitn.lpsmt.group13.pommidori.db.Database;
+import com.unitn.lpsmt.group13.pommidori.R;
+import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.fragments.StartNewSessionFragment;
+import com.unitn.lpsmt.group13.pommidori.broadcastReceivers.ToolbarAndButtonsBroadcastReceiver;
+import com.unitn.lpsmt.group13.pommidori.services.CountDownTimerService;
+import com.unitn.lpsmt.group13.pommidori.services.CountUpTimerService;
+import com.unitn.lpsmt.group13.pommidori.services.PausaTimerService;
 
 import java.util.Collections;
 import java.util.List;
 
-public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        ToolbarAndButtonsBroadcastReceiver.UpdateToolbarAndButtons{
+
+    private static final String TAG = "Homepage";
 
     //Variabili
     private DrawerLayout drawerLayout;
@@ -33,19 +48,13 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     private Toolbar toolbar;
     private Button calendario;
     private Button newSession;
-    private Button btnScadenze;
-    private Button btnSessioni;
     private AutoCompleteTextView listaScadenze;
     private AutoCompleteTextView listaSessioni;
-    private InterceptEventLayout interceptEventScadenze;
-    private InterceptEventLayout interceptEventSessioni;
-
+    private LocalBroadcastManager localBroadcastManager;
+    private ToolbarAndButtonsBroadcastReceiver toolbarBroadcastReceiver;
     private Database db;
     private StatoTimer statoTimer;
-
-    //Shared Preferances
-    private final String SHARED_PREFS_TIMER = Utility.SHARED_PREFS_TIMER;
-    private final String STATO_TIMER = Utility.STATO_TIMER;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +65,12 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.homeToolbar);
-
-        btnScadenze = (Button) findViewById( R.id.btn_dropdown_scadenze);
-        btnSessioni = (Button) findViewById( R.id.btn_dropdown_sessioni);
-
-        listaScadenze = (AutoCompleteTextView) findViewById( R.id.dropdown_scadenze);
-        listaSessioni = (AutoCompleteTextView) findViewById( R.id.dropdown_sessioni);
-
-        interceptEventScadenze = (InterceptEventLayout) findViewById( R.id.wrap_prossime_scadenze);
-        interceptEventSessioni = (InterceptEventLayout) findViewById( R.id.wrap_prossime_sessioni);
-
+        listaScadenze = findViewById( R.id.dropdown_scadenze);
+        listaSessioni = findViewById( R.id.dropdown_sessioni);
         calendario = findViewById(R.id.hp_calendario);
         newSession = findViewById(R.id.hp_newSession);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
+        statoTimer = new StatoTimer();
 
         db = Database.getInstance(this);
         //Al primo avvio dell'app, è necessario inserire l'attività che contiene tutte le sessioni di studio non associate ad attività
@@ -81,11 +84,20 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        toolbarBroadcastReceiver = new ToolbarAndButtonsBroadcastReceiver(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(TOOLBAR_BUTTONS_ACTION_INTENT);
+        localBroadcastManager.registerReceiver( toolbarBroadcastReceiver, intentFilter);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setDropDownLists();
-        if( checkTimerAttivo()) newSession.setText( R.string.resume_session);
-        else newSession.setText(R.string.new_session);
+        updateNewSessionButton( checkTimerAttivo());
     }
 
     //Chiudere il navigation drawer con il pulsante indietro
@@ -113,6 +125,10 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
                 return false;
         }
         return true;
+    }
+
+    private void loadSharedPreferences(){
+        statoTimer.setValue( sharedPreferences.getInt( STATO_TIMER, StatoTimer.DISATTIVO));
     }
 
     private void setNavigationDrawerMenu(){
@@ -198,29 +214,37 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     //Controlla se è presente un timer in corso
     private boolean checkTimerAttivo(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        loadSharedPreferences();
 
-        //Se non è presente un timer attivo, viene comunque salvato lo stato come disattivo
-        int stato = sharedPreferences.getInt(STATO_TIMER, StatoTimer.DISATTIVO);
-        statoTimer = new StatoTimer( stato);
+        if(CountDownTimerService.isRunning) return true;
+        if(CountUpTimerService.isRunning)  return true;
+        if(PausaTimerService.isRunning) return true;
+        return false;
+    }
 
-        editor.putInt(STATO_TIMER, statoTimer.getValue());
-        editor.apply();
-
-        if( statoTimer.isDisattivo()) return false;
-        return true;
+    //Se timer attivo button newSession "Torna alla sessione" se timer disattivo "Avvia nuova sessione"
+    private void updateNewSessionButton( boolean active){
+        if( active) newSession.setText( R.string.resume_session);
+        else newSession.setText(R.string.new_session);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("Homepage", "onStop");
+        localBroadcastManager.unregisterReceiver( toolbarBroadcastReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("Homepage", "onDestroy");
+    }
+
+    @Override
+    public void updateToolbarAndButtons(int stato) {
+        if( stato == R.string.pomodoro_disattivo){
+            updateNewSessionButton( false);
+        }else{
+            updateNewSessionButton( true);
+        }
     }
 }

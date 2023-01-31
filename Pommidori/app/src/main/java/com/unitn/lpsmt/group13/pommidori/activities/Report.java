@@ -1,10 +1,8 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
@@ -13,6 +11,7 @@ import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.utils.ReportFragmentAdapter;
 
 public class Report extends AppCompatActivity {

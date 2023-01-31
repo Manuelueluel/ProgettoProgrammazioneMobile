@@ -43,6 +43,7 @@
     <string name="pomodoro_disattivo">Pomodoro disattivo</string>
     <string name="pausa_in_corso">Pausa in corso</string>
 
+    <!-- Reports -->
     <string name="report">Report</string>
     <string name="objective_toast">Obbiettivo: </string>
     <string name="progress_toast">Progressi: </string>

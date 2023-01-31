@@ -1,4 +1,4 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.unitn.lpsmt.group13.pommidori.R;
+import com.unitn.lpsmt.group13.pommidori.Utility;
 
 public class Impostazioni extends AppCompatActivity {
 

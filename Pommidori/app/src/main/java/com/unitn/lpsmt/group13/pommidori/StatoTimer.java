@@ -12,7 +12,6 @@ public class StatoTimer {
 	public static final int COUNTUP = 1;
 	public static final int PAUSA = 2;
 	public static final int DISATTIVO = 3;
-	public static final int SOSPESO = 4;
 
 	private int value;
 	public StatoTimer(){ value = DISATTIVO; }	//Il costruttore di default assegna lo stato disattivo
@@ -36,7 +35,5 @@ public class StatoTimer {
 	public boolean isPausa() { return value == PAUSA; }
 
 	public boolean isDisattivo() { return value == DISATTIVO; }
-
-	public boolean isSospeso() { return value == SOSPESO; }
 
 }

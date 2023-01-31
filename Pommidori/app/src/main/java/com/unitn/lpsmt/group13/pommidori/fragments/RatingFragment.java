@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.unitn.lpsmt.group13.pommidori.Database;
+import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Rating;
 import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
@@ -21,12 +21,8 @@ import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.utils.RatingAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A simple {@link Fragment} subclass.

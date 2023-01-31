@@ -1,4 +1,4 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.fragments.CustomCalendarMonthFragment;
 import com.unitn.lpsmt.group13.pommidori.fragments.ModifySessionFragment;
 

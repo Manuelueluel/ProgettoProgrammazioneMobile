@@ -1,15 +1,10 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.db;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
-import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
-import com.unitn.lpsmt.group13.pommidori.db.TableSessionModel;
-import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

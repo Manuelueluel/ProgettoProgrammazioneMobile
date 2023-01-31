@@ -1,8 +1,9 @@
-package com.unitn.lpsmt.group13.pommidori;
+package com.unitn.lpsmt.group13.pommidori.activities;
 
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
+import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.utils.FragmentAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;

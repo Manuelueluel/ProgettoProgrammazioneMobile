@@ -24,9 +24,17 @@ public class Utility {
 	public static final String NOME_ACTIVITY_ASSOCIATA = "nomeActivityAssociata";
 	public static final String COLORE_ACTIVITY_ASSOCIATA = "coloreActivityAssociata";
 
-	//Costanti
-	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
+	//Intent broadcast receivers
+	public static final String TIME_MILLIS = "TIME_MILLIS";
+	public static final String TIMER_ACTION_INTENT = "TIMER_ACTION_INTENT";	//Broadcast action per timer
+	public static final String TOOLBAR_BUTTONS_STATO_TIMER = "TOOLBAR_BUTTONS_STATO_TIMER";
+	public static final String TOOLBAR_BUTTONS_ACTION_INTENT = "TOOLBAR_BUTTONS_ACTION_INTENT";
+	public static final String END_OF_PAUSA_INTENT = "END_OF_PAUSA_INTENT";
+	public static final String END_OF_PAUSA_TIMER = "END_OF_PAUSA_TIMER";
 
+	//Costanti
+	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 60000;	//Usato per CountUpTimer, corrisponde a 24 ore
+	//86400000
 
 	public static String capitalize( String str){
 		if( !(str == null || str.isEmpty())){

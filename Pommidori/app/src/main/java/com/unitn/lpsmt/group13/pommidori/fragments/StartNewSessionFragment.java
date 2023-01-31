@@ -16,10 +16,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.unitn.lpsmt.group13.pommidori.Database;
+import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
-import com.unitn.lpsmt.group13.pommidori.Timer;
+import com.unitn.lpsmt.group13.pommidori.activities.Timer;
 import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 
@@ -82,7 +82,7 @@ public class StartNewSessionFragment extends DialogFragment {
         activitySelezionata = new TableActivityModel();         //Default activity
 
         //Metodi
-        loadData();
+        loadSharedPreferences();
         setButtonListener();
         setDropDownLists();
     }
@@ -167,7 +167,7 @@ public class StartNewSessionFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), Timer.class);
-                saveData();
+                saveSharedPreferences();
 
                 startActivity(i);
                 StartNewSessionFragment.this.dismiss();
@@ -200,7 +200,7 @@ public class StartNewSessionFragment extends DialogFragment {
         });
     }
 
-    void saveData(){
+    void saveSharedPreferences(){
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_POMODORO, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -221,7 +221,7 @@ public class StartNewSessionFragment extends DialogFragment {
         editor.apply();
     }
 
-    void loadData(){
+    void loadSharedPreferences(){
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_POMODORO, Context.MODE_PRIVATE);
 

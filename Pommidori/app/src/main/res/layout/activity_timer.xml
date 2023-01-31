@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Timer">
+    tools:context=".activities.Timer"
+    android:id="@+id/activity_timer">
 
     <include
         android:id="@+id/timerToolbar"
         layout="@layout/toolbar" />
 
-    <FrameLayout
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/placeholder_fragment_timer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,6 +25,22 @@
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--
+    <include layout="@layout/content_timer"/>
+
+
+    <FrameLayout
+        android:id="@+id/placeholder_fragment_timer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timerToolbar"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/timers_nav_graph"/>
+
+
     android:id="@+id/fragment_timer"
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar

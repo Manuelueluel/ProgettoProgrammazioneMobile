@@ -7,23 +7,47 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pommidori">
-        <activity android:name=".NewActivityAndSession"
+        <service
+            android:name=".services.CountDownTimerService"
+            android:exported="false"/>
+        <service
+            android:name=".services.PausaTimerService"
+            android:exported="false"/>
+        <service
+            android:name=".services.CountUpTimerService"
+            android:exported="false"/>
+        <service
+            android:name=".services.AccelerometerSensorService"
+            android:exported="false"/>
+        <activity android:name=".activities.NewActivityAndSession"
             android:label="NewActivityAndSession"
-            android:parentActivityName=".Calendario"/>
-        <activity android:name=".Timer"
+            android:parentActivityName=".activities.Calendario"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.Timer"
             android:label="Timer"
-            android:parentActivityName=".Homepage"/>
-        <activity android:name=".Calendario"
+            android:parentActivityName=".activities.Homepage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.Calendario"
             android:label="Calendario"
-            android:parentActivityName=".Homepage"/>
-        <activity android:name=".Report"
+            android:parentActivityName=".activities.Homepage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.Report"
             android:label="Report"
-            android:parentActivityName=".Homepage"/>
-        <activity android:name=".Impostazioni"
+            android:parentActivityName=".activities.Homepage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.Impostazioni"
             android:label="Imposertazioni"
-            android:parentActivityName=".Homepage"/>
-        <activity android:name=".Homepage"
-            android:label="Pommodori">
+            android:parentActivityName=".activities.Homepage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.Homepage"
+            android:label="Pommodori"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
