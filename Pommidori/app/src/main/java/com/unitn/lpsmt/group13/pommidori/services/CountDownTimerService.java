@@ -2,15 +2,20 @@ package com.unitn.lpsmt.group13.pommidori.services;
 
 import static com.unitn.lpsmt.group13.pommidori.Utility.COLORE_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.MINUTI_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTDOWN_NOTIFICATION_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ORE_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_ACTION_INTENT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.NOME_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIME_MILLIS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -21,12 +26,15 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
+import com.unitn.lpsmt.group13.pommidori.fragments.CountDownTimerFragment;
 
 import java.util.Date;
 
@@ -66,6 +74,8 @@ public class CountDownTimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground( ONGOING_COUNTDOWN_NOTIFICATION_ID, createNotification());
+
         loadSharedPreferences();
         statoTimer.setValue( StatoTimer.COUNTDOWN);
 
@@ -74,6 +84,8 @@ public class CountDownTimerService extends Service {
         toolbarIntent.setAction(TOOLBAR_BUTTONS_ACTION_INTENT);
         toolbarIntent.putExtra(TOOLBAR_BUTTONS_STATO_TIMER, R.string.pomodoro_in_corso);
         localBroadcastManager.sendBroadcast(toolbarIntent);
+
+        startForeground(ONGOING_COUNTDOWN_NOTIFICATION_ID, createNotification());
 
         countDownTimer = new CountDownTimer(  tempoRimasto, 1000) {
             @Override
@@ -96,6 +108,12 @@ public class CountDownTimerService extends Service {
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
@@ -112,6 +130,10 @@ public class CountDownTimerService extends Service {
         intent.putExtra(TOOLBAR_BUTTONS_STATO_TIMER, R.string.pomodoro_disattivo);
         localBroadcastManager.sendBroadcast(intent);
 
+        //Cancello la notifica
+        NotificationManagerCompat nmc = NotificationManagerCompat.from( getBaseContext());
+        nmc.cancel( ONGOING_COUNTDOWN_NOTIFICATION_ID);
+
         isRunning = false;
     }
 
@@ -124,6 +146,29 @@ public class CountDownTimerService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
+    }
+
+    private Notification createNotification() {
+
+        Intent intent = new Intent( this, CountDownTimerFragment.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        createNotificationChannel( this, TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TIMER_CHANNEL_ID)
+                .setSmallIcon(R.drawable.selector_circle_progress)
+                .setContentTitle( getString(R.string.timer_notification_title))
+                .setContentText( getString(R.string.timer_notification_text))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
+
+        //Mostra la notifica immediatamente
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify( ONGOING_COUNTDOWN_NOTIFICATION_ID, builder.build());
+
+        return builder.build();
     }
 
     private void saveSharedPreferences() {

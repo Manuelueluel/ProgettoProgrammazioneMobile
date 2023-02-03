@@ -1,5 +1,8 @@
 package com.unitn.lpsmt.group13.pommidori;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -32,6 +35,16 @@ public class Utility {
 	public static final String END_OF_PAUSA_INTENT = "END_OF_PAUSA_INTENT";
 	public static final String END_OF_PAUSA_TIMER = "END_OF_PAUSA_TIMER";
 
+	//Notifications
+	public static final int ONGOING_COUNTDOWN_NOTIFICATION_ID = 1;
+	public static final int ONGOING_COUNTUP_NOTIFICATION_ID = 2;
+	public static final int ONGOING_PAUSA_NOTIFICATION_ID = 3;
+	public static final String TIMER_CHANNEL_ID = "TIMER_CHANNEL_ID";
+//	public static final String COUNTDOWN_CHANNEL_ID = "COUNTDOWN_CHANNEL_ID";
+//	public static final String COUNTUP_CHANNEL_ID = "COUNTUP_CHANNEL_ID";
+//	public static final String PAUSA_CHANNEL_ID = "PAUSA_CHANNEL_ID";
+
+
 	//Costanti
 	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
 
@@ -54,6 +67,20 @@ public class Utility {
 
 	public static String millisToHoursAndMinutes(long milliseconds){
 		return ((int) (milliseconds / 1000) / 3600) + "h " + (((int) (milliseconds / 1000) % 3600) / 60) + "m";
+	}
+
+	//Crea il channel e lo associa al notification manager se la versione di API >= 26
+	public static void createNotificationChannel(Context context, String channelID, String channelName, String desc) {
+		// Create the NotificationChannel, but only on API 26+ because
+		// the NotificationChannel class is new and not in the support library
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription(desc);
+			// Register the channel with the system; you can't change the importance
+			// or other notification behaviors after this
+			NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel( channel);
+		}
 	}
 }
 

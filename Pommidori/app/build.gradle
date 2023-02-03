@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.unitn.lpsmt.group13.pommidori"
@@ -11,6 +11,8 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        compileSdkVersion 33
+
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

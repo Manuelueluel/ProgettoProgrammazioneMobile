@@ -48,6 +48,14 @@
     <string name="objective_toast">Obbiettivo: </string>
     <string name="progress_toast">Progressi: </string>
 
+    <!-- Notifications -->
+    <string name="timer_notification_title">Timer attivo</string>
+    <string name="timer_notification_text">Testo notifica</string>
+    <string name="timer_channel_name">Notifica timer attivo</string>
+    <string name="pausa_notification_title">Pausa in corso</string>
+    <string name="pausa_notification_text">Testo pausa</string>
+
+
     <!-- Arrays per provare alcune funzionalità -->
     <string-array name="activitys_name">
         <item name="lpsmt">Laboratorio di programmazione per sistemi mobile e tablet</item>

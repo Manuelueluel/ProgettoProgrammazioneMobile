@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -235,7 +236,14 @@ public class Timer extends AppCompatActivity implements TimerBroadcastReceiver.U
 
                 //Start and bind of service
                 if( !CountDownTimerService.isRunning && !statoTimer.isDisattivo()){
-                    startService( new Intent( this, CountDownTimerService.class));
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                        Log.d(TAG, "Build version "+Build.VERSION.SDK_INT+" vs "+Build.VERSION_CODES.O);
+                        startForegroundService( new Intent( this, CountDownTimerService.class));
+
+                    }else{
+                        startService( new Intent( this, CountDownTimerService.class));
+                    }
                 }
 
                 if( !countDownBounded){
