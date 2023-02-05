@@ -1,8 +1,11 @@
 package com.unitn.lpsmt.group13.pommidori.activities;
 
+import static com.unitn.lpsmt.group13.pommidori.Utility.POST_NOTIFICATIONS_PERMISSION_CODE;
 import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
+import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -10,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -20,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,6 +32,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
@@ -62,6 +68,23 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     private StatoTimer statoTimer;
     private SharedPreferences sharedPreferences;
 
+    //Oggetto che permette di richiedere permissions e gestirne l'accettazione o meno
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (isGranted) {
+            // Permission is granted. Continue the action or workflow in your
+            // app.
+            Log.d(TAG, "permission granted");
+        } else {
+            // Explain to the user that the feature is unavailable because the
+            // feature requires a permission that the user has denied. At the
+            // same time, respect the user's decision. Don't link to system
+            // settings in an effort to convince the user to change their
+            // decision.
+            Log.d(TAG, "permission denied");
+        }
+    });
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,43 +110,29 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         //Metodi
         setNavigationDrawerMenu();
         setButtonListeners();
-        checkPermissions();
+
+        createNotificationChannel(this, TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
+
+        checkPermission( Manifest.permission.POST_NOTIFICATIONS);
     }
 
-    private void checkPermissions() {
-        //TODO perché non richiede il permesso notifiche ad avvio app?
+    // Function to check and request permission.
+    public void checkPermission( String permission) {
+        Log.d(TAG, "checkPermission");
 
-        // Register the permissions callback, which handles the user's response to the
-        // system permissions dialog. Save the return value, an instance of
-        // ActivityResultLauncher, as an instance variable.
-        ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-                Log.d(TAG, "permission granted");
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                Log.d(TAG, "permission denied");
+        if (ContextCompat.checkSelfPermission(Homepage.this, permission) == PackageManager.PERMISSION_DENIED) {
+
+            if( permission == Manifest.permission.POST_NOTIFICATIONS){
+                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    requestPermissionLauncher.launch( permission);
+                }
+
+            }else{
+                requestPermissionLauncher.launch( permission);
             }
-        });
-
-        //Controlla permission.POST_NOTIFICATIONS, se non granted fa la request
-        if ( ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                == PackageManager.PERMISSION_GRANTED) {
-            // You can use the API that requires the permission.
-            //performAction(...);
-            Log.d(TAG, "POST_NOTIFICATIONS ALREADY GRANTED");
-        } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-            Log.d(TAG, "POST_NOTIFICATIONS NOT GRANTED");
-            requestPermissionLauncher.launch( Manifest.permission.POST_NOTIFICATIONS);
         }
     }
+
 
     @Override
     protected void onStart() {

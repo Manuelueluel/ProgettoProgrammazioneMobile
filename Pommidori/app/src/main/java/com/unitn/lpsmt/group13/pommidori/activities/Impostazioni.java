@@ -1,19 +1,33 @@
 package com.unitn.lpsmt.group13.pommidori.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import static com.unitn.lpsmt.group13.pommidori.Utility.POST_NOTIFICATIONS_PERMISSION_CODE;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Utility;
 
 public class Impostazioni extends AppCompatActivity {
+
+    private static final String TAG = "Impostazioni";
 
     //Variabili
     Toolbar toolbar;
@@ -46,6 +60,9 @@ public class Impostazioni extends AppCompatActivity {
         loadData();
         setToolbar();
         setButtonListener();
+
+        //Utility.createNotificationChannel( getBaseContext(), Utility.TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
+        //requestPermission( Manifest.permission.POST_NOTIFICATIONS);
 
     }
 
@@ -83,6 +100,7 @@ public class Impostazioni extends AppCompatActivity {
             }
         });
     }
+
     private void saveData() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -91,6 +109,7 @@ public class Impostazioni extends AppCompatActivity {
 
         durataPausa.setText(Integer.toString(pausa));
     }
+
      private void loadData(){
          pausa = sharedPreferences.getInt(PAUSA, 5);
 

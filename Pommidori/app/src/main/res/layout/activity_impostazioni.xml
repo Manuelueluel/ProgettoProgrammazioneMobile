@@ -16,19 +16,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/d_pause"
+
         android:textSize="22sp"
-        android:textColor="@color/design_default_color_on_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingToolbar" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:gravity="center"
         android:background="@drawable/custom_border_round"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +39,7 @@
             android:id="@+id/pausa_meno"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:text="-"/>
+            android:text="-" />
 
         <TextView
             android:id="@+id/durata_pausa"
@@ -47,15 +48,15 @@
             android:layout_marginStart="8dp"
             android:text=""
             android:textAlignment="center"
-            android:textSize="30sp"
-            android:textColor="@color/design_default_color_on_secondary"/>
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/pausa_piu"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:text="+"/>
+            android:text="+" />
 
         <TextView
             android:id="@+id/textView4"
@@ -63,7 +64,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:text="minuti"
-            android:textColor="@color/design_default_color_on_secondary"/>
+            android:textColor="@color/design_default_color_on_secondary" />
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

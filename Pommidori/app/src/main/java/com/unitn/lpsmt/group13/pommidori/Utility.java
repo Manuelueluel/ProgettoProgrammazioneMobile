@@ -4,7 +4,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
 import java.time.DayOfWeek;
@@ -44,9 +47,11 @@ public class Utility {
 //	public static final String COUNTUP_CHANNEL_ID = "COUNTUP_CHANNEL_ID";
 //	public static final String PAUSA_CHANNEL_ID = "PAUSA_CHANNEL_ID";
 
+	public static final int POST_NOTIFICATIONS_PERMISSION_CODE = 101;
 
 	//Costanti
 	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
+
 
 	public static String capitalize( String str){
 		if( !(str == null || str.isEmpty())){
