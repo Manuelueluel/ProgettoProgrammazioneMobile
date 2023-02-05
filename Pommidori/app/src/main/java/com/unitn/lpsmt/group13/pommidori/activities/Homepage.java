@@ -113,22 +113,19 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
         createNotificationChannel(this, TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
 
-        checkPermission( Manifest.permission.POST_NOTIFICATIONS);
+        checkPermission( Manifest.permission.POST_NOTIFICATIONS, POST_NOTIFICATIONS_PERMISSION_CODE);
     }
 
     // Function to check and request permission.
-    public void checkPermission( String permission) {
+    public void checkPermission( String permission, int requestCode) {
         Log.d(TAG, "checkPermission");
 
         if (ContextCompat.checkSelfPermission(Homepage.this, permission) == PackageManager.PERMISSION_DENIED) {
 
-            if( permission == Manifest.permission.POST_NOTIFICATIONS){
-                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    requestPermissionLauncher.launch( permission);
-                }
-
-            }else{
+            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                 requestPermissionLauncher.launch( permission);
+            }else{
+                ActivityCompat.requestPermissions(Homepage.this, new String[] { permission }, requestCode);
             }
         }
     }
