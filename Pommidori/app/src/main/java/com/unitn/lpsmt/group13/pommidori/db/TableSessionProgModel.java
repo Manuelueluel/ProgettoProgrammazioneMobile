@@ -102,10 +102,9 @@ public class TableSessionProgModel implements Comparable<TableSessionProgModel>{
 
     @Override
     public String toString() {
-        SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALY);
+        SimpleDateFormat smDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm",Locale.ITALY);
-        return activity.getName() + " " + smHour.format(oraInizio) + "/" + smHour.format(oraFine) + " " + smDate.format(oraInizio);
-
+        return activity.getName() + " " + smHour.format(oraInizio) + "-" + smHour.format(oraFine) + " " + smDate.format(oraInizio);
     }
 
     @Override

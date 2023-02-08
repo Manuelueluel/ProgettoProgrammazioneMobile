@@ -138,12 +138,16 @@ public class ProgressFragment extends Fragment {
 
 		//Se monday non è il primo lunedì del mese selezionato, allora sarà l'ultimo lunedì del mese precedente
 		if( !(monday.getDayOfMonth() == 1)){
-			startIntervalOfSelectedMonth = monday.getMonth().length( monday.isLeapYear()) - monday.getDayOfMonth() + 1;
+//			startIntervalOfSelectedMonth = monday.getMonth().length( monday.isLeapYear()) - monday.getDayOfMonth() + 1;
+			startIntervalOfSelectedMonth = monday.lengthOfMonth() - monday.getDayOfMonth() + 1;
+
 		}else{
 			startIntervalOfSelectedMonth = 0;
 		}
 
-		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.getMonth().length( selectedDate.isLeapYear());
+//		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.getMonth().length( selectedDate.isLeapYear());
+		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.lengthOfMonth();
+
 
 		//Inizializzazione monthlyProgress
 		//Primi x giorni nella griglia che non appartengono al mese selezionato
@@ -152,8 +156,9 @@ public class ProgressFragment extends Fragment {
 		}
 
 		//Giorni del mese selezionato e i loro progressi
-		for(int i=1; i<=selectedDate.getMonth().length( selectedDate.isLeapYear()); i++){
-			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
+		for(int i=1; i<=selectedDate.lengthOfMonth(); i++){
+			monthlyProgress.add( new DayProgress(0, 0, LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), i)));
+//			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
 		}
 
 		//Ultimi x giorni nella griglia che non appartengono al mese selezionato
@@ -167,7 +172,6 @@ public class ProgressFragment extends Fragment {
 			monthlyProgress.get(i).setObjective(
 					monthlyProgress.get(i).getObjective()
 							+(int) (sessione.getOraFine().toInstant().toEpochMilli() - sessione.getOraInizio().toInstant().toEpochMilli()));
-			//TODO la sessione programmata può non avere una oraFine
 		});
 
 		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata

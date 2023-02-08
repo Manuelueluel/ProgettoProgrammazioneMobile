@@ -37,11 +37,17 @@
     <string name="cancel">Annulla</string>
     <string name="date_not_selected">--/--/--</string>
     <string name="hour_not_selected">--:--</string>
+    <string name="select_start_hour_before_creating_reminder">Seleziona un\'ora d\'inizio</string>
 
     <!-- Timer -->
     <string name="pomodoro_in_corso">Pomodoro in corso</string>
     <string name="pomodoro_disattivo">Pomodoro disattivo</string>
     <string name="pausa_in_corso">Pausa in corso</string>
+
+    <!-- Impostazioni -->
+    <string name="settings_pause_minute">minuti</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 
     <!-- Reports -->
     <string name="report">Report</string>
@@ -52,9 +58,12 @@
     <string name="timer_notification_title">Timer attivo</string>
     <string name="timer_notification_text">Testo notifica</string>
     <string name="timer_channel_name">Notifica timer attivo</string>
+    <string name="timer_channel_description">Notifica di una sessione attiva</string>
     <string name="pausa_notification_title">Pausa in corso</string>
     <string name="pausa_notification_text">Testo pausa</string>
-
+    <string name="reminder_channel_name">Promemoria sessione</string>
+    <string name="reminder_channel_description">Promemoria di una sessione</string>
+    <string name="reminder_text">Promemoria</string>
 
     <!-- Arrays per provare alcune funzionalità -->
     <string-array name="activitys_name">

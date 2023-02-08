@@ -1,10 +1,12 @@
 package com.unitn.lpsmt.group13.pommidori.activities;
 
 import static com.unitn.lpsmt.group13.pommidori.Utility.POST_NOTIFICATIONS_PERMISSION_CODE;
+import static com.unitn.lpsmt.group13.pommidori.Utility.REMINDER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
+import static com.unitn.lpsmt.group13.pommidori.Utility.USE_EXACT_ALARM_PERMISSION_CODE;
 import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -47,6 +49,7 @@ import com.unitn.lpsmt.group13.pommidori.services.CountUpTimerService;
 import com.unitn.lpsmt.group13.pommidori.services.PausaTimerService;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -111,9 +114,11 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         setNavigationDrawerMenu();
         setButtonListeners();
 
-        createNotificationChannel(this, TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
+        createNotificationChannel(this, TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), getString(R.string.timer_channel_description));
+        createNotificationChannel( this, REMINDER_CHANNEL_ID, getString(R.string.reminder_channel_name), getString(R.string.reminder_channel_description));
 
         checkPermission( Manifest.permission.POST_NOTIFICATIONS, POST_NOTIFICATIONS_PERMISSION_CODE);
+        checkPermission( Manifest.permission.USE_EXACT_ALARM, USE_EXACT_ALARM_PERMISSION_CODE);
     }
 
     // Function to check and request permission.
@@ -145,6 +150,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     protected void onResume() {
         super.onResume();
         setDropDownLists();
+        loadSharedPreferences();
         updateNewSessionButton( checkTimerAttivo());
     }
 
@@ -224,14 +230,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         List<TableActivityModel> activity = db.getAllActivitiesFromNow();
         List<TableSessionProgModel> session = db.getFirstProgrammedSessionFromEveryActivityFromNow();
 
-        //L'activity di default non deve essere visualizzata
-        TableActivityModel nessunaActivity = new TableActivityModel();
-        for(int i=0; i<activity.size(); i++){
-            if( activity.get(i).equals(nessunaActivity) ) {
-                activity.remove(i);
-            }
-        }
-
         Collections.sort( activity);
         Collections.sort( session);
 
@@ -262,7 +260,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     //Controlla se è presente un timer in corso
     private boolean checkTimerAttivo(){
-        loadSharedPreferences();
 
         if(CountDownTimerService.isRunning) return true;
         if(CountUpTimerService.isRunning)  return true;

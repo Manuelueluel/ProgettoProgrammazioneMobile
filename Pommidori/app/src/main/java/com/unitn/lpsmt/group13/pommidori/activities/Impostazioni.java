@@ -61,9 +61,6 @@ public class Impostazioni extends AppCompatActivity {
         setToolbar();
         setButtonListener();
 
-        //Utility.createNotificationChannel( getBaseContext(), Utility.TIMER_CHANNEL_ID, getString(R.string.timer_channel_name), "");
-        //requestPermission( Manifest.permission.POST_NOTIFICATIONS);
-
     }
 
     protected void setToolbar(){

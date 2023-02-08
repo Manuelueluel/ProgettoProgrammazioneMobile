@@ -1,13 +1,22 @@
 package com.unitn.lpsmt.group13.pommidori.fragments;
 
+import static android.content.Context.ALARM_SERVICE;
+
+import static com.unitn.lpsmt.group13.pommidori.Utility.REMINDER_ACTIVITY_INTENT;
+import static com.unitn.lpsmt.group13.pommidori.Utility.REMINDER_START_HOUR_INTENT;
+
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +28,8 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.unitn.lpsmt.group13.pommidori.Utility;
+import com.unitn.lpsmt.group13.pommidori.broadcastReceivers.ReminderBroadcastReceiver;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
@@ -27,13 +38,22 @@ import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class NewSessionFragment extends Fragment {
 
+    private static final String TAG = "NewSessionFragment";
+
     private final int START_HOUR_SELECTED = 0;
     private final int END_HOUR_SELECTED = 1;
+    private final int FIVE_MINUTES = 5*60000;
+    private final int TEN_MINUTES = 10*60000;
+    private final int FIFTEEN_MINUTES = 15*60000;
+    private final int THIRTY_MINUTES = 30*60000;
+    private final int ONE_HOUR = 60*60000;
+    private final int TWO_HOURS = 120*60000;
 
     private DatePickerDialog datePickerDialog;
     private Button dateButton,hourStartButton,hourEndButton, creaButton, annullaButton;
@@ -42,9 +62,10 @@ public class NewSessionFragment extends Fragment {
     private AutoCompleteTextView listaAttivita,listaAvviso,listaRipetizione;
     private Database db;
     private List<TableActivityModel> activity;
+    private AlarmManager alarmManager;
 
     //Dati
-    int year, month, day, startHour, startMinute, endHour, endMinute;
+    int year, month, day, startHour, startMinute, endHour, endMinute, reminder;
     boolean hasSelectedStartHour, hasSelectedEndHour;
 
     @Override
@@ -74,6 +95,7 @@ public class NewSessionFragment extends Fragment {
         dateButton.setText(R.string.date_not_selected);
         hourStartButton.setText(R.string.hour_not_selected);
         hourEndButton.setText(R.string.hour_not_selected);
+        alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
 
         day = 0;
         month = 0;
@@ -82,6 +104,7 @@ public class NewSessionFragment extends Fragment {
         startMinute = 0;
         endHour = 0;
         endMinute = 0;
+        reminder = THIRTY_MINUTES;  //Default notifica sessione trenta minuti prima dell'evento
 
         hasSelectedStartHour = false;
         hasSelectedEndHour = false;
@@ -124,10 +147,42 @@ public class NewSessionFragment extends Fragment {
             }
         });
 
+        listaAvviso.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "listaAvviso onItemClick item position "+position);
+                switch (position){
+                    case 1:
+                        reminder = FIVE_MINUTES;
+                        break;
+                    case 2:
+                        reminder = TEN_MINUTES;
+                        break;
+                    case 3:
+                        reminder = FIFTEEN_MINUTES;
+                        break;
+                    case 4:
+                        reminder = THIRTY_MINUTES;
+                        break;
+                    case 5:
+                        reminder = ONE_HOUR;
+                        break;
+                    case 6:
+                        reminder = TWO_HOURS;
+                        break;
+                    case 0: //MAI, caso di default
+                        reminder = -1;
+                    default:
+                        break;
+                }
+            }
+        });
+
         creaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TableSessionProgModel s = new TableSessionProgModel();
+                long startHourMillis = 0;
                 s.setActivity(activityModel);
 
                 //Controllo selezione campi
@@ -140,7 +195,15 @@ public class NewSessionFragment extends Fragment {
                 }else{
                     try {
                         String start = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute;
-                        s.setOraInizio(new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.getDefault()).parse(start));
+                        Date dateFomatted = new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.getDefault()).parse(start);
+                        startHourMillis = dateFomatted.toInstant().toEpochMilli();
+
+                        //Selezionato di non volere notifiche
+                        if( reminder != -1){
+                            createReminder( startHourMillis);
+                        }
+
+                        s.setOraInizio( dateFomatted);
                     } catch (Exception e){
                         return;
                     }
@@ -274,7 +337,21 @@ public class NewSessionFragment extends Fragment {
         listaAttivita.setAdapter( activityAdapter);
         listaAvviso.setAdapter(avvisoAdapter);
         listaRipetizione.setAdapter(ripetizioneAdapter);
+    }
 
+    private void createReminder( long startTime){
+        //Crea la notifica solo se l'inizio della sessione è successivo ad adesso
+        if( new Date( startTime).after( new Date())){
+            Log.d(TAG, "createReminder "+ activityModel.getName() + " " + new Date(startTime) + Utility.getPendingIntentRequestCode());
 
+            Intent intent = new Intent( getContext(), ReminderBroadcastReceiver.class);
+            intent.putExtra( REMINDER_ACTIVITY_INTENT, activityModel.getName());//Activity associata
+            intent.putExtra( REMINDER_START_HOUR_INTENT, startTime);//Orario inizio
+            PendingIntent pendingIntent = PendingIntent.getBroadcast( getContext(), Utility.getPendingIntentRequestCode(), intent, PendingIntent.FLAG_IMMUTABLE);
+
+            //La notifica viene anticipata di reminder
+            long triggerTime = startTime - reminder;
+            alarmManager.setExact( AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        }
     }
 }

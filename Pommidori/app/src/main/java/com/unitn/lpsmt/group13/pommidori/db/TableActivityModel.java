@@ -43,6 +43,7 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
         this.scadenza = new Date(0l);
         this.avviso = null;
     }
+
     public TableActivityModel(int id, String name, int colore, Date scadenza, String avviso) {
         this.id = id;
         this.name = name;

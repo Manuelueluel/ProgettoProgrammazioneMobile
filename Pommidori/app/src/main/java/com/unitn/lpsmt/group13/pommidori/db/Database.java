@@ -119,8 +119,21 @@ public class Database extends SQLiteOpenHelper {
 
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
-            //se la data è dopo oggi, aggiungi l'attività al return
             if(a.getScadenza().after(new Date()))
+                returnActivity.add(a);
+        }
+
+        return returnActivity;
+    }
+
+    public List<TableActivityModel> getAllActivitiesFromNowAndWithoutEnding(){
+        List<TableActivityModel> returnActivity = new ArrayList<>();
+        List<TableActivityModel> getActivity = getAllActivities();
+
+        //loop su tutti gli elementi
+        for(TableActivityModel a : getActivity) {
+            if( a.getScadenza().after(new Date()) || a.getScadenza().equals( new Date(0L)))
+                //Activities senza scadenza hanno data scadenza 01:00 01-01-1970 cioè Date(0l)
                 returnActivity.add(a);
         }
 
@@ -285,23 +298,20 @@ public class Database extends SQLiteOpenHelper {
 
     public List<TableSessionProgModel> getFirstProgrammedSessionFromEveryActivityFromNow(){
         List<TableSessionProgModel> returnSession = new ArrayList<>();
-        List<TableActivityModel> getActivity = getAllActivitiesFromNow();
-        getActivity.add( getActivity(0000));    //aggiunta l'activity di default
+        List<TableActivityModel> getActivity = getAllActivitiesFromNowAndWithoutEnding();
 
         //loop su tutti gli elementi
         for(TableActivityModel a : getActivity) {
-            List<TableSessionProgModel> returnTemp = new ArrayList<>();
             List<TableSessionProgModel> getSession = getAllProgrammedSessionsByActivity(a.getName());
 
             //loop su tutti gli elementi
             for(TableSessionProgModel s : getSession) {
                 //se la data è dopo oggi, aggiungi l'attività al return
-                if(s.getOraInizio().after(new Date()))
-                    returnTemp.add(s);
+                if( s.getOraInizio().after(new Date())) {
+                    returnSession.add(s);
+                    break;
+                }
             }
-
-            if(!returnTemp.isEmpty())
-                returnSession.add(returnTemp.get(0));
         }
 
         return returnSession;

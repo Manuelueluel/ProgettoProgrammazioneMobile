@@ -5,12 +5,13 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true"
-
         android:theme="@style/Theme.Pommidori"
         tools:targetApi="31">
         <service
@@ -25,6 +26,10 @@
         <service
             android:name=".services.AccelerometerSensorService"
             android:exported="false"/>
+        <receiver
+            android:name=".broadcastReceivers.ReminderBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"/>
         <activity android:name=".activities.NewActivityAndSession"
             android:label="NewActivityAndSession"
             android:parentActivityName=".activities.Calendario"

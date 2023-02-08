@@ -43,14 +43,19 @@ public class Utility {
 	public static final int ONGOING_COUNTUP_NOTIFICATION_ID = 2;
 	public static final int ONGOING_PAUSA_NOTIFICATION_ID = 3;
 	public static final String TIMER_CHANNEL_ID = "TIMER_CHANNEL_ID";
-//	public static final String COUNTDOWN_CHANNEL_ID = "COUNTDOWN_CHANNEL_ID";
-//	public static final String COUNTUP_CHANNEL_ID = "COUNTUP_CHANNEL_ID";
-//	public static final String PAUSA_CHANNEL_ID = "PAUSA_CHANNEL_ID";
+	public static final int REMINDER_NOTIFICATION_ID = 10;
+	public static final String REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID";
+	public static final String REMINDER_ACTIVITY_INTENT = "REMINDER_ACTIVITY_INTENT";
+	public static final String REMINDER_START_HOUR_INTENT = "REMINDER_START_HOUR_INTENT";
 
+	//Permission codes
 	public static final int POST_NOTIFICATIONS_PERMISSION_CODE = 101;
+	public static final int USE_EXACT_ALARM_PERMISSION_CODE = 102;
 
 	//Costanti
 	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
+
+	private static int pendingIntentRequestCode = 0;
 
 
 	public static String capitalize( String str){
@@ -87,5 +92,13 @@ public class Utility {
 			notificationManager.createNotificationChannel( channel);
 		}
 	}
+
+	public static int getPendingIntentRequestCode(){
+		if( pendingIntentRequestCode == Integer.MAX_VALUE){
+			pendingIntentRequestCode = Integer.MIN_VALUE;
+		}
+		return ++pendingIntentRequestCode;
+	}
+
 }
 
