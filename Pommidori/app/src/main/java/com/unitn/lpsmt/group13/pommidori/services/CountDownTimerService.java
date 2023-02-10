@@ -2,6 +2,7 @@ package com.unitn.lpsmt.group13.pommidori.services;
 
 import static com.unitn.lpsmt.group13.pommidori.Utility.COLORE_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.MINUTI_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.N_STARS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTDOWN_NOTIFICATION_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ORE_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_ACTION_INTENT;
@@ -12,6 +13,7 @@ import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIME_MILLIS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.TRIGGERS_WEIGHT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
 
 import android.app.Notification;
@@ -30,6 +32,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.unitn.lpsmt.group13.pommidori.AccelerometerSensor;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
@@ -48,9 +51,12 @@ public class CountDownTimerService extends Service {
     private CountDownTimer countDownTimer;
     private Database database;
     private StatoTimer statoTimer;
+    int oreTimer, minutiTimer;
     private long tempoRimasto;
     private long tempoIniziale;
     private long tempoTrascorso;
+    private long tempoFine;
+    private AccelerometerSensor accelerometerSensor;
     private final IBinder binder = new CountDownTimerBinder();
 
     public class CountDownTimerBinder extends Binder{
@@ -67,9 +73,10 @@ public class CountDownTimerService extends Service {
         this.tempoIniziale = System.currentTimeMillis();
         this.tempoTrascorso = 0;
         this.statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
-        isRunning = true;
+        this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        this.sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
+        this.isRunning = true;
+        this.accelerometerSensor = AccelerometerSensor.getInstance( getBaseContext());
     }
 
     @Override
@@ -78,6 +85,7 @@ public class CountDownTimerService extends Service {
 
         loadSharedPreferences();
         statoTimer.setValue( StatoTimer.COUNTDOWN);
+        tempoFine = tempoIniziale + tempoRimasto;
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();
@@ -179,8 +187,8 @@ public class CountDownTimerService extends Service {
     }
 
     private void loadSharedPreferences(){
-        int oreTimer = sharedPreferences.getInt( ORE_TIMER, 0);
-        int minutiTimer = sharedPreferences.getInt( MINUTI_TIMER, 30);
+        oreTimer = sharedPreferences.getInt( ORE_TIMER, 0);
+        minutiTimer = sharedPreferences.getInt( MINUTI_TIMER, 30);
         tempoRimasto = ((oreTimer*3600) + (minutiTimer*60)) * 1000;
     }
 
@@ -192,11 +200,32 @@ public class CountDownTimerService extends Service {
         pomodoro.setInizio( new Date( tempoIniziale));
         pomodoro.setDurata( tempoTrascorso);
         pomodoro.setColor( sharedPreferences.getInt(COLORE_ACTIVITY_ASSOCIATA, 0));
+        pomodoro.setRating( calculateRating());
 
         return database.addCompletedPomodoro( pomodoro);
     }
 
     public long getTempoRimasto(){
         return tempoRimasto;
+    }
+
+    private float calculateRating(){
+
+        /** calcolo se il timer si è concluso oppure se è stato interrotto e se sì dopo quanto
+         *
+         */
+        long durataPrevista = ((oreTimer*3600) + (minutiTimer*60)) * 1000;
+        long durataEffettiva = durataPrevista - tempoTrascorso;
+        //Il rapporto è al più 1
+        float rapporto = durataEffettiva / durataPrevista;
+
+        int triggers = accelerometerSensor.getTriggers();
+
+
+        //5 -> numero stelle massimo, 0.5 peso per trigger
+        float rating = N_STARS * rapporto - triggers * TRIGGERS_WEIGHT;
+
+
+        return rating;
     }
 }

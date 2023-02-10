@@ -10,9 +10,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
+import com.unitn.lpsmt.group13.pommidori.db.Database;
+import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
+import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class Utility {
 
@@ -47,15 +55,22 @@ public class Utility {
 	public static final String REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID";
 	public static final String REMINDER_ACTIVITY_INTENT = "REMINDER_ACTIVITY_INTENT";
 	public static final String REMINDER_START_HOUR_INTENT = "REMINDER_START_HOUR_INTENT";
+	private static int pendingIntentRequestCode = 0;
 
 	//Permission codes
 	public static final int POST_NOTIFICATIONS_PERMISSION_CODE = 101;
 	public static final int USE_EXACT_ALARM_PERMISSION_CODE = 102;
 
+	//Rating
+	public static final float BONUS_PERCENTAGE = 0.8F;
+	public static final float MALUS_PERCENTAGE = 0.5F;
+	public static final float BONUS = 1.1F;
+	public static final float MALUS = 0.9F;
+	public static final float TRIGGERS_WEIGHT = 0.5F;
+	public static final float N_STARS = 5.0F;
+
 	//Costanti
 	public static final long DURATA_MASSIMA_COUNTUP_TIMER = 86400000;	//Usato per CountUpTimer, corrisponde a 24 ore
-
-	private static int pendingIntentRequestCode = 0;
 
 
 	public static String capitalize( String str){
@@ -98,6 +113,80 @@ public class Utility {
 			pendingIntentRequestCode = Integer.MIN_VALUE;
 		}
 		return ++pendingIntentRequestCode;
+	}
+
+	public static float calculateRatingByActivity( Context context, String activityName) {
+		Database database = Database.getInstance( context);
+		List<TablePomodoroModel> pomoList = database.getAllPomodorosByActivity( activityName);
+		List<TableSessionProgModel> sessionList = database.getAllPastProgrammedSessionsByActivity( activityName);
+		float rating = 0F;
+
+		//Ordino le liste per tempo d'inizio
+		Collections.sort( pomoList);
+		Collections.sort( sessionList);
+
+		for(int j=0; j<sessionList.size(); j++){
+			Date inizioSessione = sessionList.get(j).getOraInizio();
+			Date fineSessione = sessionList.get(j).getOraFine();
+			long durataSessione = fineSessione.toInstant().toEpochMilli() - inizioSessione.toInstant().toEpochMilli();
+			long sommaDurataPomo = 0;
+			int pomoForSession = 0;
+
+			for(int i=0; i<pomoList.size(); i++){
+
+				//Se il pomodoro è iniziato all'interno della sessione
+				if( pomoList.get(i).getInizio().after( inizioSessione) && pomoList.get(i).getInizio().before( fineSessione)){
+					pomoForSession++;
+					sommaDurataPomo = sommaDurataPomo + pomoList.get(i).getDurata();
+					rating = rating + pomoList.get(i).getRating();
+
+
+					//Rimuovo i pomodoro che ho già usato per una sessione
+					pomoList.remove( i);
+
+				}else{	//Finiti i pomodori che rientravano nella sessione
+					//Calcolo bonus/malus per aver rispettato o meno la sessione programmata
+					if( sommaDurataPomo >= (durataSessione * BONUS_PERCENTAGE)){
+						rating = rating * BONUS;
+
+					}else if( sommaDurataPomo < (durataSessione * MALUS_PERCENTAGE)){
+						rating = rating * MALUS;
+					}
+					break;
+				}
+			}
+		}
+
+		//Alla fine rimangono solamente i pomodoro che non rientrano in una sessione
+		for (int i=0; i<pomoList.size(); i++){
+
+		}
+
+		/*	Ottengo tutti i pomodoro e le sessioni programmate
+			controllo se tali pomodori rientrano nelle sessioni programmate,
+
+			prendo l'intervallo di tempo sessione prog
+			prendo i pomodoro di tale activity che sono iniziati nell'intervallo sessione prog
+			prendo rating dei pomodoro
+			calcolo somma tempi pomodoro
+
+			if somma pomodoro => 80% intervallo sessione prog
+				bonus al rating
+			else if somma pomodoro < 50% intervallo sessione prog
+				malus al rating
+
+			aggiorno ratingActivity
+			ratingActivity = ratingActivity + ratingPomodoro + bonus/malus
+
+			se i pomodoro non rientrano in sessioni programmate
+			prendo rating dei pomodoro
+			aggiorno ratingActivity
+			ratingActivity = ratingActivity + ratingPomodoro * POMO_WEIGHT
+		* */
+
+
+
+		return 1.0F;
 	}
 
 }

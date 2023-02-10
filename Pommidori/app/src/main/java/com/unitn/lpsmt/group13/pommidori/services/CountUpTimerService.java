@@ -29,6 +29,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.unitn.lpsmt.group13.pommidori.AccelerometerSensor;
 import com.unitn.lpsmt.group13.pommidori.CountUpTimer;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
@@ -51,6 +52,7 @@ public class CountUpTimerService extends Service {
     private StatoTimer statoTimer;
     private long tempoIniziale;
     private long tempoTrascorso;
+    private AccelerometerSensor accelerometerSensor;
     private final IBinder binder = new CountUpTimerBinder();
 
     public class CountUpTimerBinder extends Binder{
@@ -67,9 +69,10 @@ public class CountUpTimerService extends Service {
         this.tempoIniziale = System.currentTimeMillis();
         this.tempoTrascorso = 0;
         this.statoTimer = new StatoTimer( StatoTimer.COUNTUP);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        isRunning = true;
+        this.sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
+        this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        this.isRunning = true;
+        this.accelerometerSensor = AccelerometerSensor.getInstance( getBaseContext());
     }
 
     @Override
@@ -180,11 +183,17 @@ public class CountUpTimerService extends Service {
         pomodoro.setInizio( new Date( tempoIniziale));
         pomodoro.setDurata( tempoTrascorso);
         pomodoro.setColor( sharedPreferences.getInt(COLORE_ACTIVITY_ASSOCIATA, 0));
+        pomodoro.setRating( calculateRating());
 
         return database.addCompletedPomodoro( pomodoro);
     }
 
     public long getTempoTrascorso(){
         return tempoTrascorso;
+    }
+
+    private float calculateRating(){
+
+        return 0F;
     }
 }

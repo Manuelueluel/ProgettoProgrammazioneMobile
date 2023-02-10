@@ -170,6 +170,38 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
+    public TableActivityModel getActivity( String activityName){
+        TableActivityModel result = new TableActivityModel();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TableActivityModel.TABLE_NAME +
+                " WHERE " + TableActivityModel.COLUMN_NOME + " = " + activityName;
+
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            int id = cursor.getInt(0);
+            String name = cursor.getString(1);
+            int activityColor = cursor.getInt(2);
+            Date activityDate = new Date(cursor.getLong(3));
+            String activityAvviso = cursor.getString(4);
+
+            result.setId(id);
+            result.setName(name);
+            result.setColore(activityColor);
+            result.setScadenza(activityDate);
+            result.setAvviso(activityAvviso);
+        } else{
+            //fallimento nell'accedere al database
+            result = null;
+        }
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
     public boolean deleteActivity(int id){
         String s_id = Integer.toString(id);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -411,6 +443,45 @@ public class Database extends SQLiteOpenHelper {
         return returnSessions;
     }
 
+    public List<TableSessionProgModel> getAllPastProgrammedSessionsByActivity( String activityName){
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<TableSessionProgModel> returnSessions = new ArrayList<>();
+        TableActivityModel activity = getActivity( activityName);
+
+        Date now = new Date();
+        Cursor cursor = db.query(
+                TableSessionProgModel.TABLE_NAME, null,
+                TableSessionProgModel.COLUMN_ORA_INIZIO + " <= ? AND " +
+                TableSessionProgModel.COLUMN_ID_ACTIVITY + " = ?",
+                new String[]{ now.toInstant().toString(), String.valueOf(activity.getId())},
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()){
+            do{
+                int sessionId = cursor.getInt(0);
+                int sessionActivityId = cursor.getInt(1);
+                TableActivityModel sessionActivity = getActivity(sessionActivityId);
+                Date sessionStartDate = new Date(cursor.getLong(2));
+                Date sessionEndDate = new Date(cursor.getLong(3));
+                String sessionAvviso = cursor.getString(4);
+                String sessionRipetizione = cursor.getString(5);
+                TableSessionProgModel t = new TableSessionProgModel(sessionId,sessionActivity,sessionStartDate,sessionEndDate,sessionAvviso,sessionRipetizione);
+
+                returnSessions.add(t);
+            }while(cursor.moveToNext());
+        }else {
+            returnSessions = null;
+        }
+
+        cursor.close();
+        db.close();
+
+        return returnSessions;
+    }
+
     public TableSessionProgModel getProgrammedSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME + " WHERE _id = " + id;
@@ -504,7 +575,44 @@ public class Database extends SQLiteOpenHelper {
                 Date inizio = new Date( cursor.getLong(2));
                 long durata = cursor.getLong(3);
                 int color = cursor.getInt(4);
-                TablePomodoroModel t = new TablePomodoroModel(pomodoroId, activityName, inizio, durata, color);
+                float rating = cursor.getFloat( 5);
+                TablePomodoroModel t = new TablePomodoroModel(pomodoroId, activityName, inizio, durata, color, rating);
+
+                returnPomodoros.add(t);
+            }while(cursor.moveToNext());
+        }else {
+            returnPomodoros = null;
+        }
+
+        cursor.close();
+        db.close();
+
+        return returnPomodoros;
+    }
+
+    public List<TablePomodoroModel> getAllPomodorosByActivity( String activityName){
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<TablePomodoroModel> returnPomodoros = new ArrayList<>();
+
+        Cursor cursor = db.query(
+                TablePomodoroModel.TABLE_NAME, null,
+                TablePomodoroModel.COLUMN_NOME_ACTIVITY + " = ?",
+                new String[]{activityName},
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()){
+            do{
+                int pomodoroId = cursor.getInt(0);
+                String name = cursor.getString(1);
+                Date inizio = new Date( cursor.getLong(2));
+                long durata = cursor.getLong(3);
+                int color = cursor.getInt(4);
+                float rating = cursor.getFloat( 5);
+
+                TablePomodoroModel t = new TablePomodoroModel(pomodoroId, name, inizio, durata, color, rating);
 
                 returnPomodoros.add(t);
             }while(cursor.moveToNext());
@@ -542,13 +650,16 @@ public class Database extends SQLiteOpenHelper {
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
                 int color = cursor.getInt( 4);
+                float rating = cursor.getFloat( 5);
+
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
                         durataPomodoro,
-                        color
+                        color,
+                        rating
                 );
 
                 pomodoroSettimanali.add(p);
@@ -584,13 +695,15 @@ public class Database extends SQLiteOpenHelper {
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
                 int color = cursor.getInt( 4);
+                float rating = cursor.getFloat( 5);
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
                         durataPomodoro,
-                        color
+                        color,
+                        rating
                 );
 
                 pomodoroMensili.add(p);
@@ -625,13 +738,15 @@ public class Database extends SQLiteOpenHelper {
                 long dataInizioPomodoro = cursor.getLong(2);
                 long durataPomodoro = cursor.getLong(3);
                 int color = cursor.getInt( 4);
+                float rating = cursor.getFloat( 5);
 
                 TablePomodoroModel p = new TablePomodoroModel(
                         pomodoroId,
                         activityName,
                         new Date(dataInizioPomodoro),
                         durataPomodoro,
-                        color
+                        color,
+                        rating
                 );
 
                 pomodoroAnnuali.add(p);

@@ -86,11 +86,10 @@ public class RatingFragment extends Fragment {
 		List<TableSessionModel> sessionsList = database.getAllSessions();
 		HashSet<Rating> ratings = new HashSet<>();
 
-		/*
-			ogni activity ha un rating
-			il rating è dato da cosa?
 
-		* */
+
+
+
 
 
 		sessionsList.forEach( sessionModel -> {

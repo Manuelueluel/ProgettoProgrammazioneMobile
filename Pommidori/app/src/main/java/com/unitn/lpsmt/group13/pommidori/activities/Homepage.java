@@ -233,6 +233,8 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         Collections.sort( activity);
         Collections.sort( session);
 
+        //TODO non mostra le sessioni che vengono create nel giorno stesso
+
         ArrayAdapter activityAdapter = new ArrayAdapter<TableActivityModel>(
                 Homepage.this,
                 R.layout.dropdown_item,
