@@ -15,6 +15,7 @@ import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_I
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_STATO_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TRIGGERS_WEIGHT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ensureRange;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -211,21 +212,17 @@ public class CountDownTimerService extends Service {
 
     private float calculateRating(){
 
-        /** calcolo se il timer si è concluso oppure se è stato interrotto e se sì dopo quanto
-         *
-         */
         long durataPrevista = ((oreTimer*3600) + (minutiTimer*60)) * 1000;
+        //errore linea seguente
         long durataEffettiva = durataPrevista - tempoTrascorso;
-        //Il rapporto è al più 1
-        float rapporto = durataEffettiva / durataPrevista;
+        float rapporto = ((float) (durataEffettiva) / (float) (durataPrevista));
 
         int triggers = accelerometerSensor.getTriggers();
-
-
-        //5 -> numero stelle massimo, 0.5 peso per trigger
         float rating = N_STARS * rapporto - triggers * TRIGGERS_WEIGHT;
+        Log.d(TAG, "durata prevista "+durataPrevista+"durataEffettiva"+durataEffettiva+"rapporto "+rapporto+" rating "+rating+" triggers "+triggers);
 
-
+        rating = ensureRange( rating, N_STARS, 0);
+        Log.d(TAG, "calculateRating rating"+rating);
         return rating;
     }
 }

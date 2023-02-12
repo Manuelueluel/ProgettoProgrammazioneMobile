@@ -11,10 +11,9 @@ import java.util.Objects;
  *
  */
 public class Rating {
+
 	private float rating;
 	private String activityName;
-	private Database db;
-
 
 	public Rating(float rating, String activityName) {
 		this.rating = rating;
@@ -36,7 +35,6 @@ public class Rating {
 	public void setActivityName(String activityName) {
 		this.activityName = activityName;
 	}
-
 
 	@Override
 	public boolean equals(Object o) {

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Rating;
@@ -34,7 +35,6 @@ public class RatingFragment extends Fragment {
 	private RecyclerView recyclerView;
 	private RecyclerView.Adapter adapter;
 	private RecyclerView.LayoutManager layoutManager;
-	private Database database;
 
 	public RatingFragment() {
 		// Required empty public constructor
@@ -74,59 +74,13 @@ public class RatingFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		database = Database.getInstance( this.getContext());
-		getListOfRatings();
+		setListOfRatings();
 	}
 
-	//TODO getListOfRatings da testare
-	private void getListOfRatings(){
-		List<TableSessionProgModel> progSessionsList = database.getAllPastProgrammedSessions();
-		List<TablePomodoroModel> pomodoroList = database.getAllPastPomodoro();
-
-		List<TableSessionModel> sessionsList = database.getAllSessions();
-		HashSet<Rating> ratings = new HashSet<>();
-
-
-
-
-
-
-
-		sessionsList.forEach( sessionModel -> {
-			Rating r = new Rating( sessionModel.getValutazione(), sessionModel.getName());
-			if( ratings.contains(r)){
-				ratings.add( new Rating( sessionModel.getValutazione()+r.getRating(), r.getActivityName()));
-			}else{
-				ratings.add(r);
-			}
-		});
-
-
-
-		ArrayList<Rating> list = new ArrayList<>( ratings);
-		adapter = new RatingAdapter( list);
+	//TODO setListOfRatings da testare
+	private void setListOfRatings(){
+		List<Rating> list = Utility.calculateRatings( getContext());
+		adapter = new RatingAdapter((ArrayList<Rating>) list);
 		recyclerView.setAdapter( adapter);
 	}
-
-	/*
-	private ArrayList<Rating> generaListaRatings(){
-		ArrayList<Rating> returnList = new ArrayList<>();
-		int size = ThreadLocalRandom.current().nextInt(2, names.length);
-
-		for(int i=0; i<size; i++){
-			returnList.add( new Rating( getRandomRating(), getRandomActivityName( names)));
-		}
-		return returnList;
-	}
-
-	private String getRandomActivityName(String names[]){
-		return names[ThreadLocalRandom.current().nextInt(0, names.length)];
-	}
-
-	private float getRandomRating(){
-		float f = (ThreadLocalRandom.current().nextFloat() * 10) % 5;
-		return 	f;
-	}
-
-	 */
 }

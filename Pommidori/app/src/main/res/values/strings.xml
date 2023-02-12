@@ -15,6 +15,7 @@
     <string name="impostazioni">Impostazioni</string>
     <string name="nome_attivita">Inserire il nome dell\'attività</string>
     <string name="pomodoro_avvia">Avvia</string>
+    <string name="default_activity">Nessuna attività</string>
 
     <!-- Calendar -->
     <string name="calendar">Calendario</string>
@@ -50,6 +51,9 @@
     <string name="minus">-</string>
 
     <!-- Reports -->
+    <string name="chart_tab_name">Chart</string>
+    <string name="progress_tab_name">Progress</string>
+    <string name="rating_tab_name">Rating</string>
     <string name="report">Report</string>
     <string name="objective_toast">Obbiettivo: </string>
     <string name="progress_toast">Progressi: </string>

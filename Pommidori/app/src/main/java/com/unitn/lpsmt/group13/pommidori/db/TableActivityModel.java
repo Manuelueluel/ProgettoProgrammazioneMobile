@@ -96,7 +96,13 @@ public class TableActivityModel implements Comparable<TableActivityModel>{
     public String toString() {
         SimpleDateFormat smDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         SimpleDateFormat smHour = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return name + " " + smHour.format(scadenza) + " " + smDate.format(scadenza);
+        String str;
+        if( getName().equals( "Nessuna attività")){
+            str = name;
+        }else {
+            str = name + " " + smHour.format(scadenza) + " " + smDate.format(scadenza);
+        }
+        return str;
     }
 
     @Override

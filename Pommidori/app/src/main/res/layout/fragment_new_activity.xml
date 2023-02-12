@@ -190,25 +190,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Programmazione Sessioni"
-                android:paddingHorizontal="20dp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:background="@drawable/custom_border_round"
-                android:layout_marginHorizontal="10dp"
-                android:paddingHorizontal="10dp"
-                android:orientation="vertical">
-
-                <!-- Lista Sessioni -->
-
-            </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

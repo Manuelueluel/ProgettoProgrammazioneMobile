@@ -6,11 +6,10 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
 import com.unitn.lpsmt.group13.pommidori.db.Database;
+import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
 import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 
@@ -23,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Utility {
+
+	private static final String TAG = "Utility";
 
 	//Shared preferences per gestione timer
 	public static final String SHARED_PREFS_TIMER = "sharedPreferencesTimer";
@@ -61,9 +62,9 @@ public class Utility {
 	public static final int POST_NOTIFICATIONS_PERMISSION_CODE = 101;
 	public static final int USE_EXACT_ALARM_PERMISSION_CODE = 102;
 
-	//Rating
-	public static final float BONUS_PERCENTAGE = 0.8F;
-	public static final float MALUS_PERCENTAGE = 0.5F;
+	//Rating threshold
+	public static final float BONUS_THRESHOLD = 0.8F;
+	public static final float MALUS_THRESHOLD = 0.5F;
 	public static final float BONUS = 1.1F;
 	public static final float MALUS = 0.9F;
 	public static final float TRIGGERS_WEIGHT = 0.5F;
@@ -115,51 +116,73 @@ public class Utility {
 		return ++pendingIntentRequestCode;
 	}
 
-	public static float calculateRatingByActivity( Context context, String activityName) {
+	public static List<Rating> calculateRatings( Context context){
 		Database database = Database.getInstance( context);
+		List<TableActivityModel> activities = database.getAllActivities();
+		List<Rating> ratings = new ArrayList<>();
+
+		activities.forEach( activity -> {
+			Rating rat = new Rating( calculateRatingByActivity( database, context, activity.getName()), activity.getName());
+			ratings.add( rat);
+		});
+
+		return ratings;
+	}
+
+	private static float calculateRatingByActivity( Database database, Context context, String activityName) {
 		List<TablePomodoroModel> pomoList = database.getAllPomodorosByActivity( activityName);
-		List<TableSessionProgModel> sessionList = database.getAllPastProgrammedSessionsByActivity( activityName);
+		TableActivityModel activity = database.getActivity( activityName);
+		List<TableSessionProgModel> sessionList = database.getAllPastProgrammedSessionsByActivity( activity);
 		float rating = 0F;
+		int pomoTotali = pomoList.size();
 
-		//Ordino le liste per tempo d'inizio
-		Collections.sort( pomoList);
-		Collections.sort( sessionList);
+		if( !pomoList.isEmpty() && !sessionList.isEmpty()){
+			//Ordino le liste per tempo d'inizio
+			Collections.sort( pomoList);
+			Collections.sort( sessionList);
 
-		for(int j=0; j<sessionList.size(); j++){
-			Date inizioSessione = sessionList.get(j).getOraInizio();
-			Date fineSessione = sessionList.get(j).getOraFine();
-			long durataSessione = fineSessione.toInstant().toEpochMilli() - inizioSessione.toInstant().toEpochMilli();
-			long sommaDurataPomo = 0;
-			int pomoForSession = 0;
+			for(int j=0; j<sessionList.size(); j++){
+				Date inizioSessione = sessionList.get(j).getOraInizio();
+				Date fineSessione = sessionList.get(j).getOraFine();
+				long durataSessione = fineSessione.toInstant().toEpochMilli() - inizioSessione.toInstant().toEpochMilli();
+				long sommaDurataPomo = 0;
+				int pomoForSession = 0;
 
-			for(int i=0; i<pomoList.size(); i++){
+				for(int i=0; i<pomoList.size(); i++){
 
-				//Se il pomodoro è iniziato all'interno della sessione
-				if( pomoList.get(i).getInizio().after( inizioSessione) && pomoList.get(i).getInizio().before( fineSessione)){
-					pomoForSession++;
-					sommaDurataPomo = sommaDurataPomo + pomoList.get(i).getDurata();
-					rating = rating + pomoList.get(i).getRating();
+					//Se il pomodoro è iniziato all'interno della sessione
+					if( pomoList.get(i).getInizio().after( inizioSessione) && pomoList.get(i).getInizio().before( fineSessione)){
+						pomoForSession++;
+						sommaDurataPomo = sommaDurataPomo + pomoList.get(i).getDurata();
+						rating = rating + pomoList.get(i).getRating();
 
+						//Rimuovo i pomodoro che ho già usato per una sessione
+						pomoList.remove( i);
 
-					//Rimuovo i pomodoro che ho già usato per una sessione
-					pomoList.remove( i);
+					}else{	//Finiti i pomodori che rientravano nella sessione
+						//Calcolo bonus/malus per aver rispettato o meno la sessione programmata
+						if( sommaDurataPomo >= (durataSessione * BONUS_THRESHOLD)){
+							rating = rating * BONUS;
 
-				}else{	//Finiti i pomodori che rientravano nella sessione
-					//Calcolo bonus/malus per aver rispettato o meno la sessione programmata
-					if( sommaDurataPomo >= (durataSessione * BONUS_PERCENTAGE)){
-						rating = rating * BONUS;
-
-					}else if( sommaDurataPomo < (durataSessione * MALUS_PERCENTAGE)){
-						rating = rating * MALUS;
+						}else if( sommaDurataPomo < (durataSessione * MALUS_THRESHOLD)){
+							rating = rating * MALUS;
+						}
+						break;
 					}
-					break;
 				}
 			}
-		}
 
-		//Alla fine rimangono solamente i pomodoro che non rientrano in una sessione
-		for (int i=0; i<pomoList.size(); i++){
+			//Alla fine rimangono solamente i pomodoro che non rientrano in una sessione
+			for (int i=0; i<pomoList.size(); i++){
+				rating = rating + pomoList.get(i).getRating();
+			}
+			rating = rating / pomoTotali;
 
+		}else if( !pomoList.isEmpty()){
+			//Solo pomodoro, nessuna sessione
+			for (int i=0; i<pomoList.size(); i++){
+				rating = rating + pomoList.get(i).getRating();
+			}
 		}
 
 		/*	Ottengo tutti i pomodoro e le sessioni programmate
@@ -183,10 +206,12 @@ public class Utility {
 			aggiorno ratingActivity
 			ratingActivity = ratingActivity + ratingPomodoro * POMO_WEIGHT
 		* */
+		Log.d(TAG, "ACTIVITY "+activityName+" RATING "+rating);
+		return ensureRange( rating, N_STARS, 0);
+	}
 
-
-
-		return 1.0F;
+	public static float ensureRange( float value, float max, float min){
+		return Math.min( Math.max( value, min), max);
 	}
 
 }

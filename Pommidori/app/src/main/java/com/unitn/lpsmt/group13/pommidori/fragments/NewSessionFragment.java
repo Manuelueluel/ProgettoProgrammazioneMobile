@@ -59,7 +59,7 @@ public class NewSessionFragment extends Fragment {
     private Button dateButton,hourStartButton,hourEndButton, creaButton, annullaButton;
     private TableActivityModel activityModel;
 
-    private AutoCompleteTextView listaAttivita,listaAvviso,listaRipetizione;
+    private AutoCompleteTextView listaAttivita,listaAvviso;
     private Database db;
     private List<TableActivityModel> activity;
     private AlarmManager alarmManager;
@@ -85,7 +85,6 @@ public class NewSessionFragment extends Fragment {
 
         listaAttivita = (AutoCompleteTextView) view.findViewById( R.id.dropdown_activity_new_session);
         listaAvviso = (AutoCompleteTextView) view.findViewById( R.id.dropdown_avviso_new_session);
-        listaRipetizione = (AutoCompleteTextView) view.findViewById( R.id.dropdown_ripetizione_new_session);
 
         dateButton = view.findViewById(R.id.date_session_picker);
         hourStartButton = view.findViewById(R.id.start_hour_picker);
@@ -332,11 +331,9 @@ public class NewSessionFragment extends Fragment {
         listaAttivita.setText(activityAdapter.getItem(0).toString());
         activityModel = activity.get(0);
         listaAvviso.setText(avvisoAdapter.getItem(0));
-        listaRipetizione.setText(ripetizioneAdapter.getItem(0));
 
         listaAttivita.setAdapter( activityAdapter);
         listaAvviso.setAdapter(avvisoAdapter);
-        listaRipetizione.setAdapter(ripetizioneAdapter);
     }
 
     private void createReminder( long startTime){

@@ -88,4 +88,16 @@ public class TablePomodoroModel implements Comparable<TablePomodoroModel>{
     public int compareTo(TablePomodoroModel o) {
         return getInizio().compareTo( o.getInizio());
     }
+
+    @Override
+    public String toString() {
+        return "TablePomodoroModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", inizio=" + inizio +
+                ", durata=" + durata +
+                ", color=" + color +
+                ", rating=" + rating +
+                '}';
+    }
 }

@@ -62,13 +62,13 @@ public class Report extends AppCompatActivity {
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         switch (position){
                             case 0:
-                                tab.setText("Chart");
+                                tab.setText( getString(R.string.chart_tab_name));
                                 break;
                             case 1:
-                                tab.setText("Progress");
+                                tab.setText( getString(R.string.progress_tab_name));
                                 break;
                             case 2:
-                                tab.setText("Rating");
+                                tab.setText( getString(R.string.rating_tab_name));
                                 break;
                             default:
                                 break;

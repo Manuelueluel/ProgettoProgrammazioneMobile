@@ -3,6 +3,7 @@ package com.unitn.lpsmt.group13.pommidori.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -175,7 +176,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "SELECT * FROM " + TableActivityModel.TABLE_NAME +
-                " WHERE " + TableActivityModel.COLUMN_NOME + " = " + activityName;
+                " WHERE " + TableActivityModel.COLUMN_NOME + " = '" + activityName + "';";
 
         Cursor cursor = db.rawQuery(query,null);
 
@@ -198,7 +199,6 @@ public class Database extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-
         return result;
     }
 
@@ -229,6 +229,7 @@ public class Database extends SQLiteOpenHelper {
 
         long result = db.update(TableActivityModel.TABLE_NAME, cv, "_id = ?", new String[]{s_id});
 
+        db.close();
         return result == -1 ? false : true;
     }
 
@@ -268,8 +269,8 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put(TableSessionProgModel.COLUMN_ID_ACTIVITY,tableSessionProgModel.getActivity().getId());
-        cv.put(TableSessionProgModel.COLUMN_ORA_INIZIO,tableSessionProgModel.getOraInizio().getTime());
+        cv.put(TableSessionProgModel.COLUMN_ID_ACTIVITY, tableSessionProgModel.getActivity().getId());
+        cv.put(TableSessionProgModel.COLUMN_ORA_INIZIO, tableSessionProgModel.getOraInizio().getTime());
         cv.put(TableSessionProgModel.COLUMN_ORA_FINE, tableSessionProgModel.getOraFine().getTime());
         cv.put(TableSessionProgModel.COLUMN_AVVISO, tableSessionProgModel.getAvviso());
         cv.put(TableSessionProgModel.COLUMN_RIPETIZIONE, tableSessionProgModel.getRipetizione());
@@ -443,17 +444,29 @@ public class Database extends SQLiteOpenHelper {
         return returnSessions;
     }
 
-    public List<TableSessionProgModel> getAllPastProgrammedSessionsByActivity( String activityName){
+    public List<TableSessionProgModel> getAllPastProgrammedSessionsByActivity( TableActivityModel activity){
         SQLiteDatabase db = this.getReadableDatabase();
         List<TableSessionProgModel> returnSessions = new ArrayList<>();
-        TableActivityModel activity = getActivity( activityName);
+        Cursor cursor;
 
         Date now = new Date();
-        Cursor cursor = db.query(
+        /*
+        String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME
+                + " WHERE " + TableSessionProgModel.COLUMN_ORA_INIZIO
+                + " <= " + now.toInstant().toEpochMilli()
+                + " AND " + TableSessionProgModel.COLUMN_ID_ACTIVITY
+                + " = " + activity.getId();
+
+        System.out.println( query);
+        cursor = db.rawQuery(query,null);
+
+         */
+
+        cursor = db.query(
                 TableSessionProgModel.TABLE_NAME, null,
                 TableSessionProgModel.COLUMN_ORA_INIZIO + " <= ? AND " +
                 TableSessionProgModel.COLUMN_ID_ACTIVITY + " = ?",
-                new String[]{ now.toInstant().toString(), String.valueOf(activity.getId())},
+                new String[]{ String.valueOf(now.toInstant().toEpochMilli()), String.valueOf(activity.getId())},
                 null,
                 null,
                 null
@@ -462,18 +475,22 @@ public class Database extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             do{
                 int sessionId = cursor.getInt(0);
-                int sessionActivityId = cursor.getInt(1);
-                TableActivityModel sessionActivity = getActivity(sessionActivityId);
                 Date sessionStartDate = new Date(cursor.getLong(2));
                 Date sessionEndDate = new Date(cursor.getLong(3));
                 String sessionAvviso = cursor.getString(4);
                 String sessionRipetizione = cursor.getString(5);
-                TableSessionProgModel t = new TableSessionProgModel(sessionId,sessionActivity,sessionStartDate,sessionEndDate,sessionAvviso,sessionRipetizione);
+
+                TableSessionProgModel t = new TableSessionProgModel(
+                        sessionId,
+                        activity,
+                        sessionStartDate,
+                        sessionEndDate,
+                        sessionAvviso,
+                        sessionRipetizione);
 
                 returnSessions.add(t);
             }while(cursor.moveToNext());
         }else {
-            returnSessions = null;
         }
 
         cursor.close();
@@ -602,6 +619,7 @@ public class Database extends SQLiteOpenHelper {
                 null,
                 null
         );
+        System.out.println("getAllPomodorosByActivity--------------");
 
         if(cursor.moveToFirst()){
             do{
@@ -613,11 +631,10 @@ public class Database extends SQLiteOpenHelper {
                 float rating = cursor.getFloat( 5);
 
                 TablePomodoroModel t = new TablePomodoroModel(pomodoroId, name, inizio, durata, color, rating);
-
+                System.out.println(t);
                 returnPomodoros.add(t);
             }while(cursor.moveToNext());
         }else {
-            returnPomodoros = null;
         }
 
         cursor.close();

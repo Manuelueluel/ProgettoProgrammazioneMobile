@@ -3,6 +3,7 @@ package com.unitn.lpsmt.group13.pommidori.services;
 import static com.unitn.lpsmt.group13.pommidori.Utility.COLORE_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.DURATA_MASSIMA_COUNTUP_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.NOME_ACTIVITY_ASSOCIATA;
+import static com.unitn.lpsmt.group13.pommidori.Utility.N_STARS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTDOWN_NOTIFICATION_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTUP_NOTIFICATION_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
@@ -13,6 +14,7 @@ import static com.unitn.lpsmt.group13.pommidori.Utility.TIME_MILLIS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_STATO_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ensureRange;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -179,7 +181,7 @@ public class CountUpTimerService extends Service {
         database = Database.getInstance( this);
         TablePomodoroModel pomodoro = new TablePomodoroModel();
 
-        pomodoro.setName( sharedPreferences.getString(NOME_ACTIVITY_ASSOCIATA, "Nessuna attività"));
+        pomodoro.setName( sharedPreferences.getString(NOME_ACTIVITY_ASSOCIATA, getString(R.string.default_activity)));
         pomodoro.setInizio( new Date( tempoIniziale));
         pomodoro.setDurata( tempoTrascorso);
         pomodoro.setColor( sharedPreferences.getInt(COLORE_ACTIVITY_ASSOCIATA, 0));
@@ -193,7 +195,10 @@ public class CountUpTimerService extends Service {
     }
 
     private float calculateRating(){
-
-        return 0F;
+        //Utilizzo log base 2 con argomento i minuti trascorsi
+        long x = tempoTrascorso / 60000;    //ottengo i minuti trascorsi
+        float rating = (float) (Math.log(x) / Math.log(2));
+        Log.d(TAG, "calculateRating rating="+rating+" x="+x);
+        return ensureRange( rating, N_STARS, 0);
     }
 }
