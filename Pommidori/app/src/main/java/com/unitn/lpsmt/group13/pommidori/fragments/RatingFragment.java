@@ -77,7 +77,6 @@ public class RatingFragment extends Fragment {
 		setListOfRatings();
 	}
 
-	//TODO setListOfRatings da testare
 	private void setListOfRatings(){
 		List<Rating> list = Utility.calculateRatings( getContext());
 		adapter = new RatingAdapter((ArrayList<Rating>) list);

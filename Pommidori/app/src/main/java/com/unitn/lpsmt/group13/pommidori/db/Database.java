@@ -566,6 +566,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(TablePomodoroModel.COLUMN_DATA_INIZIO, tablePomodoroModel.getInizio().getTime());
         cv.put(TablePomodoroModel.COLUMN_DURATA, tablePomodoroModel.getDurata());
         cv.put(TablePomodoroModel.COLUMN_COLORE, tablePomodoroModel.getColor());
+        cv.put(TablePomodoroModel.COLUMN_RATING, tablePomodoroModel.getRating());
 
         long result = db.insert(TablePomodoroModel.TABLE_NAME,null,cv);
         db.close();

@@ -1,29 +1,22 @@
 package com.unitn.lpsmt.group13.pommidori.activities;
 
-import static com.unitn.lpsmt.group13.pommidori.Utility.POST_NOTIFICATIONS_PERMISSION_CODE;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ACCELEROMETER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.PAUSA;
+import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.unitn.lpsmt.group13.pommidori.R;
-import com.unitn.lpsmt.group13.pommidori.Utility;
 
 public class Impostazioni extends AppCompatActivity {
 
@@ -33,14 +26,12 @@ public class Impostazioni extends AppCompatActivity {
     Toolbar toolbar;
     Button pausaMeno, pausaPiu;
     TextView durataPausa;
+    SwitchCompat switchCompat;
     SharedPreferences sharedPreferences;
 
     //valore pausa
     int pausa;
-
-    //Shared Preferances key
-    private final String SHARED_PREFS_SESSIONE = Utility.SHARED_PREFS_TIMER;
-    private final String PAUSA = Utility.PAUSA;
+    boolean accelerometerIsActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +43,19 @@ public class Impostazioni extends AppCompatActivity {
         pausaMeno = findViewById(R.id.pausa_meno);
         pausaPiu = findViewById(R.id.pausa_piu);
         durataPausa = findViewById(R.id.durata_pausa);
+        switchCompat = findViewById(R.id.acelerometer_sensor_switch);
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-        sharedPreferences = getSharedPreferences(SHARED_PREFS_SESSIONE, MODE_PRIVATE);
-
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
 
         //Metodi
-        loadData();
+        loadSharedPreferences();
+
+        if( accelerometerIsActive){
+            switchCompat.setChecked( true);
+        }else{
+            switchCompat.setChecked( false);
+        }
+
         setToolbar();
         setButtonListener();
 
@@ -82,7 +80,7 @@ public class Impostazioni extends AppCompatActivity {
             public void onClick(View view) {
                 if(pausa<30) { //durata massima pausa 30 minuti
                     pausa++;
-                    saveData();
+                    saveSharedPreferences();
                 }
             }
         });
@@ -92,24 +90,36 @@ public class Impostazioni extends AppCompatActivity {
             public void onClick(View view) {
                 if(pausa>1) { //la pausa deve essere di almeno 1 minuto
                     pausa--;
-                    saveData();
+                    saveSharedPreferences();
                 }
+            }
+        });
+
+        switchCompat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( switchCompat.isChecked()){
+                    accelerometerIsActive = true;
+                }else{
+                    accelerometerIsActive = false;
+                }
+                saveSharedPreferences();
             }
         });
     }
 
-    private void saveData() {
+    private void saveSharedPreferences() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(PAUSA, pausa);
+        editor.putBoolean(ACCELEROMETER, accelerometerIsActive);
         editor.apply();
-
         durataPausa.setText(Integer.toString(pausa));
     }
 
-     private void loadData(){
-         pausa = sharedPreferences.getInt(PAUSA, 5);
-
-         durataPausa.setText(Integer.toString(pausa));
+     private void loadSharedPreferences(){
+        pausa = sharedPreferences.getInt(PAUSA, 5);
+        accelerometerIsActive = sharedPreferences.getBoolean(ACCELEROMETER, false);
+        durataPausa.setText(Integer.toString(pausa));
      }
 }

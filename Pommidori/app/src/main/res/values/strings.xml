@@ -49,6 +49,9 @@
     <string name="settings_pause_minute">minuti</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
+    <string name="accelerometer_sensor_settings_title">Controllo movimento smartphone</string>
+    <string name="accelerometer_sensor_settings_description">Se usi lo smartphone distraendoti durante una sessione\n la valutazione calerà</string>
+    <string name="accelerometer_sensor_switch_text">Attiva:</string>
 
     <!-- Reports -->
     <string name="chart_tab_name">Chart</string>

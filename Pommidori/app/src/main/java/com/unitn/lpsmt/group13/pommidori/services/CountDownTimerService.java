@@ -1,5 +1,6 @@
 package com.unitn.lpsmt.group13.pommidori.services;
 
+import static com.unitn.lpsmt.group13.pommidori.Utility.ACCELEROMETER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.COLORE_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.MINUTI_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.N_STARS;
@@ -52,12 +53,12 @@ public class CountDownTimerService extends Service {
     private CountDownTimer countDownTimer;
     private Database database;
     private StatoTimer statoTimer;
-    int oreTimer, minutiTimer;
+    private int oreTimer, minutiTimer;
     private long tempoRimasto;
     private long tempoIniziale;
     private long tempoTrascorso;
-    private long tempoFine;
     private AccelerometerSensor accelerometerSensor;
+    private boolean accelerometerIsActive;
     private final IBinder binder = new CountDownTimerBinder();
 
     public class CountDownTimerBinder extends Binder{
@@ -77,7 +78,6 @@ public class CountDownTimerService extends Service {
         this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
         this.sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         this.isRunning = true;
-        this.accelerometerSensor = AccelerometerSensor.getInstance( getBaseContext());
     }
 
     @Override
@@ -86,7 +86,10 @@ public class CountDownTimerService extends Service {
 
         loadSharedPreferences();
         statoTimer.setValue( StatoTimer.COUNTDOWN);
-        tempoFine = tempoIniziale + tempoRimasto;
+
+        if( accelerometerIsActive){
+            accelerometerSensor = new AccelerometerSensor( getBaseContext());
+        }
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();
@@ -143,6 +146,7 @@ public class CountDownTimerService extends Service {
         NotificationManagerCompat nmc = NotificationManagerCompat.from( getBaseContext());
         nmc.cancel( ONGOING_COUNTDOWN_NOTIFICATION_ID);
 
+        accelerometerSensor = null;
         isRunning = false;
     }
 
@@ -190,6 +194,7 @@ public class CountDownTimerService extends Service {
     private void loadSharedPreferences(){
         oreTimer = sharedPreferences.getInt( ORE_TIMER, 0);
         minutiTimer = sharedPreferences.getInt( MINUTI_TIMER, 30);
+        accelerometerIsActive = sharedPreferences.getBoolean(ACCELEROMETER, false);
         tempoRimasto = ((oreTimer*3600) + (minutiTimer*60)) * 1000;
     }
 
@@ -211,18 +216,16 @@ public class CountDownTimerService extends Service {
     }
 
     private float calculateRating(){
-
         long durataPrevista = ((oreTimer*3600) + (minutiTimer*60)) * 1000;
-        //errore linea seguente
-        long durataEffettiva = durataPrevista - tempoTrascorso;
-        float rapporto = ((float) (durataEffettiva) / (float) (durataPrevista));
+        float rapporto = ((float) (tempoTrascorso) / (float) (durataPrevista));
+        float rating;
 
-        int triggers = accelerometerSensor.getTriggers();
-        float rating = N_STARS * rapporto - triggers * TRIGGERS_WEIGHT;
-        Log.d(TAG, "durata prevista "+durataPrevista+"durataEffettiva"+durataEffettiva+"rapporto "+rapporto+" rating "+rating+" triggers "+triggers);
+        if( accelerometerIsActive) {
+            rating = N_STARS * rapporto - accelerometerSensor.getTriggers() * TRIGGERS_WEIGHT;
+        }else{
+            rating = N_STARS * rapporto;
+        }
 
-        rating = ensureRange( rating, N_STARS, 0);
-        Log.d(TAG, "calculateRating rating"+rating);
-        return rating;
+        return ensureRange( rating, N_STARS, 0);
     }
 }

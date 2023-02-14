@@ -68,41 +68,42 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/accelerometer_sensor_settings_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Sensore di movimento"
+        android:text="@string/accelerometer_sensor_settings_title"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/accelerometer_sensor_settings_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/custom_border_round"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="@string/accelerometer_sensor_settings_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/accelerometer_sensor_settings_title" />
 
-        <Button
-            android:id="@+id/attiva_accelerometro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="attiva" />
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/acelerometer_sensor_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_border_round"
+        android:padding="15dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/design_default_color_on_secondary"
+        app:switchPadding="15dp"
+        android:text="@string/accelerometer_sensor_switch_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accelerometer_sensor_settings_description" />
 
-        <Button
-            android:id="@+id/disattiva_accelerometro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="disattiva" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,14 @@
 package com.unitn.lpsmt.group13.pommidori.services;
 
+import static com.unitn.lpsmt.group13.pommidori.Utility.ACCELEROMETER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.COLORE_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.DURATA_MASSIMA_COUNTUP_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.MINUTI_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.NOME_ACTIVITY_ASSOCIATA;
 import static com.unitn.lpsmt.group13.pommidori.Utility.N_STARS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTDOWN_NOTIFICATION_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ONGOING_COUNTUP_NOTIFICATION_ID;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ORE_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_ACTION_INTENT;
@@ -13,6 +16,7 @@ import static com.unitn.lpsmt.group13.pommidori.Utility.TIMER_CHANNEL_ID;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TIME_MILLIS;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_ACTION_INTENT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.TOOLBAR_BUTTONS_STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.TRIGGERS_WEIGHT;
 import static com.unitn.lpsmt.group13.pommidori.Utility.createNotificationChannel;
 import static com.unitn.lpsmt.group13.pommidori.Utility.ensureRange;
 
@@ -55,6 +59,7 @@ public class CountUpTimerService extends Service {
     private long tempoIniziale;
     private long tempoTrascorso;
     private AccelerometerSensor accelerometerSensor;
+    private boolean accelerometerIsActive;
     private final IBinder binder = new CountUpTimerBinder();
 
     public class CountUpTimerBinder extends Binder{
@@ -74,14 +79,18 @@ public class CountUpTimerService extends Service {
         this.sharedPreferences = getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
         this.isRunning = true;
-        this.accelerometerSensor = AccelerometerSensor.getInstance( getBaseContext());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground( ONGOING_COUNTUP_NOTIFICATION_ID, createNotification());
 
-        statoTimer.setValue( StatoTimer.PAUSA);
+        loadSharedPreferences();
+        statoTimer.setValue( StatoTimer.COUNTUP);
+
+        if( accelerometerIsActive){
+            accelerometerSensor = new AccelerometerSensor( getBaseContext());
+        }
 
         //Intent update toolbar title
         Intent toolbarIntent = new Intent();
@@ -138,6 +147,7 @@ public class CountUpTimerService extends Service {
         NotificationManagerCompat nmc = NotificationManagerCompat.from( getBaseContext());
         nmc.cancel( ONGOING_COUNTUP_NOTIFICATION_ID);
 
+        accelerometerSensor = null;
         isRunning = false;
     }
 
@@ -152,6 +162,10 @@ public class CountUpTimerService extends Service {
         editor.putInt( STATO_TIMER, statoTimer.getValue());
 
         editor.apply();
+    }
+
+    private void loadSharedPreferences(){
+        accelerometerIsActive = sharedPreferences.getBoolean(ACCELEROMETER, false);
     }
 
     private Notification createNotification() {
@@ -196,9 +210,12 @@ public class CountUpTimerService extends Service {
 
     private float calculateRating(){
         //Utilizzo log base 2 con argomento i minuti trascorsi
-        long x = tempoTrascorso / 60000;    //ottengo i minuti trascorsi
+        float x = tempoTrascorso / 60000.F;  //ottengo i minuti trascorsi
         float rating = (float) (Math.log(x) / Math.log(2));
-        Log.d(TAG, "calculateRating rating="+rating+" x="+x);
+        if( accelerometerIsActive){
+            rating = rating - accelerometerSensor.getTriggers() * TRIGGERS_WEIGHT;
+        }
+
         return ensureRange( rating, N_STARS, 0);
     }
 }

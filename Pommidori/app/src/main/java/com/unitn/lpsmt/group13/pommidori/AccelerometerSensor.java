@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class AccelerometerSensor implements SensorEventListener {
     private static final String TAG = "AccelerometerSensor";
@@ -20,18 +21,12 @@ public class AccelerometerSensor implements SensorEventListener {
     private static final long START_WINDOW_INTERVAL = 10000; //10 secondi di finestra iniziali per la rilevazione del movimento
     private long startTime;
     private int triggers = 0;
-    private static AccelerometerSensor instance = null;
 
-    private AccelerometerSensor( Context context){
+    public AccelerometerSensor( Context context){
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         startTime = System.currentTimeMillis() + START_WINDOW_INTERVAL;
-    }
-
-    public static AccelerometerSensor getInstance( Context context){
-        if( instance == null) instance = new AccelerometerSensor(context);
-        return instance;
     }
 
     @Override

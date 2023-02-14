@@ -38,6 +38,7 @@ public class Utility {
 	public static final String PAUSA = "pausa";
 	public static final String NOME_ACTIVITY_ASSOCIATA = "nomeActivityAssociata";
 	public static final String COLORE_ACTIVITY_ASSOCIATA = "coloreActivityAssociata";
+	public static final String ACCELEROMETER = "accelerometer";
 
 	//Intent broadcast receivers
 	public static final String TIME_MILLIS = "TIME_MILLIS";
@@ -122,21 +123,22 @@ public class Utility {
 		List<Rating> ratings = new ArrayList<>();
 
 		activities.forEach( activity -> {
-			Rating rat = new Rating( calculateRatingByActivity( database, context, activity.getName()), activity.getName());
+			Rating rat = new Rating( calculateRatingByActivity( database, activity.getName()), activity.getName());
 			ratings.add( rat);
 		});
 
 		return ratings;
 	}
 
-	private static float calculateRatingByActivity( Database database, Context context, String activityName) {
+	private static float calculateRatingByActivity( Database database, String activityName) {
 		List<TablePomodoroModel> pomoList = database.getAllPomodorosByActivity( activityName);
 		TableActivityModel activity = database.getActivity( activityName);
 		List<TableSessionProgModel> sessionList = database.getAllPastProgrammedSessionsByActivity( activity);
 		float rating = 0F;
-		int pomoTotali = pomoList.size();
+		float pomoTotali = (float) pomoList.size();
 
 		if( !pomoList.isEmpty() && !sessionList.isEmpty()){
+			Log.d(TAG, "calculateRatingByActivity pomo e sessione");
 			//Ordino le liste per tempo d'inizio
 			Collections.sort( pomoList);
 			Collections.sort( sessionList);
@@ -146,20 +148,18 @@ public class Utility {
 				Date fineSessione = sessionList.get(j).getOraFine();
 				long durataSessione = fineSessione.toInstant().toEpochMilli() - inizioSessione.toInstant().toEpochMilli();
 				long sommaDurataPomo = 0;
-				int pomoForSession = 0;
 
 				for(int i=0; i<pomoList.size(); i++){
 
 					//Se il pomodoro è iniziato all'interno della sessione
 					if( pomoList.get(i).getInizio().after( inizioSessione) && pomoList.get(i).getInizio().before( fineSessione)){
-						pomoForSession++;
 						sommaDurataPomo = sommaDurataPomo + pomoList.get(i).getDurata();
 						rating = rating + pomoList.get(i).getRating();
 
 						//Rimuovo i pomodoro che ho già usato per una sessione
 						pomoList.remove( i);
 
-					}else{	//Finiti i pomodori che rientravano nella sessione
+					}else{
 						//Calcolo bonus/malus per aver rispettato o meno la sessione programmata
 						if( sommaDurataPomo >= (durataSessione * BONUS_THRESHOLD)){
 							rating = rating * BONUS;
@@ -167,7 +167,7 @@ public class Utility {
 						}else if( sommaDurataPomo < (durataSessione * MALUS_THRESHOLD)){
 							rating = rating * MALUS;
 						}
-						break;
+						break;	//Finiti i pomodori che rientravano nella sessione
 					}
 				}
 			}
@@ -179,33 +179,15 @@ public class Utility {
 			rating = rating / pomoTotali;
 
 		}else if( !pomoList.isEmpty()){
+			Log.d(TAG, "calculateRatingByActivity solo pomo");
+
 			//Solo pomodoro, nessuna sessione
 			for (int i=0; i<pomoList.size(); i++){
 				rating = rating + pomoList.get(i).getRating();
 			}
+			rating = rating / pomoTotali;
 		}
 
-		/*	Ottengo tutti i pomodoro e le sessioni programmate
-			controllo se tali pomodori rientrano nelle sessioni programmate,
-
-			prendo l'intervallo di tempo sessione prog
-			prendo i pomodoro di tale activity che sono iniziati nell'intervallo sessione prog
-			prendo rating dei pomodoro
-			calcolo somma tempi pomodoro
-
-			if somma pomodoro => 80% intervallo sessione prog
-				bonus al rating
-			else if somma pomodoro < 50% intervallo sessione prog
-				malus al rating
-
-			aggiorno ratingActivity
-			ratingActivity = ratingActivity + ratingPomodoro + bonus/malus
-
-			se i pomodoro non rientrano in sessioni programmate
-			prendo rating dei pomodoro
-			aggiorno ratingActivity
-			ratingActivity = ratingActivity + ratingPomodoro * POMO_WEIGHT
-		* */
 		Log.d(TAG, "ACTIVITY "+activityName+" RATING "+rating);
 		return ensureRange( rating, N_STARS, 0);
 	}
