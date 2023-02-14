@@ -52,6 +52,8 @@
     <string name="accelerometer_sensor_settings_title">Controllo movimento smartphone</string>
     <string name="accelerometer_sensor_settings_description">Se usi lo smartphone distraendoti durante una sessione\n la valutazione calerà</string>
     <string name="accelerometer_sensor_switch_text">Attiva:</string>
+    <string name="objective_daily_progress_setting_title">Obbiettivo progressi giornalieri</string>
+    <string name="settings_daily_progress_hours">ore</string>
 
     <!-- Reports -->
     <string name="chart_tab_name">Chart</string>

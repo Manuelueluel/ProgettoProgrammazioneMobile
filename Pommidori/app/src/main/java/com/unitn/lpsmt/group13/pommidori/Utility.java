@@ -36,6 +36,7 @@ public class Utility {
 	public static final String STATO_TIMER = "statoTimer";
 	public static final String STATO_TIMER_PRECEDENTE = "statoTimerPrecedente";
 	public static final String PAUSA = "pausa";
+	public static final String DAILY_PROGRESS_OBJECTIVE = "daily_progress_objective";
 	public static final String NOME_ACTIVITY_ASSOCIATA = "nomeActivityAssociata";
 	public static final String COLORE_ACTIVITY_ASSOCIATA = "coloreActivityAssociata";
 	public static final String ACCELEROMETER = "accelerometer";

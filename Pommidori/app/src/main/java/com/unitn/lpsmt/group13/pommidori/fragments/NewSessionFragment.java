@@ -200,6 +200,7 @@ public class NewSessionFragment extends Fragment {
                         //Selezionato di non volere notifiche
                         if( reminder != -1){
                             createReminder( startHourMillis);
+                            Log.d(TAG, "APPENA CREATA NOTIFICA");
                         }
 
                         s.setOraInizio( dateFomatted);

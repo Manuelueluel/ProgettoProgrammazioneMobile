@@ -12,11 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.unitn.lpsmt.group13.pommidori.DayProgress;
+import com.unitn.lpsmt.group13.pommidori.DailyProgress;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Utility;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayProgressHolder>{
@@ -24,7 +23,7 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 	public static final int GRID_DAYS_CELLS = 42;
 
 	private Context context;
-	private ArrayList<DayProgress> list;
+	private ArrayList<DailyProgress> list;
 	private int startIntervalOfSelectedMonth;
 	private int endIntervalOfSelectedMonth;
 
@@ -40,7 +39,7 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.DayPro
 		}
 	}
 
-	public ProgressAdapter(Context context, ArrayList<DayProgress> list, int startInterval, int endInterval){
+	public ProgressAdapter(Context context, ArrayList<DailyProgress> list, int startInterval, int endInterval){
 		this.context = context;
 		this.list = list;
 		this.startIntervalOfSelectedMonth = startInterval;

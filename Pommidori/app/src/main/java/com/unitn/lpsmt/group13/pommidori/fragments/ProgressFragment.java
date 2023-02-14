@@ -1,5 +1,10 @@
 package com.unitn.lpsmt.group13.pommidori.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.unitn.lpsmt.group13.pommidori.Utility.DAILY_PROGRESS_OBJECTIVE;
+import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
+
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -10,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +23,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.unitn.lpsmt.group13.pommidori.db.Database;
-import com.unitn.lpsmt.group13.pommidori.DayProgress;
+import com.unitn.lpsmt.group13.pommidori.DailyProgress;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.db.TablePomodoroModel;
-import com.unitn.lpsmt.group13.pommidori.db.TableSessionProgModel;
 import com.unitn.lpsmt.group13.pommidori.utils.ProgressAdapter;
 
 import java.time.DayOfWeek;
@@ -40,11 +45,15 @@ import java.util.Locale;
  */
 public class ProgressFragment extends Fragment {
 
+	private static final String TAG = "ProgressFragment";
+
 	private LocalDate selectedDate;
 	private RecyclerView recyclerView;
 	private RecyclerView.Adapter adapter;
 	private RecyclerView.LayoutManager layoutManager;
 	private Database database;
+	private SharedPreferences sharedPreferences;
+	private int objective;
 
 	private View view;
 	private Button previous;
@@ -90,6 +99,8 @@ public class ProgressFragment extends Fragment {
 		recyclerView.setLayoutManager( layoutManager);
 		meseAnno = view.findViewById(R.id.text_view_time_interval);
 		meseAnno.setText( Utility.capitalize(selectedDate.getMonth().getDisplayName( TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear()));
+		sharedPreferences = getContext().getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
+
 		setHeaderDaysOfWeek();
 		setButtonsListeners();
 	}
@@ -98,7 +109,13 @@ public class ProgressFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		database = Database.getInstance( this.getContext());
+		loadSharedPreferences();
 		updateGrid();
+	}
+
+	private void loadSharedPreferences(){
+		objective = sharedPreferences.getInt(DAILY_PROGRESS_OBJECTIVE , 1);
+		objective = objective * 3600 * 1000;	//Objective sono ore espresse in millisecondi
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.O)
@@ -123,9 +140,8 @@ public class ProgressFragment extends Fragment {
 	}
 
 	private void updateGrid(){
-		List<TableSessionProgModel> sessioniProgrammate = database.getAllProgrammedSessionsByMonth( selectedDate);
 		List<TablePomodoroModel> pomodoroCompletati = database.getPomodorosByMonth( selectedDate);
-		ArrayList<DayProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
+		ArrayList<DailyProgress> monthlyProgress = new ArrayList<>( selectedDate.getMonth().length( selectedDate.isLeapYear()));
 		ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset( selectedDate.atStartOfDay());
 		int startIntervalOfSelectedMonth;
 		int endIntervalOfSelectedMonth;
@@ -138,41 +154,29 @@ public class ProgressFragment extends Fragment {
 
 		//Se monday non è il primo lunedì del mese selezionato, allora sarà l'ultimo lunedì del mese precedente
 		if( !(monday.getDayOfMonth() == 1)){
-//			startIntervalOfSelectedMonth = monday.getMonth().length( monday.isLeapYear()) - monday.getDayOfMonth() + 1;
 			startIntervalOfSelectedMonth = monday.lengthOfMonth() - monday.getDayOfMonth() + 1;
 
 		}else{
 			startIntervalOfSelectedMonth = 0;
 		}
 
-//		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.getMonth().length( selectedDate.isLeapYear());
 		endIntervalOfSelectedMonth = startIntervalOfSelectedMonth + selectedDate.lengthOfMonth();
-
 
 		//Inizializzazione monthlyProgress
 		//Primi x giorni nella griglia che non appartengono al mese selezionato
 		for(int i=0; i<startIntervalOfSelectedMonth; i++){
-			monthlyProgress.add( new DayProgress(0, 0, monday.plusDays(i)));
+			monthlyProgress.add( new DailyProgress(0, 0, monday.plusDays(i)));
 		}
 
 		//Giorni del mese selezionato e i loro progressi
 		for(int i=1; i<=selectedDate.lengthOfMonth(); i++){
-			monthlyProgress.add( new DayProgress(0, 0, LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), i)));
-//			monthlyProgress.add( new DayProgress(0, 0, LocalDate.now().withDayOfMonth(i)));
+			monthlyProgress.add( new DailyProgress(0, objective, LocalDate.of( selectedDate.getYear(), selectedDate.getMonth(), i)));
 		}
 
 		//Ultimi x giorni nella griglia che non appartengono al mese selezionato
 		for(int i=endIntervalOfSelectedMonth; i<ProgressAdapter.GRID_DAYS_CELLS; i++){
-			monthlyProgress.add( new DayProgress(0, 0, monday.plusDays(i)));
+			monthlyProgress.add( new DailyProgress(0, 0, monday.plusDays(i)));
 		}
-
-		//Calcolo obbiettivo giornaliero di studio, sommando la durata delle varie sessioni di studio programmate
-		sessioniProgrammate.forEach( sessione -> {
-			int i = startIntervalOfSelectedMonth + sessione.getOraInizio().toInstant().atZone( zoneOffset).getDayOfMonth()-1;
-			monthlyProgress.get(i).setObjective(
-					monthlyProgress.get(i).getObjective()
-							+(int) (sessione.getOraFine().toInstant().toEpochMilli() - sessione.getOraInizio().toInstant().toEpochMilli()));
-		});
 
 		//Calcolo progressi effettuati, sommando i vari pomodoro di ogni giornata
 		pomodoroCompletati.forEach( pomodoro -> {
