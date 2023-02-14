@@ -139,7 +139,6 @@ public class Utility {
 		float pomoTotali = (float) pomoList.size();
 
 		if( !pomoList.isEmpty() && !sessionList.isEmpty()){
-			Log.d(TAG, "calculateRatingByActivity pomo e sessione");
 			//Ordino le liste per tempo d'inizio
 			Collections.sort( pomoList);
 			Collections.sort( sessionList);
@@ -180,7 +179,6 @@ public class Utility {
 			rating = rating / pomoTotali;
 
 		}else if( !pomoList.isEmpty()){
-			Log.d(TAG, "calculateRatingByActivity solo pomo");
 
 			//Solo pomodoro, nessuna sessione
 			for (int i=0; i<pomoList.size(); i++){
@@ -189,7 +187,6 @@ public class Utility {
 			rating = rating / pomoTotali;
 		}
 
-		Log.d(TAG, "ACTIVITY "+activityName+" RATING "+rating);
 		return ensureRange( rating, N_STARS, 0);
 	}
 

@@ -1,5 +1,12 @@
 package com.unitn.lpsmt.group13.pommidori.fragments;
 
+import static com.unitn.lpsmt.group13.pommidori.Utility.MINUTI_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.NOME_ACTIVITY_ASSOCIATA;
+import static com.unitn.lpsmt.group13.pommidori.Utility.ORE_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.SHARED_PREFS_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER;
+import static com.unitn.lpsmt.group13.pommidori.Utility.STATO_TIMER_PRECEDENTE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,24 +44,11 @@ public class StartNewSessionFragment extends DialogFragment {
     private CheckBox checkDurataLibera;
     private LinearLayout riquadroSelezioneTimer;
     private StatoTimer statoTimer;
-    private TableActivityModel activitySelezionata;
     private AutoCompleteTextView dropdownSessionePers;
+    private TableActivityModel activitySelezionata;
 
     //valori pausa
-    int ore, min;
-
-    //Shared Preferances key
-    private final String SHARED_PREFS_POMODORO = Utility.SHARED_PREFS_TIMER;
-    private final String ORE_TIMER = Utility.ORE_TIMER;
-    private final String MINUTI_TIMER = Utility.MINUTI_TIMER;
-    private final String TEMPO_INIZIALE = Utility.TEMPO_INIZIALE;
-    private final String TEMPO_RIMASTO = Utility.TEMPO_RIMASTO;
-    private final String TEMPO_FINALE = Utility.TEMPO_FINALE;
-    private final String TEMPO_TRASCORSO = Utility.TEMPO_TRASCORSO;
-    private final String STATO_TIMER = Utility.STATO_TIMER;
-    private final String STATO_TIMER_PRECEDENTE = Utility.STATO_TIMER_PRECEDENTE;
-    private final String NOME_ACTIVITY_ASSOCIATA = Utility.NOME_ACTIVITY_ASSOCIATA;
-    private final String COLORE_ACTIVITY_ASSOCIATA = Utility.COLORE_ACTIVITY_ASSOCIATA;
+    private int ore, min;
 
 
     @Override
@@ -79,12 +73,22 @@ public class StartNewSessionFragment extends DialogFragment {
         riquadroSelezioneTimer = view.findViewById(R.id.timerDurata);
         avvia = view.findViewById(R.id.avviaSessione);
         statoTimer = new StatoTimer( StatoTimer.COUNTDOWN);     //Valore di default per il fragment
-        activitySelezionata = new TableActivityModel();         //Default activity
+        activitySelezionata = new TableActivityModel();
 
         //Metodi
         loadSharedPreferences();
+
+        durataPerOre.setText(Integer.toString(ore));
+        durataPerMin.setText(Integer.toString(min));
+
         setButtonListener();
         setDropDownLists();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        saveSharedPreferences();
     }
 
     protected void setButtonListener(){
@@ -202,34 +206,23 @@ public class StartNewSessionFragment extends DialogFragment {
 
     void saveSharedPreferences(){
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_POMODORO, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_TIMER, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        //Trasformo ore:minuti in millisecondi
-        long milliSecondi = ((ore*3600) +  (min*60)) * 1000;
 
         editor.putInt(ORE_TIMER, ore);
         editor.putInt(MINUTI_TIMER, min);
-        editor.putLong(TEMPO_INIZIALE, milliSecondi);
-        editor.putLong(TEMPO_RIMASTO, milliSecondi);
-        editor.putLong(TEMPO_FINALE, (System.currentTimeMillis() + milliSecondi));
-        editor.putLong(TEMPO_TRASCORSO, 0);
         editor.putInt(STATO_TIMER, statoTimer.getValue());
         editor.putInt(STATO_TIMER_PRECEDENTE, StatoTimer.DISATTIVO);
         editor.putString(NOME_ACTIVITY_ASSOCIATA, activitySelezionata.getName());
-        editor.putInt(COLORE_ACTIVITY_ASSOCIATA, activitySelezionata.getColore());
         editor.apply();
     }
 
     void loadSharedPreferences(){
         //Aprire/creare il file xml "SHARED_PREF" in modalità privata (solo questa applicazione può accedervi)
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_POMODORO, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_TIMER, Context.MODE_PRIVATE);
 
         ore = sharedPreferences.getInt(ORE_TIMER, 0);
         min = sharedPreferences.getInt(MINUTI_TIMER, 30);
-
-        durataPerOre.setText(Integer.toString(ore));
-        durataPerMin.setText(Integer.toString(min));
     }
 
     //Attiva o disattiva (enabled) tutte le Views che sono figlie di view, essa stessa compresa

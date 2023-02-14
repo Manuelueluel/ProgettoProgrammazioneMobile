@@ -28,13 +28,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.unitn.lpsmt.group13.pommidori.db.Database;
@@ -49,7 +47,6 @@ import com.unitn.lpsmt.group13.pommidori.services.CountUpTimerService;
 import com.unitn.lpsmt.group13.pommidori.services.PausaTimerService;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -71,22 +68,23 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     private StatoTimer statoTimer;
     private SharedPreferences sharedPreferences;
 
+    /*
     //Oggetto che permette di richiedere permissions e gestirne l'accettazione o meno
     private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
         if (isGranted) {
             // Permission is granted. Continue the action or workflow in your
             // app.
-            Log.d(TAG, "permission granted");
         } else {
             // Explain to the user that the feature is unavailable because the
             // feature requires a permission that the user has denied. At the
             // same time, respect the user's decision. Don't link to system
             // settings in an effort to convince the user to change their
             // decision.
-            Log.d(TAG, "permission denied");
         }
     });
 
+
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,15 +121,18 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
     // Function to check and request permission.
     public void checkPermission( String permission, int requestCode) {
-        Log.d(TAG, "checkPermission");
 
         if (ContextCompat.checkSelfPermission(Homepage.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(Homepage.this, new String[] { permission }, requestCode);
 
+            /*
             if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                 requestPermissionLauncher.launch( permission);
             }else{
                 ActivityCompat.requestPermissions(Homepage.this, new String[] { permission }, requestCode);
             }
+
+             */
         }
     }
 
@@ -233,8 +234,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         Collections.sort( activity);
         Collections.sort( session);
 
-        //TODO non mostra le sessioni che vengono create nel giorno stesso
-
         ArrayAdapter activityAdapter = new ArrayAdapter<TableActivityModel>(
                 Homepage.this,
                 R.layout.dropdown_item,
@@ -272,18 +271,13 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     //Se timer attivo button newSession "Torna alla sessione" se timer disattivo "Avvia nuova sessione"
     private void updateNewSessionButton( boolean active){
         if( active) newSession.setText( R.string.resume_session);
-        else newSession.setText(R.string.new_session);
+        else newSession.setText(R.string.start_new_session);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         localBroadcastManager.unregisterReceiver( toolbarBroadcastReceiver);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

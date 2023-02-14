@@ -238,7 +238,6 @@ public class Timer extends AppCompatActivity implements TimerBroadcastReceiver.U
                 if( !CountDownTimerService.isRunning && !statoTimer.isDisattivo()){
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                        Log.d(TAG, "Build version "+Build.VERSION.SDK_INT+" vs "+Build.VERSION_CODES.O);
                         startForegroundService( new Intent( this, CountDownTimerService.class));
 
                     }else{

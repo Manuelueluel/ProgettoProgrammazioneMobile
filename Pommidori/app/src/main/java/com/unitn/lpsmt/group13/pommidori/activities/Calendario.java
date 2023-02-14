@@ -79,9 +79,4 @@ public class Calendario extends AppCompatActivity implements ModifySessionFragme
         fragmentTransaction.commit();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("Calendario", "onStop");
-    }
 }

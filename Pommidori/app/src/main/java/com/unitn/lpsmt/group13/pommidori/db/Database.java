@@ -46,7 +46,6 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TableActivityModel.queryCreate);
         db.execSQL(TableSessionProgModel.queryCreate);
-        db.execSQL(TableSessionModel.queryCreate);
         db.execSQL(TablePomodoroModel.queryCreate);
     }
 
@@ -54,7 +53,6 @@ public class Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + TableActivityModel.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TableSessionProgModel.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TableSessionModel.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePomodoroModel.TABLE_NAME);
 
         onCreate(db);
@@ -208,7 +206,6 @@ public class Database extends SQLiteOpenHelper {
 
         deleteAllProgrammedSessionsOfSelectedActivity( id);
 
-        //String query = "DELETE FROM " + TableActivityModel.TABLE_NAME + " WHERE " + TableActivityModel.COLUMN_ACTIVITY_ID + " = " + id;
         long result = db.delete(TableActivityModel.TABLE_NAME, TableActivityModel.COLUMN_ACTIVITY_ID + "=" + s_id,null);
 
         if( db.isOpen())    db.close();
@@ -231,37 +228,6 @@ public class Database extends SQLiteOpenHelper {
 
         db.close();
         return result == -1 ? false : true;
-    }
-
-    //Sessioni
-    public List<TableSessionModel> getAllSessions(){
-        List<TableSessionModel> sessions = new ArrayList<>();
-
-        //get data from the database
-        String query = "SELECT * FROM " + TableSessionModel.TABLE_NAME;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery(query,null);
-
-        if(cursor.moveToFirst()){
-            //loop su tutti gli elementi
-            do{
-               int sessionId = cursor.getInt(0);
-               String activity = cursor.getString(1);
-               Date scadenza = new Date(cursor.getLong(2));
-               int valutazione = cursor.getInt(3);
-               TableSessionModel t = new TableSessionModel(sessionId, activity, scadenza, valutazione);
-
-                sessions.add(t);
-            }while (cursor.moveToNext());
-        } else{
-            //fallimento nell'accedere al database
-            sessions.add(new TableSessionModel());
-        }
-        cursor.close();
-        db.close();
-
-        return sessions;
     }
 
     //Sessioni Programmate
@@ -450,17 +416,6 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor;
 
         Date now = new Date();
-        /*
-        String query = "SELECT * FROM " + TableSessionProgModel.TABLE_NAME
-                + " WHERE " + TableSessionProgModel.COLUMN_ORA_INIZIO
-                + " <= " + now.toInstant().toEpochMilli()
-                + " AND " + TableSessionProgModel.COLUMN_ID_ACTIVITY
-                + " = " + activity.getId();
-
-        System.out.println( query);
-        cursor = db.rawQuery(query,null);
-
-         */
 
         cursor = db.query(
                 TableSessionProgModel.TABLE_NAME, null,
@@ -620,7 +575,6 @@ public class Database extends SQLiteOpenHelper {
                 null,
                 null
         );
-        System.out.println("getAllPomodorosByActivity--------------");
 
         if(cursor.moveToFirst()){
             do{

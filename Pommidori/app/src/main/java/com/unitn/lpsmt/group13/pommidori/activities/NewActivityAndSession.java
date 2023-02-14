@@ -12,9 +12,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 public class NewActivityAndSession extends AppCompatActivity {
 
-    ViewPager2 viewPager2;
-    TabLayout tabLayout;
-    FragmentAdapter adapter;
+    private ViewPager2 viewPager2;
+    private TabLayout tabLayout;
+    private FragmentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,8 @@ public class NewActivityAndSession extends AppCompatActivity {
 
         pager2.setAdapter(adapter);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Nuova Attività"));
-        tabLayout.addTab(tabLayout.newTab().setText("Nuova Sessione"));
+        tabLayout.addTab(tabLayout.newTab().setText( getString(R.string.new_activity)));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.new_session));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

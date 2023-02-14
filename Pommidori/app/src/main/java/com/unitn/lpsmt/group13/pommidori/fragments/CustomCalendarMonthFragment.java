@@ -86,7 +86,7 @@ public class CustomCalendarMonthFragment extends Fragment {
         if (CalendarUtils.selectDate == null)
             CalendarUtils.selectDate = LocalDate.now();
 
-        compactCalendarView = (CompactCalendarView) view.findViewById(R.id.month_calendar_view);
+        compactCalendarView = view.findViewById(R.id.month_calendar_view);
         compactCalendarView.setLocale(TimeZone.getTimeZone(ZoneId.systemDefault()), Locale.getDefault());
         compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
         compactCalendarView.setUseThreeLetterAbbreviation(true);

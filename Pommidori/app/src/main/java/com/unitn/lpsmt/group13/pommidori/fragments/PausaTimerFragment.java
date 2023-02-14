@@ -56,7 +56,6 @@ public class PausaTimerFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private Context context;
     private StatoTimer statoTimer, statoTimerPrecedente;
-    private SwitchFragment switchFragmentListener;
 
 
     public interface SwitchFragment{
@@ -115,7 +114,6 @@ public class PausaTimerFragment extends Fragment {
         sharedPreferences = view.getContext().getSharedPreferences(SHARED_PREFS_TIMER, MODE_PRIVATE);
         statoTimer = new StatoTimer();
         statoTimerPrecedente = new StatoTimer();
-        switchFragmentListener = (SwitchFragment) context;
 
         //Metodi
         setButtonListener();
@@ -147,17 +145,6 @@ public class PausaTimerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 context.stopService( new Intent(getContext(), PausaTimerService.class));
-                //Controlla stato precedente e torna al fragment associato
-//                if( statoTimerPrecedente.isCountDown()){
-//                    statoTimer.setValue( StatoTimer.DISATTIVO);
-//                    saveSharedPreferences();
-//                    switchFragmentListener.switchToCountDown();
-//
-//                }else{
-//                    statoTimer.setValue( StatoTimer.DISATTIVO);
-//                    saveSharedPreferences();
-//                    switchFragmentListener.switchToCountup();
-//                }
             }
         });
     }

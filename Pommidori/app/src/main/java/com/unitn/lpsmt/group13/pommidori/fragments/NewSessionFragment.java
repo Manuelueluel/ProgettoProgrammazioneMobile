@@ -65,8 +65,8 @@ public class NewSessionFragment extends Fragment {
     private AlarmManager alarmManager;
 
     //Dati
-    int year, month, day, startHour, startMinute, endHour, endMinute, reminder;
-    boolean hasSelectedStartHour, hasSelectedEndHour;
+    private int year, month, day, startHour, startMinute, endHour, endMinute, reminder;
+    private boolean hasSelectedStartHour, hasSelectedEndHour;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,8 +83,8 @@ public class NewSessionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listaAttivita = (AutoCompleteTextView) view.findViewById( R.id.dropdown_activity_new_session);
-        listaAvviso = (AutoCompleteTextView) view.findViewById( R.id.dropdown_avviso_new_session);
+        listaAttivita = view.findViewById( R.id.dropdown_activity_new_session);
+        listaAvviso = view.findViewById( R.id.dropdown_avviso_new_session);
 
         dateButton = view.findViewById(R.id.date_session_picker);
         hourStartButton = view.findViewById(R.id.start_hour_picker);
@@ -103,7 +103,7 @@ public class NewSessionFragment extends Fragment {
         startMinute = 0;
         endHour = 0;
         endMinute = 0;
-        reminder = THIRTY_MINUTES;  //Default notifica sessione trenta minuti prima dell'evento
+        reminder = -1;  //Default nessuna notifica
 
         hasSelectedStartHour = false;
         hasSelectedEndHour = false;
@@ -149,7 +149,6 @@ public class NewSessionFragment extends Fragment {
         listaAvviso.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "listaAvviso onItemClick item position "+position);
                 switch (position){
                     case 1:
                         reminder = FIVE_MINUTES;
@@ -200,7 +199,6 @@ public class NewSessionFragment extends Fragment {
                         //Selezionato di non volere notifiche
                         if( reminder != -1){
                             createReminder( startHourMillis);
-                            Log.d(TAG, "APPENA CREATA NOTIFICA");
                         }
 
                         s.setOraInizio( dateFomatted);
@@ -323,11 +321,6 @@ public class NewSessionFragment extends Fragment {
                 R.array.avviso,
                 R.layout.dropdown_item
         );
-        ArrayAdapter<CharSequence> ripetizioneAdapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.ripetizione,
-                R.layout.dropdown_item
-        );
 
         listaAttivita.setText(activityAdapter.getItem(0).toString());
         activityModel = activity.get(0);
@@ -340,7 +333,6 @@ public class NewSessionFragment extends Fragment {
     private void createReminder( long startTime){
         //Crea la notifica solo se l'inizio della sessione è successivo ad adesso
         if( new Date( startTime).after( new Date())){
-            Log.d(TAG, "createReminder "+ activityModel.getName() + " " + new Date(startTime) + Utility.getPendingIntentRequestCode());
 
             Intent intent = new Intent( getContext(), ReminderBroadcastReceiver.class);
             intent.putExtra( REMINDER_ACTIVITY_INTENT, activityModel.getName());//Activity associata
