@@ -27,7 +27,6 @@ import com.unitn.lpsmt.group13.pommidori.db.Database;
 import com.unitn.lpsmt.group13.pommidori.R;
 import com.unitn.lpsmt.group13.pommidori.StatoTimer;
 import com.unitn.lpsmt.group13.pommidori.activities.Timer;
-import com.unitn.lpsmt.group13.pommidori.Utility;
 import com.unitn.lpsmt.group13.pommidori.db.TableActivityModel;
 
 import java.util.List;
@@ -54,7 +53,7 @@ public class StartNewSessionFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.layout_dialog_fragment,container,false);
+        return inflater.inflate(R.layout.fragment_start_new_session,container,false);
     }
 
     @Override

@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/custom_border_square"
     android:layout_margin="25dp"
     android:padding="25dp"
     tools:context=".fragments.ModifyActivityFragment">
@@ -44,7 +43,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:hint="es. Matematica"
-                android:background="@color/white"
                 android:layout_marginVertical="5dp"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -85,7 +83,7 @@
             android:id="@+id/modify_activity_deadline"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text=""/>
+            android:text="@string/hour_not_selected"/>
 
     </LinearLayout>
 

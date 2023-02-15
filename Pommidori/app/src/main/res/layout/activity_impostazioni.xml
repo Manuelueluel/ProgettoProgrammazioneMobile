@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/custom_border_round"
+        android:background="@drawable/linear_layout_border"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="15dp"
@@ -47,7 +47,7 @@
             android:layout_marginStart="8dp"
             android:text=""
             android:textAlignment="center"
-            android:textColor="@color/design_default_color_on_secondary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="30sp" />
 
         <Button
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:text="@string/settings_pause_minute"
-            android:textColor="@color/design_default_color_on_secondary" />
+            android:textColor="?attr/colorOnSurface" />
 
     </LinearLayout>
 
@@ -96,10 +96,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/custom_border_round"
+        android:background="@drawable/linear_layout_border"
         android:padding="15dp"
         android:text="@string/accelerometer_sensor_switch_text"
-        android:textColor="@color/design_default_color_on_secondary"
+        android:textColor="?attr/colorOnSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accelerometer_sensor_settings_description"
@@ -120,7 +120,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/custom_border_round"
+        android:background="@drawable/linear_layout_border"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="15dp"
@@ -143,7 +143,7 @@
             android:layout_marginStart="8dp"
             android:text="2"
             android:textAlignment="center"
-            android:textColor="@color/design_default_color_on_secondary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="30sp" />
 
         <Button
@@ -157,7 +157,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="24dp"
-            android:textColor="@color/design_default_color_on_secondary"
+            android:textColor="?attr/colorOnSurface"
             android:text="@string/settings_daily_progress_hours" />
 
 

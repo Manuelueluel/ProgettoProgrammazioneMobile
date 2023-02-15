@@ -50,9 +50,9 @@ public class ModifyActivityFragment extends DialogFragment {
     private ModifySessionFragment.UpdateCalendarEventListListener updateCalendarEventListListener;
 
 
-    int year, month, day, deadlineHour, deadlineMinute;
-    String activityName;
-    boolean hasSelectedDate, hasSelectedDeadline, nameHasChanged;
+    private int year, month, day, deadlineHour, deadlineMinute;
+    private String activityName;
+    private boolean hasSelectedDate, hasSelectedDeadline, nameHasChanged;
 
     public ModifyActivityFragment() {
         // Required empty public constructor

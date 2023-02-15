@@ -56,9 +56,9 @@
         app:compactCalendarOtherMonthDaysTextColor="#CCC"
         app:compactCalendarTextSize="20sp"
         app:compactCalendarCurrentSelectedDayIndicatorStyle="fill_large_indicator"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="#DFFFFD"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="?attr/colorSecondary"
         app:compactCalendarCurrentDayIndicatorStyle="no_fill_large_indicator"
-        app:compactCalendarCurrentDayTextColor="#FF0000"/>
+        app:compactCalendarCurrentDayTextColor="?attr/colorSecondaryVariant"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_calendar_events"

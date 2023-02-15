@@ -76,9 +76,9 @@ public class CustomCalendarWeekFragment extends Fragment implements CalendarAdap
         week.add(mondayRecycleView);
         tusdayRecycleView = view.findViewById(R.id.tuesday_calendar_view);
         week.add(tusdayRecycleView);
-        wensdayRecycleView = view.findViewById(R.id.wensday_calendar_view);
+        wensdayRecycleView = view.findViewById(R.id.wednesday_calendar_view);
         week.add(wensdayRecycleView);
-        thusdayRecycleView = view.findViewById(R.id.thustay_calendar_view);
+        thusdayRecycleView = view.findViewById(R.id.thursday_calendar_view);
         week.add(thusdayRecycleView);
         fridayRecycleView = view.findViewById(R.id.friday_calendar_view);
         week.add(fridayRecycleView);

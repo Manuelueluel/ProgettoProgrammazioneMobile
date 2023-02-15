@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class CalendarUtils {
-    //TODO vedere utilizzo classe, cosa fa e dove
     public static LocalDate selectDate;
 
     public static String monthYearFormatDate(LocalDate date){

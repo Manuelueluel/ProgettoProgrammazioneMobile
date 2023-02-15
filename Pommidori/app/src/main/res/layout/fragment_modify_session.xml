@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/custom_border_square"
     android:layout_margin="25dp"
     android:padding="25dp"
     tools:context=".fragments.ModifySessionFragment">

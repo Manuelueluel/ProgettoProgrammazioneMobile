@@ -24,13 +24,21 @@
         <entry key="..\:/Progetto/ProgettoProgrammazioneMobile/Pommidori/app/src/main/res/layout/row.xml" value="0.3619791666666667" />
         <entry key="..\:/Progetto/ProgettoProgrammazioneMobile/Pommidori/app/src/main/res/layout/toolbar.xml" value="0.3625" />
         <entry key="app/src/main/res/drawable/custom_border_round.xml" value="0.3575" />
+        <entry key="app/src/main/res/drawable/custom_border_square_red.xml" value="0.3345" />
         <entry key="app/src/main/res/drawable/custom_radio_button.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/custom_radio_button_regular.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/custom_radio_button_text_selector.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/event_color.xml" value="0.1695" />
+        <entry key="app/src/main/res/drawable/ic_arrow_back_24.xml" value="0.343" />
         <entry key="app/src/main/res/drawable/ic_arrow_right.xml" value="0.2595" />
+        <entry key="app/src/main/res/drawable/ic_delete_24.xml" value="0.343" />
+        <entry key="app/src/main/res/drawable/ic_emoji_food_beverage_24.xml" value="0.3345" />
+        <entry key="app/src/main/res/drawable/ic_menu_24.xml" value="0.343" />
+        <entry key="app/src/main/res/drawable/ic_modify_24.xml" value="0.3345" />
         <entry key="app/src/main/res/drawable/ic_pause_24.xml" value="0.3859375" />
+        <entry key="app/src/main/res/drawable/ic_pencil_24.xml" value="0.343" />
         <entry key="app/src/main/res/drawable/ic_settings_24.xml" value="0.3859375" />
+        <entry key="app/src/main/res/drawable/linear_layout_border.xml" value="0.3345" />
         <entry key="app/src/main/res/drawable/radio_flat_text_selector.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/selector_circle_progress.xml" value="0.2595" />
         <entry key="app/src/main/res/drawable/selector_radio_button.xml" value="0.2595" />
@@ -53,7 +61,7 @@
         <entry key="app/src/main/res/layout/fragment_modify_activity.xml" value="0.2898550724637681" />
         <entry key="app/src/main/res/layout/fragment_modify_session.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/fragment_modify_session_or_activity.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_new_activity.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_new_activity.xml" value="0.67" />
         <entry key="app/src/main/res/layout/fragment_new_session.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_pie_chart.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/fragment_programmazione.xml" value="0.35625" />
@@ -71,6 +79,7 @@
         <entry key="app/src/main/res/layout/row.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/time_interval_selection.xml" value="0.3374094202898551" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.36096014492753625" />
+        <entry key="app/src/main/res/menu/menu.xml" value="0.35625" />
       </map>
     </option>
   </component>

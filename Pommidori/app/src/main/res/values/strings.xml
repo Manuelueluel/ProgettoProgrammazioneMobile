@@ -41,6 +41,14 @@
     <string name="select_start_hour_before_creating_reminder">Seleziona un\'ora d\'inizio</string>
     <string name="new_activity">Nuova attività</string>
     <string name="new_session">Nuova sessione</string>
+    <string name="vista_mensile">vista mensile</string>
+    <string name="week_view_monday">LUN</string>
+    <string name="week_view_tuesday">MAR</string>
+    <string name="week_view_wednesday">MER</string>
+    <string name="week_view_thursday">GIO</string>
+    <string name="week_view_friday">VEN</string>
+    <string name="week_view_saturday">SAB</string>
+    <string name="week_view_sunday">DOM</string>
 
     <!-- Timer -->
     <string name="pomodoro_in_corso">Pomodoro in corso</string>
@@ -64,6 +72,10 @@
     <string name="report">Report</string>
     <string name="objective_toast">Obbiettivo: </string>
     <string name="progress_toast">Progressi: </string>
+    <string name="pie_chart_week_button">Settimana</string>
+    <string name="pie_chart_month_button">Mese</string>
+    <string name="pie_chart_year_button">Anno</string>
+
 
     <!-- Notifications -->
     <string name="timer_notification_title">Timer attivo</string>

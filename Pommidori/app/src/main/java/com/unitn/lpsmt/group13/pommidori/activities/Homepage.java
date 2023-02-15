@@ -68,23 +68,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
     private StatoTimer statoTimer;
     private SharedPreferences sharedPreferences;
 
-    /*
-    //Oggetto che permette di richiedere permissions e gestirne l'accettazione o meno
-    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if (isGranted) {
-            // Permission is granted. Continue the action or workflow in your
-            // app.
-        } else {
-            // Explain to the user that the feature is unavailable because the
-            // feature requires a permission that the user has denied. At the
-            // same time, respect the user's decision. Don't link to system
-            // settings in an effort to convince the user to change their
-            // decision.
-        }
-    });
-
-
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,15 +107,6 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
 
         if (ContextCompat.checkSelfPermission(Homepage.this, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(Homepage.this, new String[] { permission }, requestCode);
-
-            /*
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                requestPermissionLauncher.launch( permission);
-            }else{
-                ActivityCompat.requestPermissions(Homepage.this, new String[] { permission }, requestCode);
-            }
-
-             */
         }
     }
 
