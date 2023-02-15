@@ -19,7 +19,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Crea una nuova Attività"
+                android:text="@string/create_new_activity_title"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:textAlignment="center"
@@ -35,7 +35,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nome Attività: "
+                    android:text="@string/name_activity_label"
                     android:textSize="15sp"
                     android:layout_marginEnd="20dp"/>
 
@@ -48,7 +48,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:hint="es. Matematica"
+                        android:hint="@string/hint_name_activity"
                         android:layout_marginVertical="5dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -63,7 +63,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Colore"
+                    android:text="@string/color_activity_label"
                     android:textSize="15sp"
                     android:layout_marginEnd="35dp"
                     android:layout_gravity="center"/>
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Crea attività senza scadenza"/>
+                    android:text="@string/activity_without_deadline_label"/>
 
             </LinearLayout>
             <LinearLayout
@@ -114,7 +114,7 @@
                     <TextView
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:text="Data scadenza: "
+                        android:text="@string/activity_date_deadline"
                         android:textSize="15sp"
                         android:layout_marginEnd="20dp"/>
 
@@ -134,7 +134,7 @@
                     <TextView
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:text="Ora scadenza: "
+                        android:text="@string/activity_hour_deadline"
                         android:textSize="15sp"
                         android:layout_marginEnd="20dp"/>
 
@@ -154,7 +154,7 @@
                     <TextView
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:text="Avviso: "
+                        android:text="@string/activity_reminder"
                         android:textSize="15sp"
                         android:layout_marginEnd="20dp"/>
 
@@ -187,14 +187,13 @@
                     android:id="@+id/crea_activity"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:text="Crea"
+                    android:text="@string/create_activity_button"
                     android:layout_marginEnd="20dp"/>
                 <Button
                     android:id="@+id/annulla_activity"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:text="Annulla"/>
-
+                    android:text="@string/cancel_activity_button"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

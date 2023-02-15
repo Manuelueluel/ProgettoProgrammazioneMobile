@@ -39,8 +39,29 @@
     <string name="date_not_selected">--/--/--</string>
     <string name="hour_not_selected">--:--</string>
     <string name="select_start_hour_before_creating_reminder">Seleziona un\'ora d\'inizio</string>
+
+    <!-- NewActivityFragment -->
     <string name="new_activity">Nuova attività</string>
+    <string name="create_new_activity_title">Crea una nuova Attività</string>
+    <string name="name_activity_label">Nome Attività:</string>
+    <string name="hint_name_activity">es. Matematica</string>
+    <string name="color_activity_label">Colore:</string>
+    <string name="activity_without_deadline_label">Crea attività senza scadenza</string>
+    <string name="activity_date_deadline">Data scadenza:</string>
+    <string name="activity_hour_deadline">Ora scadenza:</string>
+    <string name="reminder">Promemoria:</string>
+    <string name="create_button">Crea</string>
+    <string name="cancel_button">Annulla</string>
+
+    <!-- NewSessionFragment -->
+    <string name="select_activity_session">Attività:</string>
+    <string name="select_day_session">Giorno:</string>
+    <string name="select_start_hour_session">Ora Inizio:</string>
+    <string name="select_end_hour_session">Ora di Fine:</string>
+
+
     <string name="new_session">Nuova sessione</string>
+    <string name="create_new_session_title">Crea una nuova Sessione</string>
     <string name="vista_mensile">vista mensile</string>
     <string name="week_view_monday">LUN</string>
     <string name="week_view_tuesday">MAR</string>

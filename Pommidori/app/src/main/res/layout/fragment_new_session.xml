@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Crea una nuova Sessione"
+            android:text="@string/create_new_session_title"
             android:textSize="30sp"
             android:textStyle="bold"
             android:textAlignment="center"
@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Attività: "
+                android:text="@string/select_activity"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Giorno: "
+                android:text="@string/select_day_session"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
@@ -77,7 +77,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Ora Inizio: "
+                android:text="@string/select_start_hour_session"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
@@ -97,7 +97,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Ora di Fine: "
+                android:text="@string/select_end_hour_session"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
@@ -118,7 +118,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Avviso: "
+                android:text="@string/reminder"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
@@ -149,13 +149,13 @@
                 android:id="@+id/crea_session"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Crea"
+                android:text="@string/create_button"
                 android:layout_marginEnd="20dp"/>
             <Button
                 android:id="@+id/annulla_session"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Annulla"/>
+                android:text="@string/cancel_button"/>
 
         </LinearLayout>
     </LinearLayout>
