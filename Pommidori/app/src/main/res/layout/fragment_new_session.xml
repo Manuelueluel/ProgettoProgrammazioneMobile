@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/select_activity"
+                android:text="@string/select_activity_session"
                 android:textSize="15sp"
                 android:layout_marginEnd="20dp"/>
 
